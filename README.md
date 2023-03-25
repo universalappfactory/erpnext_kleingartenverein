@@ -60,7 +60,7 @@ bench get-app payments
 bench get-app --branch version-14 --resolve-deps erpnext
 
 bench --site mysite.localhost install-app erpnext
-
+bench --site mysite.localhost install-app erpnext_kleingartenverein
 
 bench use mysite.localhost
 bench start
