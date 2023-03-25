@@ -68,6 +68,3 @@ bench start
 Next point your browser to
 
 http://localhost:8000/#login
-
-
-

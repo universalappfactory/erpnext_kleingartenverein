@@ -14,7 +14,7 @@ class ShippingError(Exception):
 class LetterxpressShipping:
     '''
     API client for https://www.letterxpress.de/
-    
+
     the idea is to send postal letters via this service
     '''
     def ship_pdf(self, pdf):
@@ -53,7 +53,7 @@ class LetterxpressShipping:
             }
 
             headers = {'Content-Type': 'application/json'}
-            
+
             r = requests.post(url=endpoint, json=data, headers=headers)
             print(r)
         except Exception as error:

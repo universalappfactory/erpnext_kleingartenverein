@@ -21,7 +21,7 @@ class CustomerWithoutPlot(ValidationError):
 class InvoiceCalculator:
     """
     Basic invoice calculator to calculate yearly invoices
-    
+
     Still under development
     """
 
