@@ -1,0 +1,100 @@
+import traceback
+from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calculation.invoice_calculator import InvoiceCalculator
+from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter.letter_shipping import LetterShipping
+import frappe
+import json
+import random
+from datetime import datetime
+from frappe import _
+
+
+@frappe.whitelist()
+def execute_invoice_calculation(names, status):
+    try:
+        names = json.loads(names)
+        for name in names:
+            calculation = frappe.get_doc('Invoice Calculation', name)
+            if calculation:
+                calculator = InvoiceCalculator()
+                calculator.create_drafts(calculation)
+    except Exception as e:
+        frappe.throw(str(e))
+
+@frappe.whitelist()
+def execute_member_letter_shipping(names, status):
+    frappe.throw('not supported at the moment')
+    # try:
+    #     names = json.loads(names)
+    #     shipping = LetterShipping()
+
+    #     if (len(names) > 1):
+    #         frappe.throw('you can only select one letter at the moment.')
+
+    #     name = names[0]
+    #     letter = frappe.get_doc('Member Letter', name)
+    #     if not letter:
+    #         frappe.throw(_('cannot find letter: {0}'.format(name)))
+
+    #     customers = shipping.get_matching_customers()
+    #     frappe.publish_realtime(_(f'Creating {len(customers)} letters'))
+    #     shipping.ship_letter(letter)
+    #     for name in names:
+
+    #         if letter:
+
+
+    # except Exception as e:
+    #     frappe.throw(str(e))
+
+
+def background_create_letters(letter_name):
+    try:
+        letter = frappe.get_doc('Member Letter', letter_name)
+        if not letter:
+            frappe.throw(_('cannot find letter: {0}'.format(letter_name)))
+
+        shipping = LetterShipping()
+        customers = shipping.get_matching_customers(letter)
+
+        frappe.publish_realtime("background_create_letters_start", {"background_create_letters": len(customers)})
+
+        shipping.create_letters(letter, customers)
+
+        frappe.publish_realtime("background_create_letters_start", {"Done": len(customers)})
+    except Exception as error:
+        frappe.log_error(error)
+
+
+@frappe.whitelist()
+def execute_create_letters(names, status):
+    try:
+        names = json.loads(names)
+        shipping = LetterShipping()
+
+        if (len(names) > 1):
+            frappe.throw('you can only select one letter at the moment.')
+
+        name = names[0]
+        letter = frappe.get_doc('Member Letter', name)
+        if not letter:
+            frappe.throw(_('cannot find letter: {0}'.format(name)))
+
+        customers = shipping.get_matching_customers(letter)
+        if len(customers) == 1:
+            shipping.create_letters(letter, customers)
+        else:
+            frappe.enqueue(background_create_letters, letter_name=name, queue="long", job_name=f"create_letters_for_{name}")
+
+
+    except Exception as e:
+        frappe.throw(str(e))
+
+def customer_before_insert(doc, method=None):
+    '''
+    creates a random membership number when the customer does not have a membership_number
+    '''
+    if doc.customer_group == 'Lessee' or doc.customer_group == 'Member':
+        if not doc.membership_number:
+            now = datetime.now()
+            number = random.randrange(1, 100)
+            doc.membership_number = now.strftime('%Y%m') + str(number)

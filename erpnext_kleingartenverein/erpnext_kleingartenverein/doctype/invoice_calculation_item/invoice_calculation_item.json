@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-03-02 21:13:31.937035",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "description",
+  "product",
+  "source_type",
+  "plot_fieldname",
+  "customer_fieldname",
+  "customer_checkbox_field",
+  "plot_checkbox_field",
+  "multiplicator"
+ ],
+ "fields": [
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "product",
+   "fieldtype": "Link",
+   "label": "Product",
+   "options": "Item"
+  },
+  {
+   "fieldname": "source_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Quantity Source",
+   "options": "None\nCustomer\nCustomer with checkbox\nPlot\nPlot with checkbox",
+   "reqd": 1
+  },
+  {
+   "fieldname": "plot_fieldname",
+   "fieldtype": "Data",
+   "label": "Plot Fieldname"
+  },
+  {
+   "fieldname": "customer_fieldname",
+   "fieldtype": "Data",
+   "label": "Customer Fieldname"
+  },
+  {
+   "fieldname": "customer_checkbox_field",
+   "fieldtype": "Data",
+   "label": "Customer Checkbox Field"
+  },
+  {
+   "fieldname": "plot_checkbox_field",
+   "fieldtype": "Data",
+   "label": "Plot Checkbox Field"
+  },
+  {
+   "default": "1",
+   "fieldname": "multiplicator",
+   "fieldtype": "Float",
+   "label": "Multiplicator"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-03-07 13:44:52.620488",
+ "modified_by": "Administrator",
+ "module": "Erpnext Kleingartenverein",
+ "name": "Invoice Calculation Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

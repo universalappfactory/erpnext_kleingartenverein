@@ -1,0 +1,143 @@
+{
+ "actions": [],
+ "autoname": "format:Plot-{plot_number}",
+ "creation": "2023-03-02 13:36:01.601005",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "plot_number",
+  "plot_status",
+  "customer",
+  "information_tab",
+  "plot_size_sqm",
+  "common_area_sqm",
+  "note",
+  "counter_tab",
+  "water_meter_section",
+  "water_meter_table",
+  "attachment_tab",
+  "file_attachment_section",
+  "attachment_table",
+  "picture_table_section",
+  "picture_table"
+ ],
+ "fields": [
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Lessee",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "counter_tab",
+   "fieldtype": "Tab Break",
+   "label": "Counter"
+  },
+  {
+   "fieldname": "water_meter_section",
+   "fieldtype": "Section Break",
+   "label": "Water meter"
+  },
+  {
+   "fieldname": "water_meter_table",
+   "fieldtype": "Table",
+   "label": "Water meter table",
+   "options": "Counter Table"
+  },
+  {
+   "fieldname": "attachment_tab",
+   "fieldtype": "Tab Break",
+   "label": "Attachments"
+  },
+  {
+   "fieldname": "file_attachment_section",
+   "fieldtype": "Section Break",
+   "label": "Files"
+  },
+  {
+   "fieldname": "attachment_table",
+   "fieldtype": "Table",
+   "label": "Attachment table",
+   "options": "Attachment table"
+  },
+  {
+   "fieldname": "picture_table_section",
+   "fieldtype": "Section Break",
+   "label": "Pictures"
+  },
+  {
+   "fieldname": "picture_table",
+   "fieldtype": "Table",
+   "label": "Picture table",
+   "options": "Picture table"
+  },
+  {
+   "fieldname": "information_tab",
+   "fieldtype": "Tab Break",
+   "label": "Information"
+  },
+  {
+   "fieldname": "plot_size_sqm",
+   "fieldtype": "Float",
+   "label": "Size",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "plot_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Plot number",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "plot_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Under Lease\nNot under lease\nUnder supervision\nCanceled by lessee\nCanceled by club",
+   "reqd": 1
+  },
+  {
+   "fieldname": "common_area_sqm",
+   "fieldtype": "Float",
+   "label": "Common area"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-03-14 07:17:34.251731",
+ "modified_by": "Administrator",
+ "module": "Erpnext Kleingartenverein",
+ "name": "Plot",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

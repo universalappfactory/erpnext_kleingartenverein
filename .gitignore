@@ -1,0 +1,11 @@
+.DS_Store
+*.pyc
+*.egg-info
+*.swp
+tags
+kleingartenverein/docs/current
+node_modules/
+
+lib/
+lib64
+bin/

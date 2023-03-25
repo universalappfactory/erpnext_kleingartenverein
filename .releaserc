@@ -1,0 +1,34 @@
+{
+    "branches": [
+        "main"
+    ],
+    "plugins": [
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+        "@semantic-release/github",
+        "@semantic-release/commit-analyzer",
+        [
+            "@google/semantic-release-replace-plugin",
+            {
+                "replacements": [
+                    {
+                        "files": [
+                            "erpnext_kleingartenverein/__init__.py"
+                        ],
+                        "from": "__version__ = \".*\"",
+                        "to": "__version__ = \"${nextRelease.version}\"",
+                        "results": [
+                            {
+                                "file": "erpnext_kleingartenverein/__init__.py",
+                                "hasChanged": true,
+                                "numMatches": 1,
+                                "numReplacements": 1
+                            }
+                        ],
+                        "countMatches": true
+                    }
+                ]
+            }
+        ]
+    ]
+}

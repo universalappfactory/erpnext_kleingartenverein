@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "creation": "2023-03-02 18:33:55.570514",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "counter_number",
+  "counter_value",
+  "counter_picture"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "counter_value",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Value",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "counter_picture",
+   "fieldtype": "Attach Image",
+   "label": "Photo"
+  },
+  {
+   "fieldname": "counter_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Counter Number",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-03-07 15:31:55.761570",
+ "modified_by": "Administrator",
+ "module": "Erpnext Kleingartenverein",
+ "name": "Counter Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

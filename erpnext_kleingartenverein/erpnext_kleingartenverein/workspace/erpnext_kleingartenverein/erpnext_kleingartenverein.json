@@ -1,0 +1,146 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"9hWP1_oGf4\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h3\\\" style=\\\"\\\"><a target=\\\"_blank\\\" href=\\\"/wiki/kleingartenverein\\\">Hilfeseiten im Wiki</a></span>\",\"col\":12}},{\"id\":\"j9dbYihsOG\",\"type\":\"card\",\"data\":{\"card_name\":\"Verwaltung\",\"col\":5}},{\"id\":\"UZ8Q5QaIXX\",\"type\":\"card\",\"data\":{\"card_name\":\"Buchhaltung\",\"col\":4}},{\"id\":\"bH2f6LNxpg\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"XBir9liXnw\",\"type\":\"card\",\"data\":{\"card_name\":\"Club Management\",\"col\":4}},{\"id\":\"J4ap8JMlzu\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Formulare\",\"col\":4}}]",
+ "creation": "2022-09-17 11:48:26.825712",
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "today",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Erpnext Kleingartenverein",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Invoice Calculation",
+   "link_count": 0,
+   "link_to": "Invoice Calculation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Verwaltung",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Parzelle",
+   "link_count": 0,
+   "link_to": "Plot",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Lessee",
+   "link_count": 0,
+   "link_to": "Customer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Buchhaltung",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Ausgangsrechnung",
+   "link_count": 0,
+   "link_to": "Sales Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rechnungserstellung",
+   "link_count": 0,
+   "link_to": "Invoice Calculation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Club Management",
+   "link_count": 4,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Aufgabe",
+   "link_count": 0,
+   "link_to": "ToDo",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Kalender",
+   "link_count": 0,
+   "link_to": "Event",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Briefe",
+   "link_count": 0,
+   "link_to": "Member Letter",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Meeting Minutes",
+   "link_count": 0,
+   "link_to": "Meeting Minutes",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2023-03-21 08:43:44.406381",
+ "modified_by": "Administrator",
+ "module": "Erpnext Kleingartenverein",
+ "name": "Erpnext Kleingartenverein",
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "Standard Form",
+   "label": "Formulare"
+  }
+ ],
+ "roles": [],
+ "sequence_id": 1.0,
+ "shortcuts": [],
+ "title": "Erpnext Kleingartenverein"
+}

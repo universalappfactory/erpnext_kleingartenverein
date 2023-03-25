@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include erpnext_kleingartenverein *.css
+recursive-include erpnext_kleingartenverein *.csv
+recursive-include erpnext_kleingartenverein *.html
+recursive-include erpnext_kleingartenverein *.ico
+recursive-include erpnext_kleingartenverein *.js
+recursive-include erpnext_kleingartenverein *.json
+recursive-include erpnext_kleingartenverein *.md
+recursive-include erpnext_kleingartenverein *.png
+recursive-include erpnext_kleingartenverein *.py
+recursive-include erpnext_kleingartenverein *.svg
+recursive-include erpnext_kleingartenverein *.txt
+recursive-exclude erpnext_kleingartenverein *.pyc
