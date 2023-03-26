@@ -27,7 +27,7 @@ jobs:
           node-version: "lts/*"
 
       - name: Install replace plugin
-        run: npm install semantic-release @google/semantic-release-replace-plugin -D
+        run: npm install semantic-release @google/semantic-release-replace-plugin @semantic-release/git -D
 
       - name: Release
         env:
