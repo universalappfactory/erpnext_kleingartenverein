@@ -29,6 +29,14 @@
                     }
                 ]
             }
+        ],
+        [
+            "@semantic-release/git",
+            {
+                "assets": [
+                    "erpnext_kleingartenverein/*.py"
+                ]
+            }
         ]
     ]
 }
