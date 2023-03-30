@@ -2,6 +2,7 @@
     Basic install steps for erpnext_kleingartenverein
 '''
 import frappe
+from frappe.test_runner import make_test_records
 
 
 def before_install():
@@ -288,6 +289,7 @@ def modify_customer_naming():
 def before_tests():
     # pylint: disable-next=import-outside-toplevel
     from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
+    from erpnext.setup.setup_wizard.operations.install_fixtures import install
 
     # complete setup if missing
     if not int(frappe.db.get_single_value("System Settings", "setup_complete") or 0):

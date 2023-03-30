@@ -8,6 +8,10 @@ from frappe.exceptions import DoesNotExistError, MandatoryError, ValidationError
 from frappe.tests.utils import FrappeTestCase
 
 
+test_records = frappe.get_test_records("Plot")
+test_dependencies = []
+test_ignore = ['Customer']
+
 class TestPlot(FrappeTestCase):
 
 	def setUp(self):
