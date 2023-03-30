@@ -142,7 +142,7 @@ class InvoiceCalculator:
         company = frappe.get_doc("Company", company_list[0])
         income_account = company.default_income_account
 
-        # invoice.company = company.name
+        invoice.company = company.name
         invoice.debit_to = company.default_receivable_account
         invoice.base_grand_total = 0
         invoice.base_rounded_total = 0
