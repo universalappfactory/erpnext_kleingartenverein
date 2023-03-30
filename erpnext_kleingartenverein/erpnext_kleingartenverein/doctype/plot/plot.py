@@ -18,6 +18,17 @@ class Plot(Document):
 
 	def on_update(self):
 		self.update_customer_backlink()
+		self.store_tags()
+
+	def store_tags(self):
+		if not hasattr(self, 'user_tags') or not self.user_tags:
+			return
+
+		existing_tags = self.get_tags()
+		for tag in self.user_tags.split(','):
+			if tag != '' and not any(t == tag for t in existing_tags):
+				self.add_tag(tag)
+
 
 	def clear_customer_backlink(self, customer_name):
 		customer = frappe.get_doc('Customer', customer_name)
