@@ -8,8 +8,11 @@ from frappe.exceptions import ValidationError
 from frappe.model.document import Document
 from frappe.utils.data import getdate
 
-def get_grouping(counter_item) -> str:
+def get_date_grouping(counter_item) -> str:
 	return f'{getdate(counter_item.date).year}_{counter_item.counter_number.lower()}'
+
+def get_mounting_date_grouping(counter_item) -> str:
+	return f'{getdate(counter_item.mounting_date).strftime("%Y-%m-%d")}'
 
 class Plot(Document):
 
@@ -50,6 +53,7 @@ class Plot(Document):
 
 	def validate(self):
 		self.validate_counters()
+		self.validate_mounting_dates()
 
 	def validate_increasing_counter_values(self, grouped_by_counter):
 		sorted_list = sorted(grouped_by_counter, key=lambda x: x.date)
@@ -61,7 +65,7 @@ class Plot(Document):
 
 	def validate_counters(self):
 		if len(self.water_meter_table) > 0:
-			for key,group in groupby(self.water_meter_table, lambda x: get_grouping(x)):
+			for key,group in groupby(self.water_meter_table, lambda x: get_date_grouping(x)):
 				grouped = list(group)
 				if len(grouped) > 1:
 					year = getdate(grouped[0].date).year
@@ -69,3 +73,11 @@ class Plot(Document):
 
 			for key,group in groupby(self.water_meter_table, lambda x: x.counter_number):
 				self.validate_increasing_counter_values(list(group))
+
+	def validate_mounting_dates(self):
+		if len(self.water_meter_table) > 0:
+			for key,group in groupby(self.water_meter_table, lambda x: x.counter_number):
+				grouped = list(group)
+				first_date = grouped[0].mounting_date
+				if not all(itm.mounting_date == first_date for itm in grouped):
+					frappe.throw(_("Counter Number '{0}' has multiple mounting dates.").format(key))
