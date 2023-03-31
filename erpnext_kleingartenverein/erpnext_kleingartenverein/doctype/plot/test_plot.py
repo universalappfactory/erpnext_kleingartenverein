@@ -209,3 +209,52 @@ class TestPlot(FrappeTestCase):
         plot.water_meter_table.append(row3)
 
         self.assertEqual(len(plot.water_meter_table), 3)
+
+    def test_that_plot_has_seal_label_when_counter_table_has_a_seal_number(
+        self,
+    ):
+        plot = frappe.new_doc("Plot")
+        plot.plot_number = "MyPlot1"
+
+        row1 = frappe.new_doc("Counter Table")
+        row1.date = date(2022, 12, 15)
+        row1.mounting_date = date(2021, 3, 15)
+        row1.counter_value = 22.5
+        row1.counter_number = "ABC"
+        row1.seal_number = "12345"
+        plot.water_meter_table.append(row1)
+
+        plot.save()
+
+        tags = plot.get_tags()
+        expected_tags = ['Has Seal']
+        self.assertListEqual(tags, expected_tags)
+
+    def test_that_plot_without_seal_number_does_not_get_seal_tag(
+        self,
+    ):
+        plot = frappe.new_doc("Plot")
+        plot.plot_number = "MyPlot1"
+
+        row1 = frappe.new_doc("Counter Table")
+        row1.date = date(2022, 12, 15)
+        row1.mounting_date = date(2021, 3, 15)
+        row1.counter_value = 22.5
+        row1.counter_number = "ABC"
+        plot.water_meter_table.append(row1)
+
+        plot.save()
+
+        tags = plot.get_tags()
+        expected_tags = []
+        self.assertListEqual(tags, expected_tags)
+
+    def test_that_plot_with_only_required_fields_can_be_saved(
+        self,
+    ):
+        plot = frappe.new_doc("Plot")
+        plot.plot_number = "MyPlot1"
+
+        plot.save()
+
+        self.assertIsNotNone(plot.name)
