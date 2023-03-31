@@ -2,9 +2,9 @@
 # For license information, please see license.txt
 
 import frappe
+from datetime import datetime, date
 from frappe import _
 from itertools import groupby
-from frappe.exceptions import ValidationError
 from frappe.model.document import Document
 from frappe.utils.data import getdate
 
@@ -35,13 +35,15 @@ class Plot(Document):
             if tag != "" and not any(t == tag for t in existing_tags):
                 self.add_tag(tag)
 
-    def isNullOrWhiteSpace(self, str=None):
+    def isEmptyValue(self, str=None):
+        if isinstance(str, datetime) or isinstance(str, date):
+            return False
         return not str or str.isspace()
 
     def add_has_seal_label(self):
         if self.water_meter_table and len(self.water_meter_table) > 0:
             if not any(
-                not self.isNullOrWhiteSpace(row.seal_number)
+                not self.isEmptyValue(row.seal_number)
                 for row in self.water_meter_table
             ):
                 return
@@ -75,7 +77,7 @@ class Plot(Document):
         self.validate_counters()
         self.validate_mounting_dates()
 
-    def validate_increasing_counter_values(self, grouped_by_counter):
+    def validate_decreasing_counter_values(self, grouped_by_counter):
         sorted_list = sorted(grouped_by_counter, key=lambda x: x.date)
         last = 0
         for x in sorted_list:
@@ -85,20 +87,34 @@ class Plot(Document):
                 )
             last = x.counter_value
 
-    def validate_counters(self):
-        if len(self.water_meter_table) > 0:
-            for key, group in groupby(
-                self.water_meter_table, lambda x: get_date_grouping(x)
-            ):
-                grouped = list(group)
-                if len(grouped) > 1:
-                    year = getdate(grouped[0].date).year
-                    frappe.throw(_("Year {0} has multiple entries.").format(year))
+    def add_missing_water_meter_values(self, row):
+        matching = next(
+            filter(
+                lambda x: not x.is_new() and x.counter_number == row.counter_number,
+                self.water_meter_table,
+            ),
+            None,
+        )
 
+        if not matching:
+            return
+
+        if self.isEmptyValue(row.mounting_date):
+            row.mounting_date = matching.mounting_date
+
+        if self.isEmptyValue(row.seal_number):
+            row.seal_number = matching.seal_number
+
+    def validate_counters(self):
+        for row in self.water_meter_table:
+            if row.is_new():
+                self.add_missing_water_meter_values(row)
+
+        if len(self.water_meter_table) > 0:
             for key, group in groupby(
                 self.water_meter_table, lambda x: x.counter_number
             ):
-                self.validate_increasing_counter_values(list(group))
+                self.validate_decreasing_counter_values(list(group))
 
     def validate_mounting_dates(self):
         if len(self.water_meter_table) > 0:

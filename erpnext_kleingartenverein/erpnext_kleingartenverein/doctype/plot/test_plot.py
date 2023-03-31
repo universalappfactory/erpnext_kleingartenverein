@@ -36,26 +36,6 @@ class TestPlot(FrappeTestCase):
         plot.save()
         self.assertIsNotNone(plot.name)
 
-    def test_that_counter_table_must_have_unique_years(self):
-        plot = frappe.new_doc("Plot")
-        plot.plot_number = "MyPlot1"
-
-        row1 = frappe.new_doc("Counter Table")
-        row1.date = date(2022, 1, 16)
-        row1.counter_value = 22.5
-        row1.counter_number = "ABC"
-        plot.water_meter_table.append(row1)
-
-        row2 = frappe.new_doc("Counter Table")
-        row2.date = date(2022, 12, 16)
-        row2.counter_value = 28.5
-        row2.counter_number = "ABC"
-        plot.water_meter_table.append(row2)
-
-        with self.assertRaises(ValidationError) as context:
-            plot.save()
-        self.assertTrue("Year 2022 has multiple entries." in str(context.exception))
-
     def test_that_plot_can_be_saved_when_counter_year_is_unique(self):
         plot = frappe.new_doc("Plot")
         plot.plot_number = "MyPlot1"
@@ -227,7 +207,7 @@ class TestPlot(FrappeTestCase):
         plot.save()
 
         tags = plot.get_tags()
-        expected_tags = ['Has Seal']
+        expected_tags = ["Has Seal"]
         self.assertListEqual(tags, expected_tags)
 
     def test_that_plot_without_seal_number_does_not_get_seal_tag(
@@ -258,3 +238,51 @@ class TestPlot(FrappeTestCase):
         plot.save()
 
         self.assertIsNotNone(plot.name)
+
+    def test_that_existing_seal_number_is_set_on_new_row_when_row_by_counter_exist(
+        self,
+    ):
+        plot = frappe.new_doc("Plot")
+        plot.plot_number = "MyPlot1"
+
+        row1 = frappe.new_doc("Counter Table")
+        row1.date = date(2022, 12, 15)
+        row1.mounting_date = date(2021, 3, 15)
+        row1.counter_value = 22.5
+        row1.counter_number = "ABC"
+        row1.seal_number = "FirstSeal"
+        plot.water_meter_table.append(row1)
+        plot.save()
+
+        row2 = frappe.new_doc("Counter Table")
+        row2.date = date(2023, 12, 16)
+        row1.mounting_date = date(2021, 3, 15)
+        row2.counter_value = 45
+        row2.counter_number = "ABC"
+        plot.water_meter_table.append(row2)
+        plot.save()
+
+        self.assertEqual(row2.seal_number, "FirstSeal")
+
+    def test_that_existing_mounting_date_is_set_on_new_row_when_row_by_counter_exist(
+        self,
+    ):
+        plot = frappe.new_doc("Plot")
+        plot.plot_number = "MyPlot1"
+
+        row1 = frappe.new_doc("Counter Table")
+        row1.date = date(2022, 12, 15)
+        row1.mounting_date = date(2021, 3, 15)
+        row1.counter_value = 22.5
+        row1.counter_number = "ABC"
+        plot.water_meter_table.append(row1)
+        plot.save()
+
+        row2 = frappe.new_doc("Counter Table")
+        row2.date = date(2023, 12, 16)
+        row2.counter_value = 45
+        row2.counter_number = "ABC"
+        plot.water_meter_table.append(row2)
+        plot.save()
+
+        self.assertEqual(row2.mounting_date, date(2021, 3, 15))
