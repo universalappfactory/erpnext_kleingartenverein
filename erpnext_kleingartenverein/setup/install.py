@@ -258,6 +258,12 @@ def create_customer_groups():
         customer_group.default_price_list = price_list.name
         customer_group.insert()
 
+    if "Former Tenant" not in all_customer_groups:
+        customer_group = frappe.new_doc("Customer Group")
+        customer_group.customer_group_name = "Former Tenant"
+        customer_group.default_price_list = price_list.name
+        customer_group.insert()
+
 
 def hide_workspaces():
     workspace_list = frappe.get_list("Workspace", pluck="name")
