@@ -261,17 +261,18 @@ def create_customer_groups():
 
 def hide_workspaces():
     workspace_list = frappe.get_list("Workspace", pluck="name")
+    workspace_list.remove('Wiki')
 
     visible = ["Erpnext Kleingartenverein"]
     for workspace in list(filter(lambda x: x not in visible, workspace_list)):
-        worspace_doc = frappe.get_doc("Workspace", workspace)
-        worspace_doc.is_hidden = True
-        worspace_doc.save()
+        workspace_doc = frappe.get_doc("Workspace", workspace)
+        workspace_doc.is_hidden = True
+        workspace_doc.save()
 
     delete = ["Home"]
     for workspace in list(filter(lambda x: x in delete, workspace_list)):
-        worspace_doc = frappe.get_doc("Workspace", workspace)
-        worspace_doc.delete()
+        workspace_doc = frappe.get_doc("Workspace", workspace)
+        workspace_doc.delete()
 
 
 def modify_customer_naming():
