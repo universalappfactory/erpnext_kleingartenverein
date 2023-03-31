@@ -267,7 +267,9 @@ def create_customer_groups():
 
 def hide_workspaces():
     workspace_list = frappe.get_list("Workspace", pluck="name")
-    workspace_list.remove('Wiki')
+
+    if 'Wiki' in workspace_list:
+        workspace_list.remove('Wiki')
 
     visible = ["Erpnext Kleingartenverein"]
     for workspace in list(filter(lambda x: x not in visible, workspace_list)):
