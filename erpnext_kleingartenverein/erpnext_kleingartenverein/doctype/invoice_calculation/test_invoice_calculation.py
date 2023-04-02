@@ -5,6 +5,7 @@ See license.txt
 
 import frappe
 from frappe.exceptions import DoesNotExistError
+from frappe.test_runner import make_test_objects
 from frappe.utils.nestedset import NestedSetChildExistsError
 from frappe.model.dynamic_links import get_dynamic_link_map
 from frappe.tests.utils import FrappeTestCase
@@ -16,18 +17,15 @@ from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calcula
     InvoiceCalculator,
 )
 
+test_records = frappe.get_test_records("Invoice Calculation")
+test_dependencies = []
+test_ignore = ["Customer", "Item", "Opportunity"]
 
+# ToDo we need to improve the test_record setup (maybe only with testrecords.json)
 class TestInvoiceCalculation(FrappeTestCase):
-    # def setUp(self):
-    # 	make_test_records(
-    #         doctype='Invoice Calculation',
-    #         verbose=1,
-    #         force=True,
-    #     	commit=True
-    #     )
-
     @classmethod
     def setUpClass(cls):
+        frappe.local.test_objects["Opportunity"] = []
         cls.cleanup_all()
 
         cls.setup_customer()
@@ -38,9 +36,6 @@ class TestInvoiceCalculation(FrappeTestCase):
     @classmethod
     def addClassCleanup(cls):
         cls.cleanup_all()
-
-    # def tearDown(self):
-    #     pass
 
     @classmethod
     def cleanup_all(cls):
@@ -59,7 +54,9 @@ class TestInvoiceCalculation(FrappeTestCase):
         product = frappe.new_doc("Item")
         product.item_code = "Lease"
         product.item_group = next(
-            filter(lambda x: x.name == "Products", product_groups)
+            filter(
+                lambda x: x.name == "Products" or x.name == "Produkte", product_groups
+            )
         ).name
         product.stock_uom = "Square Meter"
         product.save()
@@ -67,33 +64,39 @@ class TestInvoiceCalculation(FrappeTestCase):
             product.item_code,
             company_list[0].name,
             "default_price_list",
-            "Standard Selling",
+            "Default",
         )
 
         product_water = frappe.new_doc("Item")
         product_water.item_code = "Water"
+        product_water.stock_uom = "Cubic Meter"
         product_water.item_group = next(
-            filter(lambda x: x.name == "Products", product_groups)
+            filter(
+                lambda x: x.name == "Products" or x.name == "Produkte", product_groups
+            )
         ).name
         product_water.save()
         set_item_default(
             product_water.item_code,
             company_list[0].name,
             "default_price_list",
-            "Standard Selling",
+            "Default",
         )
 
         product_fixed = frappe.new_doc("Item")
         product_fixed.item_code = "Fixed"
+        product_fixed.stock_uom = "Unit"
         product_fixed.item_group = next(
-            filter(lambda x: x.name == "Products", product_groups)
+            filter(
+                lambda x: x.name == "Products" or x.name == "Produkte", product_groups
+            )
         ).name
         product_fixed.save()
         set_item_default(
             product_fixed.item_code,
             company_list[0].name,
             "default_price_list",
-            "Standard Selling",
+            "Default",
         )
 
     @classmethod
@@ -104,7 +107,10 @@ class TestInvoiceCalculation(FrappeTestCase):
             "Item",
             {
                 "item_group": next(
-                    filter(lambda x: x.name == "Products", product_groups)
+                    filter(
+                        lambda x: x.name == "Products" or x.name == "Produkte",
+                        product_groups,
+                    )
                 ).name
             },
         )
@@ -128,21 +134,21 @@ class TestInvoiceCalculation(FrappeTestCase):
         lease_price = frappe.new_doc("Item Price")
         lease_price.currency = "EUR"
         lease_price.item_code = "Lease"
-        lease_price.price_list = "Standard Selling"
+        lease_price.price_list = "Default"
         lease_price.price_list_rate = 1.75
         lease_price.save()
 
         water_price = frappe.new_doc("Item Price")
         water_price.currency = "EUR"
         water_price.item_code = "Water"
-        water_price.price_list = "Standard Selling"
+        water_price.price_list = "Default"
         water_price.price_list_rate = 0.50
         water_price.save()
 
         fixed_price = frappe.new_doc("Item Price")
         fixed_price.currency = "EUR"
         fixed_price.item_code = "Fixed"
-        fixed_price.price_list = "Standard Selling"
+        fixed_price.price_list = "Default"
         fixed_price.price_list_rate = 10.50
         fixed_price.save()
 
@@ -175,7 +181,10 @@ class TestInvoiceCalculation(FrappeTestCase):
 
         for customer in customers:
             customer_doc = frappe.get_doc("Customer", customer.name)
-            customer_doc.delete()
+            try:
+                customer_doc.delete()
+            except:
+                pass
 
         try:
             customer_group = frappe.get_doc("Customer Group", "Tenant")
@@ -185,9 +194,7 @@ class TestInvoiceCalculation(FrappeTestCase):
                 child.delete()
 
             customer_group.delete()
-        except DoesNotExistError:
-            pass
-        except NestedSetChildExistsError:
+        except Exception:
             pass
 
     @classmethod

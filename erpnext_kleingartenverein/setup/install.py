@@ -1,7 +1,8 @@
-'''
+"""
     Basic install steps for erpnext_kleingartenverein
-'''
+"""
 import frappe
+from frappe.test_runner import make_test_records
 
 
 def before_install():
@@ -257,20 +258,29 @@ def create_customer_groups():
         customer_group.default_price_list = price_list.name
         customer_group.insert()
 
+    if "Former Tenant" not in all_customer_groups:
+        customer_group = frappe.new_doc("Customer Group")
+        customer_group.customer_group_name = "Former Tenant"
+        customer_group.default_price_list = price_list.name
+        customer_group.insert()
+
 
 def hide_workspaces():
     workspace_list = frappe.get_list("Workspace", pluck="name")
 
+    if "Wiki" in workspace_list:
+        workspace_list.remove("Wiki")
+
     visible = ["Erpnext Kleingartenverein"]
     for workspace in list(filter(lambda x: x not in visible, workspace_list)):
-        worspace_doc = frappe.get_doc("Workspace", workspace)
-        worspace_doc.is_hidden = True
-        worspace_doc.save()
+        workspace_doc = frappe.get_doc("Workspace", workspace)
+        workspace_doc.is_hidden = True
+        workspace_doc.save()
 
     delete = ["Home"]
     for workspace in list(filter(lambda x: x in delete, workspace_list)):
-        worspace_doc = frappe.get_doc("Workspace", workspace)
-        worspace_doc.delete()
+        workspace_doc = frappe.get_doc("Workspace", workspace)
+        workspace_doc.delete()
 
 
 def modify_customer_naming():
@@ -288,6 +298,7 @@ def modify_customer_naming():
 def before_tests():
     # pylint: disable-next=import-outside-toplevel
     from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
+    from erpnext.setup.setup_wizard.operations.install_fixtures import install
 
     # complete setup if missing
     if not int(frappe.db.get_single_value("System Settings", "setup_complete") or 0):
@@ -307,6 +318,7 @@ def before_tests():
                 "chart_of_accounts": "Standard",
             }
         )
+    # install("Germany")
 
     frappe.db.commit()
     frappe.clear_cache()
