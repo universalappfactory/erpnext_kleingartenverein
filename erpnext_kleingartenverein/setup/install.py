@@ -1,6 +1,6 @@
-'''
+"""
     Basic install steps for erpnext_kleingartenverein
-'''
+"""
 import frappe
 from frappe.test_runner import make_test_records
 
@@ -268,8 +268,8 @@ def create_customer_groups():
 def hide_workspaces():
     workspace_list = frappe.get_list("Workspace", pluck="name")
 
-    if 'Wiki' in workspace_list:
-        workspace_list.remove('Wiki')
+    if "Wiki" in workspace_list:
+        workspace_list.remove("Wiki")
 
     visible = ["Erpnext Kleingartenverein"]
     for workspace in list(filter(lambda x: x not in visible, workspace_list)):
@@ -318,6 +318,7 @@ def before_tests():
                 "chart_of_accounts": "Standard",
             }
         )
+    # install("Germany")
 
     frappe.db.commit()
     frappe.clear_cache()
