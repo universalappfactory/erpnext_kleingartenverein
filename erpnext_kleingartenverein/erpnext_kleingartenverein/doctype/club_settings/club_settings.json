@@ -9,8 +9,8 @@
  "field_order": [
   "club_link",
   "sec_master_data",
-  "sec_signatures",
-  "tab_signature"
+  "sec_picture",
+  "tab_picture"
  ],
  "fields": [
   {
@@ -28,21 +28,21 @@
    "label": "Master Data"
   },
   {
-   "collapsible": 1,
-   "fieldname": "sec_signatures",
-   "fieldtype": "Section Break",
-   "label": "Signatures"
+   "fieldname": "tab_picture",
+   "fieldtype": "Table",
+   "label": "Picture Table",
+   "options": "Picture table"
   },
   {
-   "fieldname": "tab_signature",
-   "fieldtype": "Table",
-   "label": "Signature Table",
-   "options": "Picture table"
+   "collapsible": 1,
+   "fieldname": "sec_picture",
+   "fieldtype": "Section Break",
+   "label": "Pictures"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-04-03 06:40:47.385825",
+ "modified": "2023-04-04 07:44:41.248742",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Club Settings",
