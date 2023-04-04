@@ -1,0 +1,5 @@
+[pre_model_sync]
+
+[post_model_sync]
+erpnext_kleingartenverein.patches.add_former_tenant_customer_group
+erpnext_kleingartenverein.patches.add_old_invoice_data_fields_to_customer
