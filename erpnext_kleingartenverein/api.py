@@ -81,12 +81,12 @@ def execute_create_letters(names, status):
         shipping = LetterShipping()
 
         if len(names) > 1:
-            frappe.throw("you can only select one letter at the moment.")
+            frappe.throw(_("you can only select one letter at the moment."))
 
         name = names[0]
         letter = frappe.get_doc("Member Letter", name)
         if not letter:
-            frappe.throw(_("cannot find letter: {0}".format(name)))
+            frappe.throw(_("cannot find letter: {0}").format(name))
 
         customers = shipping.get_matching_customers(letter)
         if len(customers) == 1:
