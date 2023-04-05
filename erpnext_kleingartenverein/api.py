@@ -55,7 +55,7 @@ def background_create_letters(letter_name):
     try:
         letter = frappe.get_doc("Member Letter", letter_name)
         if not letter:
-            frappe.throw(_("cannot find letter: {0}".format(letter_name)))
+            frappe.throw(_("cannot find letter: {0}").format(letter_name))
 
         shipping = LetterShipping()
         customers = shipping.get_matching_customers(letter)
@@ -118,7 +118,7 @@ def sent_customer_letter(names, letter, tags=None):
 
         letter = frappe.get_doc("Member Letter", letter)
         if not letter:
-            frappe.throw(_("cannot find letter: {0}".format(letter)))
+            frappe.throw(_("cannot find letter: {0}").format(letter))
 
         customers = get_customers(names)
         if len(customers) == 1:
