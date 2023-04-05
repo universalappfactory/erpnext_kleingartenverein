@@ -234,6 +234,12 @@ def get_or_create_default_pricelist():
     except frappe.DoesNotExistError:
         pass
 
+    try:
+        price_list = frappe.get_doc("Price List", "Default")
+        return price_list
+    except frappe.DoesNotExistError:
+        pass
+
     price_list = frappe.new_doc("Price List")
     price_list.price_list_name = "Default"
     price_list.currency = "EUR"

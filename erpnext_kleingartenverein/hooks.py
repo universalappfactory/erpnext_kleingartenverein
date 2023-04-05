@@ -55,10 +55,13 @@ app_license = "AGPLv3"
 # ----------
 
 # add methods and filters to jinja environment
-# jinja = {
-#	"methods": "erpnext_kleingartenverein.utils.jinja_methods",
-#	"filters": "erpnext_kleingartenverein.utils.jinja_filters"
-# }
+jinja = {
+	# "methods": "erpnext_kleingartenverein.utils.jinja_methods",
+	"filters": [
+    	"erpnext_kleingartenverein.utils.jinja_filters.as_base_xx",
+        "erpnext_kleingartenverein.utils.jinja_filters.get_row_by_value"
+	]
+}
 
 # Installation
 # ------------
