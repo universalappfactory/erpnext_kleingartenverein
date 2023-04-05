@@ -27,7 +27,7 @@ def execute_invoice_calculation(names, status):
 
 @frappe.whitelist()
 def execute_member_letter_shipping(names, status):
-    frappe.throw("not supported at the moment")
+    frappe.throw(_("not supported at the moment"))
     # try:
     #     names = json.loads(names)
     #     shipping = LetterShipping()
