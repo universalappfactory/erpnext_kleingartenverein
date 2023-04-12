@@ -19,7 +19,15 @@ from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calcula
 
 test_records = frappe.get_test_records("Invoice Calculation")
 test_dependencies = []
-test_ignore = ["Customer", "Item", "Opportunity"]
+test_ignore = [
+    "Customer",
+    "Opportunity",
+    "Employee",
+    "Account",
+    "Item",
+    "Customer Group",
+]
+
 
 # ToDo we need to improve the test_record setup (maybe only with testrecords.json)
 class TestInvoiceCalculation(FrappeTestCase):
