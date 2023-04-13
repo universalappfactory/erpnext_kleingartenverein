@@ -1,3 +1,81 @@
 [
-
+    {
+        "doctype": "Warehouse Type",
+        "name": "Transit"
+    },
+    {
+        "doctype": "Company",
+        "name": "_Test Company",
+        "company_name": "Test Company",
+        "default_currency": "EUR",
+        "country": "Germany"
+    },
+    {
+        "doctype": "Customer Group",
+        "name": "Root Test CustomerGroup",
+        "customer_group_name": "Root Test CustomerGroup",
+        "is_group": 1
+    },
+    {
+        "doctype": "Customer Group",
+        "name": "_Test CustomerGroup",
+        "customer_group_name": "Test CustomerGroup",
+        "parent_customer_group": "Root Test CustomerGroup",
+        "is_group": 1
+    },
+    {
+        "doctype": "Price List",
+        "price_list_name": "Standard Selling",
+        "currency": "EUR",
+        "selling": 1
+    },
+    {
+        "doctype": "Territory",
+        "name": "_Test Territory",
+        "territory_name": "_Test Territory"
+    },
+    {
+        "doctype": "Customer",
+        "name": "_Former Tenant Customer",
+        "customer_name": "Former Tenant Customer",
+        "customer_group": "Tenant",
+        "territory": "_Test Territory"
+    },
+    {
+        "doctype": "Customer",
+        "name": "_New Tenant",
+        "customer_name": "New Tenant",
+        "customer_group": "Test CustomerGroup",
+        "territory": "_Test Territory"
+    },
+    {
+        "doctype": "Plot",
+        "name": "_Test Plot",
+        "plot_number": "Test Plot",
+        "customer": "Former Tenant Customer"
+    },
+    {
+        "doctype": "Customer",
+        "name": "_Test Lead",
+        "customer_name": "_Test Lead",
+        "customer_group": "Test CustomerGroup",
+        "territory": "_Test Territory"
+    },
+    {
+        "doctype": "Opportunity",
+        "name": "_Test Opportunity 1",
+        "opportunity_from": "Customer",
+        "enquiry_type": "Sales",
+        "party_name": "_Test Lead",
+        "transaction_date": "2013-12-12",
+        "company": "_Test Company",
+        "items": [
+            {
+                "item_name": "Test Item",
+                "description": "Some description",
+                "qty": 5,
+                "rate": 100
+            }
+        ]
+    }
 ]

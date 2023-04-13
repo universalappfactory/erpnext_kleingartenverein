@@ -23,8 +23,7 @@
    "fieldname": "to_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "To",
-   "reqd": 1
+   "label": "To"
   },
   {
    "fieldname": "customer_link",
@@ -46,7 +45,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-04-07 20:31:24.129431",
+ "modified": "2023-04-12 13:17:03.669220",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Former Tenant Table",

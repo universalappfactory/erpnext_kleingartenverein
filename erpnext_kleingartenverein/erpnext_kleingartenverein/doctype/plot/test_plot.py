@@ -7,10 +7,9 @@ from datetime import date
 from frappe.exceptions import DoesNotExistError, MandatoryError, ValidationError
 from frappe.tests.utils import FrappeTestCase
 
-
 test_records = frappe.get_test_records("Plot")
 test_dependencies = []
-test_ignore = ["Customer"]
+test_ignore = ["Customer", "Warehouse"]
 
 
 class TestPlot(FrappeTestCase):
@@ -21,6 +20,37 @@ class TestPlot(FrappeTestCase):
                 plot.delete()
         except DoesNotExistError:
             pass
+
+        customer = frappe.get_doc("Customer", "Former Tenant Customer")
+        customer.customer_group = "Tenant"
+        customer.save()
+
+        customer = frappe.get_doc("Customer", "New Tenant")
+        customer.customer_group = "Test CustomerGroup"
+        customer.save()
+
+    @staticmethod
+    def create_plot(plot_number, customer_name=None, teanant_since=None):
+        try:
+            plot = frappe.get_doc("Plot", f"Plot-{plot_number}")
+            if plot:
+                plot.delete()
+        except DoesNotExistError:
+            pass
+
+        plot = frappe.new_doc("Plot")
+        plot.plot_number = plot_number
+        if customer_name:
+            plot.customer = customer_name
+
+            if teanant_since:
+                new_entry = frappe.new_doc("Former Tenant Table")
+                new_entry.from_date = teanant_since
+                new_entry.customer_link = customer_name
+                plot.append("former_tenants_table", new_entry)
+
+        plot.save()
+        return plot
 
     def test_required_fields(self):
         plot = frappe.new_doc("Plot")
@@ -286,3 +316,146 @@ class TestPlot(FrappeTestCase):
         plot.save()
 
         self.assertEqual(row2.mounting_date, date(2021, 3, 15))
+
+    def test_that_former_tenant_gets_new_tenant_group_when_new_tenant_is_assigned(self):
+        former_tenant = frappe.get_doc("Customer", "Former Tenant Customer")
+        self.assertEqual(former_tenant.customer_group, "Tenant")
+
+        new_tenant = frappe.get_doc("Customer", "New Tenant")
+        self.assertEqual(new_tenant.customer_group, "Test CustomerGroup")
+
+        existing_plot = TestPlot.create_plot("123", former_tenant.name)
+        plot = frappe.get_doc("Plot", existing_plot.name)
+        plot.customer = new_tenant.name
+        plot.save()
+
+        modified_tenant = frappe.get_doc("Customer", "Former Tenant Customer")
+        self.assertEqual(modified_tenant.customer_group, "Former Tenant")
+
+    def test_that_tenant_history_is_completed_for_former_tenant(self):
+        former_tenant = frappe.get_doc("Customer", "Former Tenant Customer")
+        self.assertEqual(former_tenant.customer_group, "Tenant")
+
+        new_tenant = frappe.get_doc("Customer", "New Tenant")
+        self.assertEqual(new_tenant.customer_group, "Test CustomerGroup")
+
+        tenant_since = date(2019, 5, 13)
+        existing_plot = TestPlot.create_plot("456", former_tenant.name, tenant_since)
+        plot = frappe.get_doc("Plot", existing_plot.name)
+        plot.customer = new_tenant.name
+
+        plot.save()
+
+        tenant_history = plot.former_tenants_table
+        self.assertGreater(len(tenant_history), 0)
+
+        matching = next(
+            filter(
+                lambda x: x.customer_link == "Former Tenant Customer", tenant_history
+            ),
+            None,
+        )
+        self.assertIsNotNone(matching)
+        self.assertEqual(matching.customer_link, "Former Tenant Customer")
+        self.assertEqual(matching.from_date, tenant_since)
+        self.assertEqual(matching.to_date, date.today())
+
+    def test_that_new_tenant_history_entry_is_created_for_new_tenant(self):
+        former_tenant = frappe.get_doc("Customer", "Former Tenant Customer")
+        self.assertEqual(former_tenant.customer_group, "Tenant")
+
+        new_tenant = frappe.get_doc("Customer", "New Tenant")
+        self.assertEqual(new_tenant.customer_group, "Test CustomerGroup")
+
+        existing_plot = TestPlot.create_plot("789", former_tenant.name)
+        plot = frappe.get_doc("Plot", existing_plot.name)
+        plot.customer = new_tenant.name
+
+        plot.save()
+
+        tenant_history = plot.former_tenants_table
+        self.assertGreater(len(tenant_history), 0)
+
+        matching = next(
+            filter(lambda x: x.customer_link == "New Tenant", tenant_history), None
+        )
+        self.assertIsNotNone(matching)
+        self.assertEqual(matching.customer_link, "New Tenant")
+        self.assertEqual(matching.from_date, date.today())
+        self.assertEqual(matching.to_date, None)
+
+    def test_that_customergroup_tenant_is_assigned_when_new_tenant_has_different_group(
+        self,
+    ):
+        former_tenant = frappe.get_doc("Customer", "Former Tenant Customer")
+        self.assertEqual(former_tenant.customer_group, "Tenant")
+
+        new_tenant = frappe.get_doc("Customer", "New Tenant")
+        self.assertEqual(new_tenant.customer_group, "Test CustomerGroup")
+
+        plot = TestPlot.create_plot("101112", former_tenant.name, date(2018, 3, 1))
+        plot.customer = new_tenant.name
+
+        plot.save()
+
+        modified_tenant = frappe.get_doc("Customer", "New Tenant")
+        self.assertEqual(modified_tenant.customer_group, "Tenant")
+
+    def test_that_customer_backlink_is_removed_when_tenant_is_deleted(self):
+        former_tenant = frappe.get_doc("Customer", "Former Tenant Customer")
+        self.assertEqual(former_tenant.customer_group, "Tenant")
+
+        plot = TestPlot.create_plot("131415", former_tenant.name, date(2018, 3, 1))
+        plot.customer = None
+        plot.save()
+
+        former_tenant = frappe.get_doc("Customer", "Former Tenant Customer")
+        self.assertIsNone(former_tenant.plot_link)
+
+    def test_that_customer_backlink_is_set_as_expected_when_new_tenant_is_assigned(
+        self,
+    ):
+        former_tenant = frappe.get_doc("Customer", "Former Tenant Customer")
+        self.assertEqual(former_tenant.customer_group, "Tenant")
+
+        new_tenant = frappe.get_doc("Customer", "New Tenant")
+        self.assertEqual(new_tenant.customer_group, "Test CustomerGroup")
+
+        plot = TestPlot.create_plot("161718", former_tenant.name, date(2018, 3, 1))
+        plot.customer = new_tenant.name
+
+        plot.save()
+
+        modified_tenant = frappe.get_doc("Customer", "New Tenant")
+        self.assertEqual(modified_tenant.plot_link, "Plot-161718")
+
+        former_tenant = frappe.get_doc("Customer", "Former Tenant Customer")
+        self.assertIsNone(former_tenant.plot_link)
+
+    def test_that_plot_has_plot_status_under_lease_when_a_new_customer_is_assigned(
+        self,
+    ):
+        plot = frappe.new_doc("Plot")
+        plot.plot_number = "MyNewPlot"
+        plot.save()
+
+        self.assertEqual(plot.plot_status, "Not under lease")
+
+        new_tenant = frappe.get_doc("Customer", "New Tenant")
+        plot.customer = new_tenant.name
+        plot.save()
+
+        self.assertEqual(plot.plot_status, "Under Lease")
+
+    def test_that_plot_has_plot_status_not_lease_when_customer_is_removed(
+        self,
+    ):
+        former_tenant = frappe.get_doc("Customer", "Former Tenant Customer")
+        self.assertEqual(former_tenant.customer_group, "Tenant")
+
+        plot = TestPlot.create_plot("161718", former_tenant.name, date(2018, 3, 1))
+        self.assertEqual(plot.plot_status, "Under Lease")
+
+        plot.customer = None
+        plot.save()
+        self.assertEqual(plot.plot_status, "Not under lease")
