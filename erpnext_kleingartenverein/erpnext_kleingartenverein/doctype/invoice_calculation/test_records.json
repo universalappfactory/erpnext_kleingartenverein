@@ -18,10 +18,66 @@
         "customer_group_name": "Test CustomerGroup"
     },
     {
+        "doctype": "Item Group",
+        "name": "Products",
+        "item_group_name": "Products"
+    },
+    {
+        "doctype": "UOM",
+        "name": "Square Meter",
+        "uom_name": "Square Meter"
+    },
+    {
+        "doctype": "UOM",
+        "name": "Cubic Meter",
+        "uom_name": "Cubic Meter"
+    },
+    {
+        "doctype": "UOM",
+        "name": "Unit",
+        "uom_name": "Unit"
+    },
+    {
         "doctype": "Price List",
         "price_list_name": "Standard Selling",
         "currency": "EUR",
         "selling": 1
+    },
+    {
+        "doctype": "Item",
+        "item_code": "Lease",
+        "item_group": "Products",
+        "stock_uom": "Square Meter",
+        "item_defaults": [
+            {
+                "company": "_Test Company",
+                "default_price_list": "Standard Selling"
+            }
+        ]
+    },
+    {
+        "doctype": "Item",
+        "item_code": "Water",
+        "item_group": "Products",
+        "stock_uom": "Cubic Meter",
+        "item_defaults": [
+            {
+                "company": "_Test Company",
+                "default_price_list": "Standard Selling"
+            }
+        ]
+    },
+    {
+        "doctype": "Item",
+        "item_code": "Fixed",
+        "item_group": "Products",
+        "stock_uom": "Unit",
+        "item_defaults": [
+            {
+                "company": "_Test Company",
+                "default_price_list": "Standard Selling"
+            }
+        ]
     },
     {
         "doctype": "Territory",
@@ -33,6 +89,13 @@
         "name": "_Test Lead",
         "customer_name": "_Test Lead",
         "customer_group": "Test CustomerGroup",
+        "territory": "_Test Territory"
+    },
+    {
+        "doctype": "Customer",
+        "name": "_Test Invoice Calculation Customer",
+        "customer_name": "Test Invoice Calculation Customer",
+        "customer_group": "Tenant",
         "territory": "_Test Territory"
     },
     {

@@ -7,6 +7,13 @@ from frappe.modules.patch_handler import get_patches_from_app, run_single
 class TestPatches(FrappeTestCase):
     def test_that_patches_run(self):
         try:
+            customers = frappe.get_list('Customer')
+            for c in customers:
+                if c.customer_group == 'Former Tenant':
+                    customer = frappe.get_doc('Customer', c.name)
+                    customer.customer_group = 'Tenant'
+                    customer.save()
+
             doc = frappe.get_doc("Customer Group", "Former Tenant")
             doc.delete()
         except frappe.DoesNotExistError:
