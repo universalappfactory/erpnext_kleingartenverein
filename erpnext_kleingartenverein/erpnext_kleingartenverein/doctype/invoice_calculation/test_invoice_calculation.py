@@ -5,12 +5,8 @@ See license.txt
 
 import frappe
 from frappe.exceptions import DoesNotExistError
-from frappe.test_runner import make_test_objects
-from frappe.utils.nestedset import NestedSetChildExistsError
-from frappe.model.dynamic_links import get_dynamic_link_map
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils.data import flt
-from erpnext.stock.doctype.item.item import set_item_default
 
 # pylint: disable-next=line-too-long
 from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calculation.invoice_calculator import (
@@ -19,17 +15,21 @@ from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calcula
 
 test_records = frappe.get_test_records("Invoice Calculation")
 test_dependencies = []
-test_ignore = ["Customer", "Item", "Opportunity"]
+test_ignore = [
+    "Customer",
+    "Opportunity",
+    "Employee",
+    "Account",
+    "Item",
+    "Customer Group",
+]
 
-# ToDo we need to improve the test_record setup (maybe only with testrecords.json)
+
 class TestInvoiceCalculation(FrappeTestCase):
     @classmethod
     def setUpClass(cls):
         frappe.local.test_objects["Opportunity"] = []
         cls.cleanup_all()
-
-        cls.setup_customer()
-        cls.setup_products()
         cls.setup_price_list()
         cls.setup_plot()
 
@@ -42,82 +42,7 @@ class TestInvoiceCalculation(FrappeTestCase):
         cls.cleanup_invoice_calculation()
         cls.cleanup_sales_invoice()
         cls.cleanup_price_list()
-        cls.cleanup_products()
         cls.cleanup_plot()
-        cls.cleanup_customer()
-
-    @classmethod
-    def setup_products(cls):
-        company_list = frappe.get_list("Company")
-        product_groups = frappe.get_list("Item Group")
-
-        product = frappe.new_doc("Item")
-        product.item_code = "Lease"
-        product.item_group = next(
-            filter(
-                lambda x: x.name == "Products" or x.name == "Produkte", product_groups
-            )
-        ).name
-        product.stock_uom = "Square Meter"
-        product.save()
-        set_item_default(
-            product.item_code,
-            company_list[0].name,
-            "default_price_list",
-            "Default",
-        )
-
-        product_water = frappe.new_doc("Item")
-        product_water.item_code = "Water"
-        product_water.stock_uom = "Cubic Meter"
-        product_water.item_group = next(
-            filter(
-                lambda x: x.name == "Products" or x.name == "Produkte", product_groups
-            )
-        ).name
-        product_water.save()
-        set_item_default(
-            product_water.item_code,
-            company_list[0].name,
-            "default_price_list",
-            "Default",
-        )
-
-        product_fixed = frappe.new_doc("Item")
-        product_fixed.item_code = "Fixed"
-        product_fixed.stock_uom = "Unit"
-        product_fixed.item_group = next(
-            filter(
-                lambda x: x.name == "Products" or x.name == "Produkte", product_groups
-            )
-        ).name
-        product_fixed.save()
-        set_item_default(
-            product_fixed.item_code,
-            company_list[0].name,
-            "default_price_list",
-            "Default",
-        )
-
-    @classmethod
-    def cleanup_products(cls):
-        product_groups = frappe.get_list("Item Group")
-
-        products_to_delete = frappe.get_list(
-            "Item",
-            {
-                "item_group": next(
-                    filter(
-                        lambda x: x.name == "Products" or x.name == "Produkte",
-                        product_groups,
-                    )
-                ).name
-            },
-        )
-
-        for product in products_to_delete:
-            product_doc = frappe.get_doc("Item", product.name)
-            product_doc.delete()
 
     @classmethod
     def cleanup_price_list(cls):
@@ -134,21 +59,21 @@ class TestInvoiceCalculation(FrappeTestCase):
         lease_price = frappe.new_doc("Item Price")
         lease_price.currency = "EUR"
         lease_price.item_code = "Lease"
-        lease_price.price_list = "Default"
+        lease_price.price_list = "Standard Selling"
         lease_price.price_list_rate = 1.75
         lease_price.save()
 
         water_price = frappe.new_doc("Item Price")
         water_price.currency = "EUR"
         water_price.item_code = "Water"
-        water_price.price_list = "Default"
+        water_price.price_list = "Standard Selling"
         water_price.price_list_rate = 0.50
         water_price.save()
 
         fixed_price = frappe.new_doc("Item Price")
         fixed_price.currency = "EUR"
         fixed_price.item_code = "Fixed"
-        fixed_price.price_list = "Default"
+        fixed_price.price_list = "Standard Selling"
         fixed_price.price_list_rate = 10.50
         fixed_price.save()
 
@@ -160,44 +85,6 @@ class TestInvoiceCalculation(FrappeTestCase):
             return None
 
     @classmethod
-    def setup_customer(cls):
-        customer_group = cls.try_get_doc("Customer Group", "Tenant")
-        if not customer_group:
-            customer_group = frappe.new_doc("Customer Group")
-            customer_group.customer_group_name = "Tenant"
-            customer_group.save()
-
-        customer = cls.try_get_doc("Customer", "Doe")
-        if not customer:
-            customer = frappe.new_doc("Customer")
-            customer.customer_group = customer_group.name
-            customer.customer_name = "Doe"
-            customer.territory = "_Test Territory"
-            customer.save()
-
-    @classmethod
-    def cleanup_customer(cls):
-        customers = frappe.get_list("Customer", filters={"customer_group": "Tenant"})
-
-        for customer in customers:
-            customer_doc = frappe.get_doc("Customer", customer.name)
-            try:
-                customer_doc.delete()
-            except:
-                pass
-
-        try:
-            customer_group = frappe.get_doc("Customer Group", "Tenant")
-
-            children = customer_group.get_children()
-            for child in children:
-                child.delete()
-
-            customer_group.delete()
-        except Exception:
-            pass
-
-    @classmethod
     def cleanup_invoice_calculation(cls):
         calculation_list = frappe.get_all("Invoice Calculation")
         for calculation in calculation_list:
@@ -206,12 +93,15 @@ class TestInvoiceCalculation(FrappeTestCase):
 
     @classmethod
     def setup_plot(cls):
+        plots = frappe.get_list("Plot")
+        for p in plots:
+            plot_doc = frappe.get_doc("Plot", p.name)
+            if not plot_doc.plot_size_sqm or not plot_doc.plot_size_sqm <= 0:
+                plot_doc.plot_size_sqm = 10
+                plot_doc.save()
+
         plot = frappe.new_doc("Plot")
-
-        customer_list = frappe.get_all("Customer")
-        customer = next(filter(lambda x: x.name == "Doe", customer_list))
-
-        plot.customer = customer.name
+        plot.customer = "Test Invoice Calculation Customer"
         plot.plot_size_sqm = 522.3
         plot.plot_status = "Under Lease"
         plot.plot_number = "122"
@@ -223,15 +113,25 @@ class TestInvoiceCalculation(FrappeTestCase):
 
         for plot in plots:
             plot_doc = frappe.get_doc("Plot", plot.name)
+            prev_customer = plot_doc.customer
             plot_doc.customer = None
-            plot_doc.plot_number = "tod"
+            for h in plot_doc.former_tenants_table:
+                plot_doc.remove(h)
+
             plot_doc.plot_status = "Under Lease"
             plot_doc.save()
             plot_doc.delete()
 
+            if prev_customer:
+                customer = frappe.get_doc("Customer", prev_customer)
+                customer.customer_group = "Tenant"
+                customer.save()
+
     @classmethod
     def cleanup_sales_invoice(cls):
-        invoice_list = frappe.get_list("Sales Invoice", filters={"customer": "Doe"})
+        invoice_list = frappe.get_list(
+            "Sales Invoice", filters={"customer": "Test Invoice Calculation Customer"}
+        )
 
         for i in invoice_list:
             invoice = frappe.get_doc("Sales Invoice", i.name)
@@ -251,10 +151,15 @@ class TestInvoiceCalculation(FrappeTestCase):
         calculator = InvoiceCalculator()
         invoices = calculator.create_drafts(calculation)
 
-        self.assertEqual(len(invoices), 1)
-        first_invoice = frappe.get_doc("Sales Invoice", invoices[0])
+        invoice_list = list(map(lambda x: frappe.get_doc("Sales Invoice", x), invoices))
+        matching_invoice = next(
+            filter(
+                lambda x: x.customer == "Test Invoice Calculation Customer",
+                invoice_list,
+            )
+        )
 
-        self.assertEqual(first_invoice.grand_total, 10.5)
+        self.assertEqual(matching_invoice.grand_total, 10.5)
 
     def test_invoice_calculation_from_plot(self):
         calculation = frappe.new_doc("Invoice Calculation")
@@ -271,9 +176,15 @@ class TestInvoiceCalculation(FrappeTestCase):
 
         calculator = InvoiceCalculator()
         invoices = calculator.create_drafts(calculation)
+        invoice_list = list(map(lambda x: frappe.get_doc("Sales Invoice", x), invoices))
 
-        self.assertEqual(len(invoices), 1)
-        first_invoice = frappe.get_doc("Sales Invoice", invoices[0])
+        matching_invoice = next(
+            filter(
+                lambda x: x.customer == "Test Invoice Calculation Customer",
+                invoice_list,
+            )
+        )
+        self.assertIsNotNone(matching_invoice)
 
         expected_grand_total = flt(522.3 * 1.75, precision=2)
-        self.assertEqual(first_invoice.grand_total, expected_grand_total)
+        self.assertEqual(matching_invoice.grand_total, expected_grand_total)

@@ -6,7 +6,15 @@ from frappe.tests.utils import FrappeTestCase
 
 test_records = frappe.get_test_records("Member Letter")
 test_dependencies = []
-test_ignore = ['Customer', 'Item', 'Opportunity']
+test_ignore = [
+    "Customer",
+    "Opportunity",
+    "Employee",
+    "Account",
+    "Item",
+    "Customer Group",
+]
+
 
 class TestMemberLetter(FrappeTestCase):
-	pass
+    pass

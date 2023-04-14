@@ -4,6 +4,7 @@ from erpnext.stock.doctype.item.item import get_item_defaults, get_item_details
 import frappe
 from frappe.exceptions import ValidationError
 from frappe.utils.data import flt
+from frappe import _
 
 
 class MissingDefaultItemPriceError(ValidationError):
@@ -15,6 +16,10 @@ class MissingDocumentFieldError(ValidationError):
 
 
 class CustomerWithoutPlot(ValidationError):
+    pass
+
+
+class InvalidQuantityError(ValidationError):
     pass
 
 
@@ -101,12 +106,15 @@ class InvoiceCalculator:
         field_value = frappe.db.get_value(
             "Plot", customer.plot_link, invoice_calculation_item.plot_fieldname
         )
-        if not field_value:
+        if field_value is None:
             raise MissingDocumentFieldError(
                 f"Plot does not have a field called {invoice_calculation_item.plot_fieldname}"
             )
 
         calculated_quantity = invoice_calculation_item.multiplicator * field_value
+
+        if calculated_quantity <= 0:
+            raise InvalidQuantityError(_("calculated_quantity must be greater than 0"))
 
         item.item_name = p.name
         item.qty = calculated_quantity

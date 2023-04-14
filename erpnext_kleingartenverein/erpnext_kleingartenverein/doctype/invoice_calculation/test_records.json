@@ -1,19 +1,92 @@
 [
     {
         "doctype": "Company",
-        "company_name": "Test Company",
+        "name": "_Test Company",
+        "company_name": "_Test Company",
         "default_currency": "EUR",
         "country": "Germany"
     },
     {
+        "doctype": "Warehouse",
+        "name": "_Test Warehouse",
+        "warehouse_name": "_Test Warehouse",
+        "company": "_Test Company"
+    },
+    {
         "doctype": "Customer Group",
+        "name": "_All Customergroups",
+        "customer_group_name": "All Customergroups",
+        "is_group": 1
+    },
+    {
+        "doctype": "Customer Group",
+        "name": "_Test CustomerGroup",
         "customer_group_name": "Test CustomerGroup"
+    },
+    {
+        "doctype": "Item Group",
+        "name": "Products",
+        "item_group_name": "Products"
+    },
+    {
+        "doctype": "UOM",
+        "name": "Square Meter",
+        "uom_name": "Square Meter"
+    },
+    {
+        "doctype": "UOM",
+        "name": "Cubic Meter",
+        "uom_name": "Cubic Meter"
+    },
+    {
+        "doctype": "UOM",
+        "name": "Unit",
+        "uom_name": "Unit"
     },
     {
         "doctype": "Price List",
         "price_list_name": "Standard Selling",
         "currency": "EUR",
         "selling": 1
+    },
+    {
+        "doctype": "Item",
+        "item_code": "Lease",
+        "item_group": "Products",
+        "stock_uom": "Square Meter",
+        "item_defaults": [
+            {
+                "company": "_Test Company",
+                "default_price_list": "Standard Selling",
+                "default_warehouse": "_Test Warehouse - _TC"
+            }
+        ]
+    },
+    {
+        "doctype": "Item",
+        "item_code": "Water",
+        "item_group": "Products",
+        "stock_uom": "Cubic Meter",
+        "item_defaults": [
+            {
+                "company": "_Test Company",
+                "default_price_list": "Standard Selling",
+                "default_warehouse": "_Test Warehouse - _TC"
+            }
+        ]
+    },
+    {
+        "doctype": "Item",
+        "item_code": "Fixed",
+        "item_group": "Products",
+        "stock_uom": "Unit",
+        "item_defaults": [
+            {
+                "company": "_Test Company",
+                "default_price_list": "Standard Selling",
+                "default_warehouse": "_Test Warehouse - _TC"
+            }
+        ]
     },
     {
         "doctype": "Territory",
@@ -28,13 +101,30 @@
         "territory": "_Test Territory"
     },
     {
+        "doctype": "Customer",
+        "name": "_Test Invoice Calculation Customer",
+        "customer_name": "Test Invoice Calculation Customer",
+        "customer_group": "Tenant",
+        "territory": "_Test Territory"
+    },
+    {
+        "doctype": "Opportunity Type",
+        "name": "Sales"
+    },
+    {
+        "doctype": "Sales Stage",
+        "name": "Prospecting",
+        "stage_name": "Prospecting"
+    },
+    {
         "doctype": "Opportunity",
-        "name": "_Test Opportunity 1",
+        "name": "_Test-Opportunity-000012",
         "opportunity_from": "Customer",
         "enquiry_type": "Sales",
+        "sales_stage": "",
         "party_name": "_Test Lead",
         "transaction_date": "2013-12-12",
-        "company": "Test Company",
+        "company": "_Test Company",
         "items": [
             {
                 "item_name": "Test Item",

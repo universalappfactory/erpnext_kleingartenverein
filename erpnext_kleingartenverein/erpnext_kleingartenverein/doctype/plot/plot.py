@@ -2,7 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from frappe import _
 from itertools import groupby
 from frappe.model.document import Document
@@ -43,8 +43,7 @@ class Plot(Document):
     def add_has_seal_label(self):
         if self.water_meter_table and len(self.water_meter_table) > 0:
             if not any(
-                not self.isEmptyValue(row.seal_number)
-                for row in self.water_meter_table
+                not self.isEmptyValue(row.seal_number) for row in self.water_meter_table
             ):
                 return
 
@@ -59,6 +58,13 @@ class Plot(Document):
             customer.plot_link = None
             customer.save()
 
+    def clear_obsolete_customer_backlinks(self):
+        linked_customers = frappe.get_list("Customer", filters={"plot_link": self.name})
+        for customer in filter(
+            lambda x: x.name != self.get_value("customer"), linked_customers
+        ):
+            self.clear_customer_backlink(customer.name)
+
     def update_customer_backlink(self):
         linked_customer = self.get_value("customer")
         if linked_customer:
@@ -66,16 +72,14 @@ class Plot(Document):
             if customer.plot_link != self.name:
                 customer.plot_link = self.name
                 customer.save()
-        else:
-            linked_customers = frappe.get_list(
-                "Customer", filters={"plot_link": self.name}
-            )
-            for customer in linked_customers:
-                self.clear_customer_backlink(customer.name)
+
+        self.clear_obsolete_customer_backlinks()
 
     def validate(self):
         self.validate_counters()
         self.validate_mounting_dates()
+        self.apply_new_tenant_assignment()
+        self.validate_former_tenant_table()
 
     def validate_decreasing_counter_values(self, grouped_by_counter):
         sorted_list = sorted(grouped_by_counter, key=lambda x: x.date)
@@ -129,3 +133,71 @@ class Plot(Document):
                             key
                         )
                     )
+
+    def apply_new_tenant_assignment(self):
+        prev_version = self.get_doc_before_save()
+        if (
+            prev_version
+            and prev_version.customer
+            and prev_version.customer != self.customer
+        ):
+            former_tenant = frappe.get_doc("Customer", prev_version.customer)
+            former_tenant.customer_group = "Former Tenant"
+            former_tenant.save()
+            self.finish_history_for(prev_version.customer)
+
+            if self.customer:
+                actual_tenant = frappe.get_doc("Customer", self.customer)
+                if actual_tenant.customer_group != "Tenant":
+                    actual_tenant.customer_group = "Tenant"
+                    actual_tenant.save()
+
+        self.add_new_history_entry()
+
+        if self.customer and self.plot_status == "Not under lease":
+            self.plot_status = "Under Lease"
+
+        if not self.customer and self.plot_status == "Under Lease":
+            self.plot_status = "Not under lease"
+
+    def finish_history_for(self, customer_name):
+        if not customer_name:
+            return
+
+        matching = next(
+            filter(
+                lambda x: x.customer_link == customer_name, self.former_tenants_table
+            ),
+            None,
+        )
+        if matching and matching.to_date is None:
+            matching.to_date = date.today()
+
+    def add_new_history_entry(self):
+        if self.customer:
+            matching = next(
+                filter(
+                    lambda x: x.customer_link == self.customer,
+                    self.former_tenants_table,
+                ),
+                None,
+            )
+            if not matching:
+                new_entry = frappe.new_doc("Former Tenant Table")
+                new_entry.from_date = date.today()
+                new_entry.customer_link = self.customer
+                self.append("former_tenants_table", new_entry)
+
+    def validate_former_tenant_table(self):
+        if self.former_tenants_table:
+            grouped = groupby(
+                sorted(self.former_tenants_table, key=lambda x: x.customer_link),
+                lambda x: x.customer_link,
+            )
+
+            if any(len(list(grp)) > 1 for key, grp in grouped):
+                frappe.throw(
+                    _(
+                        "Plot '{0}' has multiple entries for one customer in the tenant history"
+                    ).format(self.plot_number)
+                )
