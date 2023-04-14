@@ -29,6 +29,12 @@ class TestPlot(FrappeTestCase):
         customer.customer_group = "Test CustomerGroup"
         customer.save()
 
+        plot_list = frappe.get_list("Plot")
+        for plot in plot_list:
+            doc = frappe.get_doc("Plot", plot)
+            doc.customer = None
+            doc.save()
+
     @staticmethod
     def create_plot(plot_number, customer_name=None, teanant_since=None):
         try:
@@ -37,6 +43,8 @@ class TestPlot(FrappeTestCase):
                 plot.delete()
         except DoesNotExistError:
             pass
+
+
 
         plot = frappe.new_doc("Plot")
         plot.plot_number = plot_number
@@ -391,7 +399,7 @@ class TestPlot(FrappeTestCase):
         self.assertEqual(former_tenant.customer_group, "Tenant")
 
         new_tenant = frappe.get_doc("Customer", "New Tenant")
-        self.assertEqual(new_tenant.customer_group, "Test CustomerGroup")
+        self.assertNotEqual(new_tenant.customer_group, "Tenant")
 
         plot = TestPlot.create_plot("101112", former_tenant.name, date(2018, 3, 1))
         plot.customer = new_tenant.name

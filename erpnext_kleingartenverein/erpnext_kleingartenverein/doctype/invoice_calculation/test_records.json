@@ -7,6 +7,12 @@
         "country": "Germany"
     },
     {
+        "doctype": "Warehouse",
+        "name": "_Test Warehouse",
+        "warehouse_name": "_Test Warehouse",
+        "company": "_Test Company"
+    },
+    {
         "doctype": "Customer Group",
         "name": "_All Customergroups",
         "customer_group_name": "All Customergroups",
@@ -51,7 +57,8 @@
         "item_defaults": [
             {
                 "company": "_Test Company",
-                "default_price_list": "Standard Selling"
+                "default_price_list": "Standard Selling",
+                "default_warehouse": "_Test Warehouse - _TC"
             }
         ]
     },
@@ -63,7 +70,8 @@
         "item_defaults": [
             {
                 "company": "_Test Company",
-                "default_price_list": "Standard Selling"
+                "default_price_list": "Standard Selling",
+                "default_warehouse": "_Test Warehouse - _TC"
             }
         ]
     },
@@ -75,7 +83,8 @@
         "item_defaults": [
             {
                 "company": "_Test Company",
-                "default_price_list": "Standard Selling"
+                "default_price_list": "Standard Selling",
+                "default_warehouse": "_Test Warehouse - _TC"
             }
         ]
     },
