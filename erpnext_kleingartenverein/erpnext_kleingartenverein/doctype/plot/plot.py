@@ -19,10 +19,10 @@ def get_mounting_date_grouping(counter_item) -> str:
 
 class Plot(Document):
     def after_insert(self):
-        self.update_customer_backlink()
+        self.update_linked_customer()
 
     def on_update(self):
-        self.update_customer_backlink()
+        self.update_linked_customer()
         self.add_has_seal_label()
         self.store_tags()
 
@@ -65,12 +65,33 @@ class Plot(Document):
         ):
             self.clear_customer_backlink(customer.name)
 
-    def update_customer_backlink(self):
+    def get_teamwork_tasks_as_string(self):
+        if not self.teamwork_tasks_table:
+            return ""
+
+        result = _("Tasks for teamwork:{0}").format("\n\n")
+        for row in self.teamwork_tasks_table:
+            hours, remainder = divmod(row.duration, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            result = result + f"{row.description} - {int(hours)}h {int(minutes)}min\n"
+
+        return result
+
+    def update_linked_customer(self):
         linked_customer = self.get_value("customer")
         if linked_customer:
             customer = frappe.get_doc("Customer", linked_customer)
+            store = False
             if customer.plot_link != self.name:
                 customer.plot_link = self.name
+                store = True
+
+            tasks = self.get_teamwork_tasks_as_string()
+            if customer.teamwork_tasks_from_plot != tasks:
+                customer.teamwork_tasks_from_plot = tasks
+                store = True
+
+            if store:
                 customer.save()
 
         self.clear_obsolete_customer_backlinks()
