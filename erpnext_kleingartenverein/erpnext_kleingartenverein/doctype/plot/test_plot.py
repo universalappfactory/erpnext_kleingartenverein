@@ -3,7 +3,7 @@
 
 # import frappe
 import frappe
-from datetime import date
+from datetime import date, timedelta
 from frappe.exceptions import DoesNotExistError, MandatoryError, ValidationError
 from frappe.tests.utils import FrappeTestCase
 
@@ -43,8 +43,6 @@ class TestPlot(FrappeTestCase):
                 plot.delete()
         except DoesNotExistError:
             pass
-
-
 
         plot = frappe.new_doc("Plot")
         plot.plot_number = plot_number
@@ -467,3 +465,33 @@ class TestPlot(FrappeTestCase):
         plot.customer = None
         plot.save()
         self.assertEqual(plot.plot_status, "Not under lease")
+
+    def test_that_teamwork_tasks_from_plot_is_written(
+        self,
+    ):
+        test_tenant = frappe.get_doc("Customer", "Test Tenant")
+        self.assertEqual(test_tenant.customer_group, "Test CustomerGroup")
+
+        plot = TestPlot.create_plot("181920", test_tenant.name, date(2018, 3, 1))
+        first_entry = frappe.new_doc("Work Task")
+        first_entry.description = "task description"
+        first_entry.duration = timedelta(hours=3, minutes=40).total_seconds()
+        plot.append("teamwork_tasks_table", first_entry)
+
+        second_entry = frappe.new_doc("Work Task")
+        second_entry.description = "second task description"
+        second_entry.duration = timedelta(hours=2).total_seconds()
+        plot.append("teamwork_tasks_table", second_entry)
+        plot.save()
+
+        modified_tenant = frappe.get_doc("Customer", "Test Tenant")
+        expected_result = "Tasks for teamwork:\n\ntask description - 3h 40min\n"
+        expected_result = expected_result +"second task description - 2h 0min\n"
+        self.assertEqual(modified_tenant.teamwork_tasks_from_plot, expected_result)
+
+        plot.remove(first_entry)
+        plot.remove(second_entry)
+        plot.save()
+
+        modified_tenant = frappe.get_doc("Customer", "Test Tenant")
+        self.assertEqual(modified_tenant.teamwork_tasks_from_plot, "")

@@ -2,7 +2,7 @@
     Basic install steps for erpnext_kleingartenverein
 """
 import frappe
-from frappe.test_runner import make_test_records
+from frappe import _
 
 
 def before_install():
@@ -60,6 +60,7 @@ def add_field(
     in_list_view=False,
     in_standard_filter=False,
     is_unique=False,
+    is_virtual=False,
 ):
     if options is None:
         options = []
@@ -91,11 +92,65 @@ def add_field(
         if is_unique:
             field.unique = 1
 
+        if is_virtual:
+            field.is_virtual = 1
+
         if len(options) > 0:
             field.options = "\n".join(options)
 
         field.insert_after = insert_after
         field.insert()
+
+
+def add_teamwork_work_tasks_table(customize_form=None):
+    if not customize_form:
+        customize_form = frappe.get_doc("Customize Form")
+        customize_form.doc_type = "Customer"
+        customize_form.fetch_to_customize()
+
+    add_field(
+        customize_form,
+        "teanant_teamwork_info",
+        _("Tenant teamwork info"),
+        "teamwork_sec_break",
+        "HTML",
+        options=[
+            _(
+                '<p class="alert alert-warning">Here you can enter teamwork tasks for a specific tenant.</p>'
+            )
+        ],
+    )
+
+    add_field(
+        customize_form,
+        "teanant_teamwork_table",
+        _("Tenant specific tasks for teamwork"),
+        "teanant_teamwork_info",
+        "Table",
+        options=["Work Task"],
+    )
+
+    add_field(
+        customize_form,
+        "teamwork_tasks_from_plot",
+        _("Teamwork tasks (from plot)"),
+        "teanant_teamwork_table",
+        "Text",
+        read_only=True,
+    )
+
+    add_field(
+        customize_form,
+        "teanant_teamwork_execution_info",
+        _("Tenant teamwork execution info"),
+        "teamwork_tasks_from_plot",
+        "HTML",
+        options=[
+            _(
+                '<p class="alert alert-warning">Here you can enter the actual executed tasks for teamwork</p>'
+            )
+        ],
+    )
 
 
 def create_additional_customer_form_fields():
@@ -219,6 +274,7 @@ def create_additional_customer_form_fields():
         "Table",
         ["Attachment table"],
     )
+    add_teamwork_work_tasks_table(customize_form)
 
 
 def get_or_create_default_pricelist():

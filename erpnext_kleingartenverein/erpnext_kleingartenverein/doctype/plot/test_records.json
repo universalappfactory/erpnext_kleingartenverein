@@ -49,6 +49,13 @@
         "territory": "_Test Territory"
     },
     {
+        "doctype": "Customer",
+        "name": "_Test Tenant",
+        "customer_name": "Test Tenant",
+        "customer_group": "Test CustomerGroup",
+        "territory": "_Test Territory"
+    },
+    {
         "doctype": "Plot",
         "name": "_Test Plot",
         "plot_number": "Test Plot",

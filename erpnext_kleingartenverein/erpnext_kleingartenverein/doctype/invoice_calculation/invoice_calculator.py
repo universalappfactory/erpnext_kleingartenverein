@@ -101,7 +101,7 @@ class InvoiceCalculator:
             )
 
         if not customer.plot_link:
-            raise CustomerWithoutPlot(f"Customer without plot {invoice.customer}")
+            raise CustomerWithoutPlot(f"Customer without plot {customer.name}")
 
         field_value = frappe.db.get_value(
             "Plot", customer.plot_link, invoice_calculation_item.plot_fieldname

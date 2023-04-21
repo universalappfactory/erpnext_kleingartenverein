@@ -23,7 +23,10 @@
   "picture_table_section",
   "picture_table",
   "tenant_history_tab",
-  "former_tenants_table"
+  "former_tenants_table",
+  "teamwork_tab",
+  "teamwork_info",
+  "teamwork_tasks_table"
  ],
  "fields": [
   {
@@ -127,11 +130,28 @@
    "fieldtype": "Table",
    "label": "Former Tenants",
    "options": "Former Tenant Table"
+  },
+  {
+   "fieldname": "teamwork_tab",
+   "fieldtype": "Tab Break",
+   "label": "Teamwork"
+  },
+  {
+    "fieldname": "teamwork_info",
+    "fieldtype": "HTML",
+    "label": "Teamwork Info",
+    "options": "<p class=\"alert alert-warning\">Teamwork tasks for this plot.\nThe actual work done by a tenant must be entered at the tenant itself.\n</p>"
+  },
+  {
+   "fieldname": "teamwork_tasks_table",
+   "fieldtype": "Table",
+   "label": "Tasks",
+   "options": "Work Task"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-04-13 13:33:40.002466",
+ "modified": "2023-04-21 10:18:13.776468",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Plot",
