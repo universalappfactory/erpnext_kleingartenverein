@@ -108,6 +108,9 @@ override_doctype_class = {
 doc_events = {
 	"Customer": {
 		"before_insert": "erpnext_kleingartenverein.api.customer_before_insert",
+        "before_validate": "erpnext_kleingartenverein.api.customer_before_validate",
+        "validate": "erpnext_kleingartenverein.api.customer_validate",
+        "on_update": "erpnext_kleingartenverein.api.customer_on_update",
 	}
 }
 
