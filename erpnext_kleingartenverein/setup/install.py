@@ -350,10 +350,10 @@ def hide_workspaces():
         workspace_doc.is_hidden = True
         workspace_doc.save()
 
-    delete = ["Home"]
-    for workspace in list(filter(lambda x: x in delete, workspace_list)):
-        workspace_doc = frappe.get_doc("Workspace", workspace)
-        workspace_doc.delete()
+    # delete = ["Home"]
+    # for workspace in list(filter(lambda x: x in delete, workspace_list)):
+    #     workspace_doc = frappe.get_doc("Workspace", workspace)
+    #     workspace_doc.delete()
 
 
 def modify_customer_naming():
