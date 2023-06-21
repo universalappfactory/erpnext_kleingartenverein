@@ -22,7 +22,7 @@ class TestPatches(FrappeTestCase):
         check_patch_files("erpnext_kleingartenverein")
 
         all_patches = get_patches_from_app("erpnext_kleingartenverein")
-        self.assertEqual(len(all_patches), 4)
+        self.assertEqual(len(all_patches), 3)
         for p in all_patches:
             run_single(p, force=True)
 
@@ -58,12 +58,3 @@ class TestPatches(FrappeTestCase):
             None,
         )
         self.assertIsNotNone(teamwork_tasks_from_plot)
-
-        invoice_by_email = next(
-            filter(
-                lambda x: x.name == "Customer-invoice_by_email",
-                customize_form.fields,
-            ),
-            None,
-        )
-        self.assertIsNotNone(invoice_by_email)

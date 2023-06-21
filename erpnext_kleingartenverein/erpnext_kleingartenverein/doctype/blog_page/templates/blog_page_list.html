@@ -1,0 +1,21 @@
+{% extends "templates/web.html" %}
+{% from "templates/head/head_with_image.html" import head_with_image with context %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block page_content %}
+
+{{ head_with_image(_('Postings'), default_header_image) }}
+
+<div class="pt-6 bg-graygreen p-8">
+{% for item in result %}
+    <div class="flex justify-center mb-8">
+        {{ item }}
+    </div>
+{% endfor %}
+
+</div>
+
+
+{% endblock%}

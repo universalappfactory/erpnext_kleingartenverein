@@ -1,0 +1,58 @@
+{% extends "templates/web.html" %}
+
+{% from "templates/macros/separator.html" import separator with context %}
+{% from "templates/macros/section_card.html" import section_card with context %}
+{% from "templates/macros/section_content.html" import section_content with context %}
+
+
+{% macro render_section(item) %}
+
+<section class="relative {{item.background_css}} {{item.section_css_class}}">
+    {% if item.separator_type == 'Top' %}
+    {{ separator(item)}}
+    {% endif %}
+    <div class="container mx-auto px-4 py-8">
+        {{ section_content(item)}}
+    </div>
+    {% if item.separator_type == 'Bottom' %}
+    {{ separator(item)}}
+    {% endif %}
+</section>
+
+{% endmacro %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block page_content %}
+
+<div class="relative left-8 mr-8 pt-16 pb-32 flex content-center items-center justify-center" style="min-height: 25vh;">
+
+    <div class="absolute top-0 w-full mr-8 h-full bg-center bg-cover"
+        style="background-image: url(&quot;{{image}}&quot;);">
+    </div>
+</div>
+
+
+<section class="blog-page pb-20 -mt-24">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-wrap">
+            <div class="md:w-full px-4 text-center">
+                <div
+                    class="relative flex flex-col min-w-0 break-words {{background_css}} w-full mb-8 shadow-lg rounded-lg">
+
+                    <div class="mt-8 text-white text-3xl mb-8">
+                        <h3>{{headline}}</h3>
+                    </div>
+
+                    <div class="flex-auto">
+                        {% for item in sections %}
+                        {{ render_section(item) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

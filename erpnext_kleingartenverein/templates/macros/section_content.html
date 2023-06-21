@@ -1,0 +1,27 @@
+{% macro section_content(item) %}
+
+<div class="flex flex-wrap items-center card-section">
+
+  {% if item.content_template == 'LeftPreview' %}
+  {{ section_card(item) }}
+  {% endif %}
+
+  <div class="md:w-5/12 px-4 mr-auto ml-auto">
+
+    {% if item.headline %}
+    <h1 class="text-nature-white mb-2 text-lg">
+      {{ item.headline }}
+    </h1>
+    {% endif %}
+
+    <div class="markdown mt-4">
+      {{ item.content | markdown}}
+    </div>
+  </div>
+
+  {% if item.content_template == 'RightPreview' %}
+  {{ section_card(item) }}
+  {% endif %}
+</div>
+
+{% endmacro %}

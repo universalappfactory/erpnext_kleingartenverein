@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{section_card_name}",
+ "creation": "2023-06-14 17:23:13.427685",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_card_name",
+  "headline",
+  "content",
+  "image"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_card_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "headline",
+   "fieldtype": "Data",
+   "label": "Headline"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Markdown Editor",
+   "label": "Content"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-06-14 17:37:22.450149",
+ "modified_by": "Administrator",
+ "module": "Erpnext Kleingartenverein",
+ "name": "Section Card",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

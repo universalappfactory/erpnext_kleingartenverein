@@ -1,0 +1,37 @@
+<article class="pt-4 pb-2 bg-graygreen-300 px-4 rounded w-full md:w-3/4">
+	<div class="flex items-center justify-center mb-3 text-gray-500">
+		
+		
+		<div>
+			<h2 class="mb-2 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white hover:underline"><a
+				href="/{{route}}">{{headline}}</a></h2>
+		</div>
+
+		
+	</div>
+		
+	<div class="flex">
+		{% if image %}
+		<img class="rounded-full w-32 h-32" src="{{image}}"></img>
+		{% endif %}
+		<div class="ml-8">
+			{% if abstract %}
+			<p class="mb-5 text-nature-white">{{abstract}}</p>
+			{% endif %}
+		</div>
+	</div>
+	
+	<div class="mt-4 flex items-center justify-between">
+		<span class="text-sm text-gray-900">Veröffentlicht am&nbsp;<time>{{
+				frappe.format_date(published_at) }}</time></span>
+
+		<a class="inline-flex items-center font-medium text-nature-white hover:underline"
+			href="/{{route}}">Weiterlesen<svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20"
+				xmlns="http://www.w3.org/2000/svg">
+				<path fill-rule="evenodd"
+					d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+					clip-rule="evenodd"></path>
+			</svg>
+		</a>
+	</div>
+</article>

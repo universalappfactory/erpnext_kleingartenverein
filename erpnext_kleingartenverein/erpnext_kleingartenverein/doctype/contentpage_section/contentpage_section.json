@@ -1,0 +1,88 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-06-14 17:15:19.470216",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_name",
+  "headline",
+  "content",
+  "content_template",
+  "card",
+  "separator_type",
+  "background_css",
+  "separator_background_css",
+  "custom_section_css"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Section Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "headline",
+   "fieldtype": "Data",
+   "label": "Headline"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Markdown Editor",
+   "label": "Content"
+  },
+  {
+   "fieldname": "content_template",
+   "fieldtype": "Select",
+   "label": "Content Template",
+   "options": "LeftPreview\nRightPreview",
+   "reqd": 1
+  },
+  {
+   "fieldname": "card",
+   "fieldtype": "Link",
+   "label": "Card",
+   "options": "Section Card"
+  },
+  {
+   "fieldname": "separator_type",
+   "fieldtype": "Select",
+   "label": "SeparatorType",
+   "options": "None\nTop\nBottom"
+  },
+  {
+   "default": "bg-nature-green-300",
+   "fieldname": "background_css",
+   "fieldtype": "Data",
+   "label": "Background Css"
+  },
+  {
+   "default": "text-nature-green-300",
+   "fieldname": "separator_background_css",
+   "fieldtype": "Data",
+   "label": "Separator Background Css"
+  },
+  {
+   "fieldname": "custom_section_css",
+   "fieldtype": "Data",
+   "label": "Custom Section Css"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-06-21 11:27:30.862886",
+ "modified_by": "Administrator",
+ "module": "Erpnext Kleingartenverein",
+ "name": "Contentpage Section",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

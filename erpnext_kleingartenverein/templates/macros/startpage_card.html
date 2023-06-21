@@ -1,0 +1,90 @@
+{% macro bulletin_card(item) %}
+<div class="w-full md:w-4/12  lg:pt-12 pt-6  px-4 text-center">
+    <div class="relative flex flex-col min-w-0 break-words bg-nature-green w-full mb-8 shadow-lg rounded-lg">
+        <div class="px-4 py-5 flex-auto text-white">
+            <div class="text-nature-white  text-center
+                inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg
+                bg-first-startpage-card
+                rounded-full">
+                <a href="{{item.link}}">
+                    {%- if item.image -%}
+                    <img src="{{item.image}}" />
+                    {%- endif -%}
+                </a>
+            </div>
+            <h6 class="text-xl font-semibold mb-2">
+                <a href="{{item.link}}">{{ item.headline }}</a>
+            </h6>
+            <ul>
+                {% for item in bulletins %}
+                {{ bulletin_item(item, parent=True) }}
+                {% endfor %}
+            </ul>
+            <p class="mt-2 text-gray-800">
+                <a href="{{item.link}}">
+                    {{ item.link_text }}
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{%- endmacro -%}
+
+{% macro blog_item(item) %}
+
+{% endmacro %}
+
+{%- macro blog_card(item) -%}
+<div class="w-full md:w-4/12 px-4 text-center">
+    <div class="relative flex flex-col min-w-0 break-words bg-nature-green-300 w-full mb-8 shadow-lg rounded-lg">
+        <div class="px-4 py-5 flex-auto">
+            <div class="text-nature-white  text-center
+                inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg
+                rounded-full">
+                {%- if item.image -%}
+                    <img src="{{item.image}}" />
+                {%- endif -%}
+            </div>
+            
+            {% for entry in last_blog_entries %}
+                <a href="{{entry.route}}">
+                    <h6 class="text-xl text-nature-white font-semibold">{{entry.headline}}</h6>
+                
+                    <p class="mt-2 mb-4 text-nature-white truncate text-ellipsis min-h-[10%] max-h-16">
+                    {{entry.abstract}}
+                    </p>
+                </a>
+                
+            {% endfor %}
+
+            <p>
+                <a href="{{item.link}}">{{item.link_text}}</a>
+            </p>
+        </div>
+    </div>
+</div>
+{%- endmacro -%}
+
+{%- macro calendar_card(item) -%}
+<div class="w-full md:w-4/12 px-4 lg:pt-8 pt-4  text-center">
+    <div class="relative flex flex-col min-w-0 break-words bg-nature-green-200 w-full mb-8 shadow-lg rounded-lg">
+        <div class="px-4 py-5 flex-auto">
+            <div class="text-nature-white  text-center
+                inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg
+                rounded-full">
+                {%- if item.image -%}
+                <img src="{{item.image}}" />
+                {%- endif -%}
+            </div>
+            <h6 class="text-xl font-semibold text-nature-white">{{item.headline}}</h6>
+            <ul class="text-nature-white">
+                <li>Tag des Kleingartens</li>
+                <li>Gemeinschaftsarbeit</li>
+            </ul>
+            <p>
+                <a href="{{item.link}}">{{item.link_text}}</a>
+            </p>
+        </div>
+    </div>
+</div>
+{%- endmacro -%}

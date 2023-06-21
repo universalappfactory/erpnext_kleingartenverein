@@ -1,0 +1,55 @@
+# Copyright (c) 2023, Kleingartenverein and contributors
+# For license information, please see license.txt
+
+# import frappe
+from datetime import datetime
+
+from frappe.exceptions import DoesNotExistError
+from frappe.website.website_generator import WebsiteGenerator
+from erpnext_kleingartenverein.api import get_breadcrumbs
+from erpnext_kleingartenverein.www.utils import (
+    DefaultContextData,
+    add_default_context_data,
+)
+
+
+class BlogPage(WebsiteGenerator, DefaultContextData):
+    def validate(self):
+        self.set_route()
+
+    def set_route(self):
+        if self.is_website_published() and not self.route:
+            self.route = self.make_route()
+
+        if self.route:
+            self.route = self.route.strip("/.")[:139]
+
+    def make_route(self):
+        from_headline = self.scrubbed_headline()
+        if self.meta.route:
+            return self.meta.route + "/" + from_headline
+        else:
+            return from_headline
+
+    def scrubbed_headline(self):
+        return self.scrub(self.headline)
+
+    def get_context(self, context):
+        if not self.is_published or self.published_at > datetime.now():
+            raise DoesNotExistError()
+
+        super().get_context(context)
+        route = "/".join(self.route.split("/")[:-1])
+        context.breadcrumbs = get_breadcrumbs(context, route)
+
+
+def get_list_context(context=None):
+    add_default_context_data(context)
+
+    context.update(
+        {
+            "order_by": "published_at desc",
+            "filters": {"is_published": 1, "published_at": ["<", datetime.now()]},
+            "breadcrumbs": get_breadcrumbs(context),
+        }
+    )

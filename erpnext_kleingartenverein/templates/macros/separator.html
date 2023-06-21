@@ -1,0 +1,9 @@
+{% macro separator(item) %}
+<div class="bottom-auto left-0 right-0  w-full absolute pointer-events-none overflow-hidden -mt-20"
+  style="height: 80px;">
+  <svg class="absolute bottom-0 overflow-hidden {{item.separator_background_css}}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
+    version="1.1" viewBox="0 0 2560 100" x="0" y="0">
+    <polygon class="fill-current" points="2560 0 2560 100 0 100"></polygon>
+  </svg>
+</div>
+{%endmacro%}

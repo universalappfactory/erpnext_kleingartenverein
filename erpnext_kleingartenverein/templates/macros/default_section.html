@@ -1,0 +1,21 @@
+{% macro render_section(item) %}
+
+{% set ns = namespace(css='py-20') %}
+{%- if item.custom_section_css -%}
+    {% set ns.css = item.custom_section_css %}
+{%- endif -%}
+
+<section class="relative {{ns.css}} {{item.background_css}}">
+    
+    {% if item.separator_type == 'Top' %}
+    {{ separator(item)}}
+    {% endif %}
+    <div class="container mx-auto px-4">
+        {{ section_content(item)}}
+    </div>
+    {% if item.separator_type == 'Bottom' %}
+    {{ separator(item)}}
+    {% endif %}
+</section>
+
+{% endmacro %}

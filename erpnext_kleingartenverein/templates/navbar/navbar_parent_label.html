@@ -1,0 +1,15 @@
+{% macro navbar_parent_label(route) %}
+    {%- for item in top_bar_items -%}
+        {% if item.url == '/'~route -%}
+            {{item.parent_label}}
+        {%- endif -%}
+    {%- endfor %}
+{% endmacro %}
+
+{% macro navbar_label(route) %}
+    {%- for item in top_bar_items -%}
+        {% if item.url == '/'~route -%}
+            {{item.label}}
+        {%- endif -%}
+    {%- endfor %}
+{% endmacro %}

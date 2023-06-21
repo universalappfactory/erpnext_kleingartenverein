@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!-- Built on Frappe. https://frappeframework.com/ -->
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="theme-color" content="#000000" />
+
+	{% block meta_block %}
+	{% include "templates/includes/meta_block.html" %}
+	{% endblock %}
+
+	<title>{% block title %}{{ title | striptags }}{% endblock %}</title>
+
+	{% block favicon %}
+	{% endblock %}
+
+	{% include 'erpnext_kleingartenverein/templates/script.html' %}
+
+	<script>
+		window.frappe = {};
+		frappe.ready_events = [];
+		frappe.ready = function (fn) {
+			frappe.ready_events.push(fn);
+		}
+		window.dev_server = {{ dev_server }};
+		window.socketio_port = {{ (frappe.socketio_port or 'null') }};
+		window.show_language_picker = {{ show_language_picker or 'false' }};
+	</script>
+
+
+	<link rel="stylesheet" href="/assets/frappe/css/fonts/fontawesome/font-awesome.min.css">
+	
+
+</head>
+
+<body class="text-slate-700 antialiased h-screen bg-graygreen-100">
+
+	<header class="sticky top-0 z-40 flex-none w-full mx-auto bg-white border-b border-gray-200 dark:border-gray-600 dark:bg-gray-800">
+		{%- block navbar -%}
+		{% include "erpnext_kleingartenverein/templates/navbar/navbar.html" %}
+		{%- endblock -%}
+	</header>
+
+	{% block content %}
+	{{ content }}
+	{% endblock %}
+
+	{% block base_scripts %}
+	<!-- js should be loaded in body! -->
+	<script>
+		frappe.boot = {{ boot }}
+		// for backward compatibility of some libs
+		frappe.sys_defaults = frappe.boot.sysdefaults;
+
+		function toggleNavbar(collapseID) {
+			document.getElementById(collapseID).classList.toggle("hidden");
+			document.getElementById(collapseID).classList.toggle("block");
+		}
+
+		function openPopover(event, popoverID) {
+			let element = event.target;
+			while (element.nodeName !== "BUTTON") {
+				element = element.parentNode;
+			}
+			var popper = Popper.createPopper(element, document.getElementById(popoverID), {
+				placement: 'bottom'
+			});
+			document.getElementById(popoverID).classList.toggle("hidden");
+		}
+	</script>
+	
+	
+	
+	{% endblock %}
+
+	
+
+	{%- block script %}
+	{% if colocated_js -%}
+	<script>{ { colocated_js } }</script>
+	{%- endif %}
+	{%- endblock %}
+	<!-- csrf_token -->
+	{%- block body_include %}{{ body_include or "" }}{% endblock -%}
+	
+	<script src="/assets/erpnext_kleingartenverein/assets/flowbite.min.css"></script>
+	<script src="/assets/erpnext_kleingartenverein/assets/flowbite.min.js"></script>
+
+
+</body>
+
+</html>

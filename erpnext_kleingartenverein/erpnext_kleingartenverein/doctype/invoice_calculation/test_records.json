@@ -94,29 +94,18 @@
         "territory_name": "_Test Territory"
     },
     {
-        "doctype": "Address Template",
-        "country": "Germany",
-        "is_default": 1
-    },
-    {
         "doctype": "Customer",
         "name": "_Test Lead",
         "customer_name": "_Test Lead",
         "customer_group": "Test CustomerGroup",
-        "territory": "_Test Territory",
-        "address_line1": "My Address",
-        "city": "My City",
-        "pincode": "123"
+        "territory": "_Test Territory"
     },
     {
         "doctype": "Customer",
         "name": "_Test Invoice Calculation Customer",
         "customer_name": "Test Invoice Calculation Customer",
         "customer_group": "Tenant",
-        "territory": "_Test Territory",
-        "address_line1": "My Address",
-        "city": "My City",
-        "pincode": "123"
+        "territory": "_Test Territory"
     },
     {
         "doctype": "Opportunity Type",

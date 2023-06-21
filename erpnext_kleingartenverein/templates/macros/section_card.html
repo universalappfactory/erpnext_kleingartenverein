@@ -1,0 +1,42 @@
+{% macro section_card(item) %}
+
+{% if item.card %}
+
+{% set card = frappe.get_doc('Section Card', item.card) %}
+
+<div class="sm:full-width md:w-4/12 px-4 mr-auto ml-auto">
+    <div
+      class="relative flex flex-col min-w-0 break-words bg-white mb-6 shadow-lg rounded-lg bg-nature-white"
+    >
+      <img
+        alt="..."
+        src="{{card.image}}"
+        class="w-full align-middle rounded-t-lg"
+      />
+      
+      <blockquote class="relative p-8 bg-nature-white">
+        <svg
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 583 95"
+          class="absolute left-0 w-full block text-nature-white"
+          style="height: 95px; top: -94px;"
+        >
+          <polygon
+            points="-30,95 583,95 583,65"
+            class="fill-current"
+          ></polygon>
+        </svg>
+        {% if card.headline %}
+        <h4 class="text-xl font-bold text-gray-800">
+          {{ card.headline }}
+        </h4>
+        {% endif %}
+        {% if card.content %}
+        {{card.content | markdown}}
+        {% endif %}
+      </blockquote>
+    </div>
+  </div>
+  {% endif %}
+{% endmacro %}

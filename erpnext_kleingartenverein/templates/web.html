@@ -1,0 +1,35 @@
+{% extends base_template_path %}
+{% block content %}
+
+{% macro main_content() %}
+{% block page_container %}
+<main>
+	{%- if template == 'www/message.html' -%}
+	&nbsp;
+	{%- else -%}
+	<div>
+		{% block header %}{% endblock %}
+	</div>
+	{%- endif -%}
+
+	{% if self.header_actions() %}
+	<div>
+		{% block header_actions %}{% endblock %}
+	</div>
+	{% endif %}
+
+	{%- block page_content -%}{%- endblock -%}
+
+	<div>
+		{%- block page_footer -%}
+		{% include "erpnext_kleingartenverein/templates/footer/footer.html" %}
+		{%- endblock -%}
+	</div>
+</main>
+{% endblock %}
+{% endmacro %}
+
+
+{{ main_content() }}
+
+{% endblock %}

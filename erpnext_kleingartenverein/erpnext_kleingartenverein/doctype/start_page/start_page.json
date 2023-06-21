@@ -1,0 +1,89 @@
+{
+ "actions": [],
+ "allow_guest_to_view": 1,
+ "allow_rename": 1,
+ "creation": "2023-06-07 15:57:51.783072",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "startpage_name",
+  "route",
+  "is_published",
+  "sections",
+  "cards",
+  "primary_cards",
+  "header_image"
+ ],
+ "fields": [
+  {
+   "fieldname": "startpage_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "IsPublished"
+  },
+  {
+   "fieldname": "sections",
+   "fieldtype": "Table",
+   "label": "Sections",
+   "options": "Contentpage Section"
+  },
+  {
+   "fieldname": "cards",
+   "fieldtype": "Table",
+   "label": "Cards",
+   "options": "Section Card"
+  },
+  {
+   "fieldname": "primary_cards",
+   "fieldtype": "Table",
+   "label": "Primary Cards",
+   "options": "Startpage Card"
+  },
+  {
+   "fieldname": "header_image",
+   "fieldtype": "Image",
+   "label": "Header Image"
+  }
+ ],
+ "has_web_view": 1,
+ "index_web_pages_for_search": 1,
+ "is_published_field": "is_published",
+ "links": [],
+ "modified": "2023-06-21 14:08:42.384282",
+ "modified_by": "Administrator",
+ "module": "Erpnext Kleingartenverein",
+ "name": "Start Page",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "route": "",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

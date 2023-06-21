@@ -18,6 +18,8 @@ app_license = "AGPLv3"
 # web_include_css = "/assets/erpnext_kleingartenverein/css/erpnext_kleingartenverein.css"
 # web_include_js = "/assets/erpnext_kleingartenverein/js/erpnext_kleingartenverein.js"
 
+web_include_js = []
+
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "erpnext_kleingartenverein/public/scss/website"
 
@@ -39,17 +41,34 @@ app_license = "AGPLv3"
 
 # application home page (will override Website Settings)
 # home_page = "login"
+get_website_user_home_page = "erpnext_kleingartenverein.api.get_homepage"
+website_catch_all = "not_found"
+# on_login = "erpnext_kleingartenverein.api.on_login"
 
 # website user home page (by Role)
 # role_home_page = {
 #	"Role": "home_page"
 # }
 
+# website_route_rules = [
+#     {"from_route": "/test", "to_route": "test"},
+# ]
+
+website_route_rules = [
+	{"from_route": "/weather/<path:app_path>", "to_route": "weather"},
+    # {"from_route": "/bulletin/<path:app_path>", "to_route": "bulletin"},
+    {"from_route": "/aushaenge/<name>", "to_route": "bulletin"},
+    {"from_route": "/aushaenge/page/<number>", "to_route": "Bulletin"},
+    {"from_route": "/aushaenge", "to_route": "Bulletin"},
+]
+
+# home_page = "erpnext_kleingartenverein"
+
 # Generators
 # ----------
 
 # automatically create page for each record of this doctype
-# website_generators = ["Web Page"]
+# website_generators = []
 
 # Jinja
 # ----------
@@ -108,11 +127,10 @@ override_doctype_class = {
 doc_events = {
 	"Customer": {
 		"before_insert": "erpnext_kleingartenverein.api.customer_before_insert",
-        "before_validate": "erpnext_kleingartenverein.api.customer_before_validate",
-        "validate": "erpnext_kleingartenverein.api.customer_validate",
-        "on_update": "erpnext_kleingartenverein.api.customer_on_update",
 	}
 }
+
+base_template = "erpnext_kleingartenverein/templates/base.html"
 
 # Scheduled Tasks
 # ---------------

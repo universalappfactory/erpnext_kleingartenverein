@@ -145,63 +145,26 @@ def customer_before_insert(doc, method=None):
             number = random.randrange(1, 100)
             doc.membership_number = now.strftime("%Y%m") + str(number)
 
-def is_set(source, property_name):
-    if not hasattr(source, property_name):
-        return False
 
-    val = str(getattr(source,property_name))
-    return val.lstrip().rstrip() != ''
-
-def customer_validate(doc, method=None):
-    if doc.is_new():
-        if not is_set(doc, "address_line1"):
-            frappe.throw(
-                _(
-                    "Address Line 1 must be set for {0}"
-                ).format(doc.name)
-            )
-        if not is_set(doc, "city"):
-            frappe.throw(
-                _(
-                    "City must be set for {0}"
-                ).format(doc.name)
-            )
-
-        if not is_set(doc, "pincode"):
-            frappe.throw(
-                _(
-                    "Pincode must be set for {0}"
-                ).format(doc.name)
-            )
-
-def customer_before_validate(doc, method=None):
-    if doc.is_new():
-        if not is_set(doc, "country"):
-            company = frappe.get_last_doc('Company')
-            doc.country = company.country
+@frappe.whitelist()
+def get_homepage(user):
+    if user == "Guest":
+        return "login"
+    return "index"
 
 
+def get_breadcrumbs(context, current_route=None):
+    result = []
+    if not context or not current_route and not context.meta:
+        return result
 
-def customer_on_update(doc, method=None):
-    if not doc.customer_primary_contact:
+    route = current_route if current_route else context.meta.route
+    if context.top_bar_items:
+        for itm in context.top_bar_items:
+            if itm.url == f"/{route}":
+                if itm.parent_label and itm.parent_label != "":
+                    result.append(("", itm.parent_label))
 
-        names = doc.name.split(' ')
-        contact = frappe.get_doc(
-            {
-                "doctype": "Contact",
-                "first_name": names[0],
-                "last_name": names[-1],
-                "is_primary_contact": 1,
-                "links": [{"link_doctype": 'Customer', "link_name": doc.name}],
-            }
-        )
+                result.append((itm.url, itm.label))
 
-        if doc.get("email_id"):
-            contact.add_email(doc.get("email_id"), is_primary=True)
-        if doc.get("mobile_no"):
-            contact.add_phone(doc.get("mobile_no"), is_primary_mobile_no=True)
-        contact.insert()
-
-        doc.db_set("customer_primary_contact", contact.name)
-        doc.db_set("mobile_no", doc.mobile_no)
-        doc.db_set("email_id", doc.email_id)
+    return result

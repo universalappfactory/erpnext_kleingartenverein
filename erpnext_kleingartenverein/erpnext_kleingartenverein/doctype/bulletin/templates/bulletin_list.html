@@ -1,0 +1,42 @@
+{% extends "templates/web.html" %}
+{% from "templates/macros/separator.html" import separator with context %}
+{% from "templates/head/head_with_image.html" import head_with_image with context %}
+
+{% macro paging() %}
+<div class="">
+    <nav class="block">
+      <ul class="flex justify-center rounded list-none flex-wrap">
+        {% for n in range(page_count) %}
+            <li>
+                <a href="/aushaenge/page/{{n+1}}" class="first:ml-0
+                                                        text-xs
+                                                        font-semibold
+                                                        flex
+                                                        w-8 h-8 mx-1 p-0 rounded-full items-center justify-center leading-tight relative border border-solid border-pink-500
+                                                        {% if n+1 == page %}text-white bg-pink-500{% else %}text-pink-500 bg-white{% endif %}
+                                                        ">
+                    {{n+1}}
+                </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+{% endmacro %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block page_content %}
+
+{{ head_with_image(_('Bulletins'), default_header_image) }}
+
+<div class="pt-6 pb-6">
+{% for item in result %}
+    {{item}}
+{% endfor %}
+
+</div>
+
+
+{% endblock%}

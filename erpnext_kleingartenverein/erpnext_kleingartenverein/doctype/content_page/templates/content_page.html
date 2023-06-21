@@ -1,0 +1,17 @@
+{% extends "templates/web.html" %}
+
+{% from "templates/head/head_with_image.html" import head_with_image with context %}
+{% from "templates/macros/separator.html" import separator with context %}
+{% from "templates/macros/section_card.html" import section_card with context %}
+{% from "templates/macros/section_content.html" import section_content with context %}
+{% from "templates/macros/default_section.html" import render_section with context %}
+
+{% block page_content %}
+      
+    {{ head_with_image(headline, default_header_image) }}
+    
+    {% for item in sections %}
+      {{ render_section(item) }}
+    {% endfor %}      
+
+{% endblock%}
