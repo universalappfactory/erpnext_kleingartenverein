@@ -1,6 +1,14 @@
 {% macro render_dropdown(parent_item) %}
-<button id="dropdownNavbarLink" data-dropdown-toggle="{{parent_item.name}}"
-  class="flex items-center justify-between w-full py-2 pl-3 pr-4  text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
+<button  data-dropdown-toggle="{{parent_item.name}}"
+
+class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b 
+         border-gray-100 
+         hover:bg-gray-50
+         w-full
+         md:hover:bg-transparent 
+         md:border-0 
+         md:hover:text-blue-700 
+         md:p-0 md:w-auto">
   {{parent_item.label}}
   <svg class="w-5 h-5 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
     xmlns="http://www.w3.org/2000/svg">
@@ -10,8 +18,8 @@
   </svg></button>
 <!-- Dropdown menu -->
 <div id="{{parent_item.name}}" class="z-10 hidden bg-graygreen-200 
-  font-normal divide-y divide-gray-100 shadow w-44 ">
-  <ul class="py-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
+  font-normal divide-y divide-gray-100 shadow w-full md:w-fit">
+  <ul class="py-2" aria-labelledby="dropdownLargeButton">
     {% if top_bar_items -%}
     {%- for childitem in top_bar_items -%}
 
@@ -32,7 +40,7 @@
 
 
 {% macro render_item(navbar_item, submenu=False, parent=False) %}
-<ul class="flex flex-col lg:flex-row list-none mr-auto">
+<ul class="w-full md:w-fit flex flex-col lg:flex-row list-none mr-auto justify-center">
 
   {% set ns = namespace(has_children=false) %}
   {% if top_bar_items -%}
@@ -48,8 +56,7 @@
     {% else %}
   <li>
     <a href="{{navbar_item.url}}"
-      class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
-      aria-current="page">
+      class="block py-2 pl-3 pr-4 bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0" aria-current="page">
       {{navbar_item.label}}
     </a>
   </li>
@@ -63,29 +70,26 @@
 <div class="flex flex-wrap items-center justify-between max-w-screen-xl mx-auto p-4">
   <button type="button" class="flex mr-3 text-sm 
       bg-gray-800 rounded-full 
-      md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" 
-      id="mega-menu-full-dropdown-button" 
-      data-dropdown-toggle="mega-menu-full-dropdown"
-      data-dropdown-placement="bottom"
-      >
+      md:mr-0 focus:ring-4 focus:ring-gray-300" id="mega-menu-full-dropdown-button"
+    data-dropdown-toggle="mega-menu-full-dropdown" data-dropdown-placement="bottom">
     <span class="sr-only">Open user menu</span>
     <img class="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user photo">
   </button>
-  
-  <!-- Dropdown menu -->
-  <div id="mega-menu-full-dropdown-button" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownBottomButton">
+
+  <!-- Megamenu Dropdown menu -->
+  <div id="mega-menu-full-dropdown-button" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow ">
+    <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownBottomButton">
       <li>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
       </li>
       <li>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Settings</a>
       </li>
       <li>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Earnings</a>
       </li>
       <li>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Sign out</a>
       </li>
     </ul>
   </div>
@@ -95,38 +99,43 @@
 {% endmacro %}
 
 {% macro usermenu() %}
-<div class="flex items-center md:order-2">
-  <button type="button" 
-      
-      id="user-menu-button" 
-      aria-expanded="false" 
-      data-dropdown-toggle="user-dropdown" 
-      data-dropdown-placement="bottom">
-      <i class="fa fa-sign-in text-6xl aria-hidden="true"></i>
-
+<div class="invisible md:visible flex items-center md:order-2">
+  <button type="button" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
+    data-dropdown-placement="bottom">
+    <i class="fa fa-sign-in text-nature-white text-6xl aria-hidden=" true"></i>
   </button>
   <!-- Dropdown menu -->
-  <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
+  <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow"
+    id="user-dropdown">
     <div class="px-4 py-3">
-      <span class="block text-sm text-gray-900 dark:text-white">{{user}}</span>
+      <span class="block text-sm ">{{user}}</span>
     </div>
     <ul class="py-2" aria-labelledby="user-menu-button">
       <li>
-        <a href="/dashboard" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a>
+        <a href="/dashboard" class="block px-4 py-2 text-sm hover:bg-gray-100">{{_('Dashboard')}}</a>
       </li>
       <li>
-        <a href="/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+        <a href="/logout" class="block px-4 py-2 text-sm hover:bg-gray-100">{{_('Sign out')}}</a>
       </li>
     </ul>
   </div>
 </div>
 {% endmacro %}
 
-<nav class="top-0 absolute z-50 w-full flex flex-wrap items-center justify-between px-2 py-4 ">
-  <div class="container bg-nature-green p-4 px-4 mx-auto items-center justify-between">
+<nav class="top-0 absolute z-50 w-full flex flex-wrap">
+  <div class="container bg-nature-green mx-auto items-center justify-start mt-4 px-4 py-4">
 
     <button data-collapse-toggle="navbar-multi-level" type="button"
-      class="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+      class="inline-flex items-center ml-3 text-sm text-nature-white 
+             rounded-sm
+             md:hidden 
+             p-2
+             hover:bg-gray-100 
+             hover:text-white
+             hover:opacity-75
+             focus:outline-none 
+             focus:ring-2 
+             focus:ring-gray-200"
       aria-controls="navbar-multi-level" aria-expanded="false">
       <span class="sr-only">Open main menu</span>
       <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
@@ -136,15 +145,18 @@
           clip-rule="evenodd"></path>
       </svg>
     </button>
-    <div class="hidden w-full md:block md:w-auto text-3xl" id="navbar-multi-level">
+    
+    <div class="hidden w-full md:block md:w-auto text-3xl " id="navbar-multi-level">
       <div class="flex justify-between">
-        <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 
+        <ul class="w-full flex flex-col font-medium 
           md:flex-row 
           md:space-x-8 md:mt-0 md:border-0  
+          text-nature-white
           ">
 
-          <li><a href="/">
-              <i class="fa fa-home text-6xl"></i>
+          <li class="pl-3 flex-col"><a href="/">
+              <i class="fa fa-home text-6xl mr-4"></i>
+              <span class="visible md:invisible">Home</span>
             </a>
           </li>
           {% if top_bar_items -%}
@@ -154,24 +166,25 @@
           {%- endif -%}
           {%- endfor %}
           {%- endif %}
+
+          <li class="flex items-center visible md:invisible">
+            <button class="flex w-full
+            hover:bg-gray-50
+            w-full
+            " 
+            id="user-dropdown-button-2"
+            aria-expanded="false"
+            data-dropdown-toggle="user-dropdown"
+            data-dropdown-placement="bottom">
+              <a>Mein Kleingartenverein</a>
+            </li>
+          </button>  
         </ul>
 
         {%- if user and user != '' and user != 'Guest' -%}
         {{ usermenu() }}
         {%- endif -%}
       </div>
-
     </div>
-
-
-    <!-- breadcrumbs -->
-    <div class="mt-2">
-      {% block breadcrumbs %}
-      {% include 'erpnext_kleingartenverein/templates/breadcrumbs/breadcrumbs.html' %}
-      {% endblock %}
-    </div>
-
   </div>
-
-
 </nav>

@@ -17,6 +17,7 @@
 	{% block favicon %}
 	{% endblock %}
 
+	<link rel="stylesheet" href="/assets/erpnext_kleingartenverein/assets/flowbite.min.css">
 	{% include 'erpnext_kleingartenverein/templates/script.html' %}
 
 	<script>
@@ -48,6 +49,7 @@
 	{{ content }}
 	{% endblock %}
 
+	
 	{% block base_scripts %}
 	<!-- js should be loaded in body! -->
 	<script>
@@ -72,11 +74,7 @@
 		}
 	</script>
 	
-	
-	
 	{% endblock %}
-
-	
 
 	{%- block script %}
 	{% if colocated_js -%}
@@ -86,9 +84,8 @@
 	<!-- csrf_token -->
 	{%- block body_include %}{{ body_include or "" }}{% endblock -%}
 	
-	<script src="/assets/erpnext_kleingartenverein/assets/flowbite.min.css"></script>
+	
 	<script src="/assets/erpnext_kleingartenverein/assets/flowbite.min.js"></script>
-
 
 </body>
 

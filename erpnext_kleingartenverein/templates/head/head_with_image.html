@@ -1,22 +1,24 @@
 {% macro head_with_image(name, image) %}
-<div class="relative pt-16 pb-32 flex content-center items-center justify-center" style="min-height: 35vh;">
+<div class="relative flex h-[25vh] md:h-[30vh]">
 
     <div class="absolute top-0 w-full h-full bg-center bg-cover bg-graygreen-100"
         style='background-image: url("{{ image }}");'>
         <span id="blackOverlay" class="w-full h-full absolute opacity-75 bg-black"></span>
     </div>
 
-    <div class="container relative mx-auto">
-        <div class="items-center flex flex-wrap">
-            <div class="w-full text-center">
-                <div class="py-4 border rounded border-solid border-nature-white shadow-lg px-8 opacity-75">
+    
+    <div class="w-full h-full grid content-center justify-center" style="background-color: brown;">
+        <!-- <div class="items-center flex flex-wrap content-center"> -->
+            <!-- <div class="w-full text-center mx-4"> -->
+                <div class="mx-4 md:max-w-lg py-4 px-4 text-center  border rounded border-solid border-nature-white shadow-lg opacity-75">
                     <h1 class="text-white font-semibold text-5xl opacity-100">
                         {{name}}
                     </h1>
                 </div>
-            </div>
-        </div>
+            <!-- </div> -->
+        <!-- </div> -->
     </div>
+    
 
     <div class="top-auto bottom-0 left-0 right-0 w-full
           absolute pointer-events-none " style="height: 70px;">

@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_guest_to_view": 1,
  "allow_rename": 1,
  "creation": "2023-06-13 17:39:31.345715",
  "default_view": "List",
@@ -89,7 +88,7 @@
  "index_web_pages_for_search": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-06-21 13:41:16.690072",
+ "modified": "2023-06-23 14:51:22.010927",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Blog Page",

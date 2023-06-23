@@ -47,14 +47,16 @@
             </div>
             
             {% for entry in last_blog_entries %}
+                {%- if entry.headline -%}
                 <a href="{{entry.route}}">
                     <h6 class="text-xl text-nature-white font-semibold">{{entry.headline}}</h6>
-                
+                    {%- if entry.abstract -%}
                     <p class="mt-2 mb-4 text-nature-white truncate text-ellipsis min-h-[10%] max-h-16">
                     {{entry.abstract}}
                     </p>
+                    {%- endif -%}
                 </a>
-                
+                {%- endif -%}
             {% endfor %}
 
             <p>

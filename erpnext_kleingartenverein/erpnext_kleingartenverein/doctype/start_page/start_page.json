@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_guest_to_view": 1,
  "allow_rename": 1,
  "creation": "2023-06-07 15:57:51.783072",
  "default_view": "List",
@@ -55,7 +54,7 @@
   },
   {
    "fieldname": "header_image",
-   "fieldtype": "Image",
+   "fieldtype": "Attach Image",
    "label": "Header Image"
   }
  ],
@@ -63,7 +62,7 @@
  "index_web_pages_for_search": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-06-21 14:08:42.384282",
+ "modified": "2023-06-23 14:50:53.462787",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Start Page",
@@ -82,7 +81,6 @@
    "write": 1
   }
  ],
- "route": "",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

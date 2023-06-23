@@ -1238,6 +1238,9 @@ select {
 .visible {
   visibility: visible;
 }
+.invisible {
+  visibility: hidden;
+}
 .static {
   position: static;
 }
@@ -1327,13 +1330,13 @@ select {
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
 }
-.my-4 {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
 .mx-4 {
   margin-left: 1rem;
   margin-right: 1rem;
+}
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 .mx-1 {
   margin-left: 0.25rem;
@@ -1404,6 +1407,9 @@ select {
 }
 .mr-3 {
   margin-right: 0.75rem;
+}
+.mr-4 {
+  margin-right: 1rem;
 }
 .mr-8 {
   margin-right: 2rem;
@@ -1495,6 +1501,9 @@ select {
 .h-3 {
   height: 0.75rem;
 }
+.h-\[25vh\] {
+  height: 25vh;
+}
 .h-16 {
   height: 4rem;
 }
@@ -1561,9 +1570,6 @@ select {
 .w-5 {
   width: 1.25rem;
 }
-.w-44 {
-  width: 11rem;
-}
 .w-8 {
   width: 2rem;
 }
@@ -1578,6 +1584,9 @@ select {
 }
 .w-10 {
   width: 2.5rem;
+}
+.w-44 {
+  width: 11rem;
 }
 .w-80 {
   width: 20rem;
@@ -1773,6 +1782,9 @@ select {
 .items-stretch {
   align-items: stretch;
 }
+.justify-start {
+  justify-content: flex-start;
+}
 .justify-end {
   justify-content: flex-end;
 }
@@ -1854,6 +1866,9 @@ select {
 }
 .rounded {
   border-radius: 0.25rem;
+}
+.rounded-sm {
+  border-radius: 0.125rem;
 }
 .rounded-md {
   border-radius: 0.375rem;
@@ -2166,10 +2181,6 @@ select {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
 }
-.px-8 {
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -2177,6 +2188,10 @@ select {
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
+}
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 .py-10 {
   padding-top: 2.5rem;
@@ -2815,6 +2830,10 @@ select {
   --tw-text-opacity: 1;
   color: rgb(21 121 208 / var(--tw-text-opacity));
 }
+.hover\:text-white:hover {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
 .hover\:text-gray-900:hover {
   --tw-text-opacity: 1;
   color: rgb(31 39 46 / var(--tw-text-opacity));
@@ -2826,6 +2845,9 @@ select {
 .hover\:underline:hover {
   -webkit-text-decoration-line: underline;
           text-decoration-line: underline;
+}
+.hover\:opacity-75:hover {
+  opacity: 0.75;
 }
 .hover\:shadow-lg:hover {
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -3052,13 +3074,13 @@ select {
     --tw-bg-opacity: 1;
     background-color: rgb(80 90 98 / var(--tw-bg-opacity));
   }
-  .dark\:hover\:bg-gray-600:hover {
-    --tw-bg-opacity: 1;
-    background-color: rgb(104 113 120 / var(--tw-bg-opacity));
-  }
   .dark\:hover\:bg-blue-700:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(19 102 174 / var(--tw-bg-opacity));
+  }
+  .dark\:hover\:bg-gray-600:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(104 113 120 / var(--tw-bg-opacity));
   }
   .dark\:hover\:text-white:hover {
     --tw-text-opacity: 1;
@@ -3067,10 +3089,6 @@ select {
   .dark\:focus\:border-blue-500:focus {
     --tw-border-opacity: 1;
     border-color: rgb(36 144 239 / var(--tw-border-opacity));
-  }
-  .dark\:focus\:text-white:focus {
-    --tw-text-opacity: 1;
-    color: rgb(255 255 255 / var(--tw-text-opacity));
   }
   .dark\:focus\:ring-gray-600:focus {
     --tw-ring-opacity: 1;
@@ -3200,6 +3218,12 @@ select {
   }
 }
 @media (min-width: 768px) {
+  .md\:visible {
+    visibility: visible;
+  }
+  .md\:invisible {
+    visibility: hidden;
+  }
   .md\:order-2 {
     order: 2;
   }
@@ -3221,6 +3245,15 @@ select {
   .md\:hidden {
     display: none;
   }
+  .md\:h-\[30vh\] {
+    height: 30vh;
+  }
+  .md\:w-2\/5 {
+    width: 40%;
+  }
+  .md\:w-\[40vh\] {
+    width: 40vh;
+  }
   .md\:w-4\/12 {
     width: 33.333333%;
   }
@@ -3229,6 +3262,11 @@ select {
   }
   .md\:w-auto {
     width: auto;
+  }
+  .md\:w-fit {
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
   }
   .md\:w-full {
     width: 100%;
@@ -3241,6 +3279,9 @@ select {
   }
   .md\:w-6\/12 {
     width: 50%;
+  }
+  .md\:max-w-lg {
+    max-width: 32rem;
   }
   .md\:flex-row {
     flex-direction: row;
@@ -3287,28 +3328,6 @@ select {
   .md\:hover\:text-blue-700:hover {
     --tw-text-opacity: 1;
     color: rgb(19 102 174 / var(--tw-text-opacity));
-  }
-  @media (prefers-color-scheme: dark) {
-    .md\:dark\:bg-transparent {
-      background-color: transparent;
-    }
-  }
-  @media (prefers-color-scheme: dark) {
-    .md\:dark\:text-blue-500 {
-      --tw-text-opacity: 1;
-      color: rgb(36 144 239 / var(--tw-text-opacity));
-    }
-  }
-  @media (prefers-color-scheme: dark) {
-    .md\:dark\:hover\:bg-transparent:hover {
-      background-color: transparent;
-    }
-  }
-  @media (prefers-color-scheme: dark) {
-    .md\:dark\:hover\:text-blue-500:hover {
-      --tw-text-opacity: 1;
-      color: rgb(36 144 239 / var(--tw-text-opacity));
-    }
   }
 }
 @media (min-width: 1024px) {
