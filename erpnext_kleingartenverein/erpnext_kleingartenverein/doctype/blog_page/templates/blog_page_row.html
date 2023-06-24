@@ -1,4 +1,4 @@
-<article class="pt-4 pb-2 bg-graygreen-300 px-4 rounded w-full md:w-3/4">
+<article class="pt-4 pb-2 bg-graygreen-300 px-4 rounded w-full md:w-3/4 ">
 	<div class="flex items-center justify-center mb-3 text-gray-500">
 		
 		
@@ -10,23 +10,36 @@
 		
 	</div>
 		
-	<div class="flex">
+	<div class="flex max-h-[10vh]">
+
+
+		<!-- <div class="flex">
+			<div><i class="fa fa-home text-6xl mr-4"></i></div>
+			  <div class="block md:hidden">Home</div>
+		  </div>   -->
+
 		{% if image %}
-		<img class="rounded-full w-32 h-32" src="{{image}}"></img>
+		<img class="hidden md:block rounded-full w-32 h-32" src="{{image}}"></img>
 		{% endif %}
-		<div class="ml-8">
+		<!-- <div class="ml-8"> -->
 			{% if abstract %}
-			<p class="mb-5 text-nature-white">{{abstract}}</p>
+			<p class="mb-5 md:pl-4 text-nature-white text-ellipsis overflow-hidden">{{abstract}}</p>
 			{% endif %}
-		</div>
+		<!-- </div> -->
 	</div>
 	
 	<div class="mt-4 flex items-center justify-between">
-		<span class="text-sm text-gray-900">Veröffentlicht am&nbsp;<time>{{
-				frappe.format_date(published_at) }}</time></span>
+		<div class="flex text-sm text-gray-900">
+			<div class="hidden md:block md:pr-2">Veröffentlicht am</div>
+			<time>{{
+				frappe.format_date(published_at) }}</time></div>
 
 		<a class="inline-flex items-center font-medium text-nature-white hover:underline"
-			href="/{{route}}">Weiterlesen<svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20"
+			href="/{{route}}">
+
+			<div class="hidden md:block">Weiterlesen</div>
+			
+			<svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20"
 				xmlns="http://www.w3.org/2000/svg">
 				<path fill-rule="evenodd"
 					d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"

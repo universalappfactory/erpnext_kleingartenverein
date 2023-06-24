@@ -36,12 +36,12 @@ const routes = [
   {
     path: "/",
     name: "Dashboard",
-    component: () => __vitePreload(() => import("./Dashboard.b9964330.js"), true ? ["assets/Dashboard.b9964330.js","assets/vendor.1d4b85a3.js","assets/vendor.7c581ac4.css","assets/Footer.2caaf4a0.js"] : void 0)
+    component: () => __vitePreload(() => import("./Dashboard.b9964330.js"), true ? ["assets/Dashboard.b9964330.js","assets/vendor.1d4b85a3.js","assets/vendor.ecfbefdb.css","assets/Footer.2caaf4a0.js"] : void 0)
   },
   {
     path: "/paechter",
     name: "P\xE4chter",
-    component: () => __vitePreload(() => import("./Paechter.68814ced.js"), true ? ["assets/Paechter.68814ced.js","assets/vendor.1d4b85a3.js","assets/vendor.7c581ac4.css","assets/Footer.2caaf4a0.js"] : void 0)
+    component: () => __vitePreload(() => import("./Paechter.68814ced.js"), true ? ["assets/Paechter.68814ced.js","assets/vendor.1d4b85a3.js","assets/vendor.ecfbefdb.css","assets/Footer.2caaf4a0.js"] : void 0)
   }
 ];
 let router = createRouter({

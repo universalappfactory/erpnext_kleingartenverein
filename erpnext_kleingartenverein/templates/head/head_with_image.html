@@ -1,19 +1,24 @@
 {% macro head_with_image(name, image) %}
+
+{%- set breadcrumb_count = breadcrumbs|length -%}
+
 <div class="relative flex h-[25vh] md:h-[30vh]">
 
     <div class="absolute top-0 w-full h-full bg-center bg-cover bg-graygreen-100"
         style='background-image: url("{{ image }}");'>
-        <span id="blackOverlay" class="w-full h-full absolute opacity-75 bg-black"></span>
+        <span id="blackOverlay" class="w-full h-full absolute opacity-50 bg-black"></span>
     </div>
 
     
     <div class="w-full h-full grid content-center justify-center" style="background-color: brown;">
         <!-- <div class="items-center flex flex-wrap content-center"> -->
             <!-- <div class="w-full text-center mx-4"> -->
-                <div class="mx-4 md:max-w-lg py-4 px-4 text-center  border rounded border-solid border-nature-white shadow-lg opacity-75">
-                    <h1 class="text-white font-semibold text-5xl opacity-100">
-                        {{name}}
-                    </h1>
+                <div class="asd">
+                    <div class="mx-4 md:max-w-lg py-4 px-4 text-center {%if breadcrumb_count > 0 %} mt-[5em] {%endif%}  border rounded border-solid border-nature-white shadow-lg opacity-75">
+                        <h1 class="text-white font-semibold text-5xl opacity-100  ">
+                            {{name}}
+                        </h1>
+                    </div>
                 </div>
             <!-- </div> -->
         <!-- </div> -->

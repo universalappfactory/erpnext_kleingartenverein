@@ -1,6 +1,7 @@
 @import './assets/Inter/inter.css';
 @import 'frappe-ui/src/style.css';
 
+
 .card-section
 {
     /* background-color: blue;    */
@@ -15,27 +16,27 @@
     @apply py-2
 }
 
-.card-section h1
-{
-    font-size: 2.25rem; /* 36px */
-    line-height: 2.5rem; /* 40px */
-} 
-
-.card-section h2
+.card-section h1, .markdown h1
 {
     font-size: 1.875rem; /* 30px */
     line-height: 2.25rem; /* 36px */
-}
+} 
 
-.card-section h3
+.card-section h2, .markdown h2
 {
     font-size: 1.5rem; /* 24px */
     line-height: 2rem; /* 32px */
 }
 
-.card-section h4
+.card-section h3, .markdown h3
 {
     font-size: 1.25rem; /* 20px */
+    line-height: 1.75rem; /* 28px */
+}
+
+.card-section h4, .markdown h4 /* text-3xl */
+{
+    font-size: 1.125rem; /* 18px */
     line-height: 1.75rem; /* 28px */
 } 
 
@@ -50,28 +51,5 @@
     @apply text-left leading-relaxed text-xl
 }
 
-.markdown h1
-{
-    font-size: 2.25rem; /* 36px */
-    line-height: 2.5rem; /* 40px */
-} 
 
-.markdown h2
-{
-    font-size: 1.875rem; /* 30px */
-    line-height: 2.25rem; /* 36px */
-}
-
-.markdown h3
-{
-    font-size: 1.5rem; /* 24px */
-    line-height: 2rem; /* 32px */
-}
-
-.markdown h4
-{
-    font-size: 1.25rem; /* 20px */
-    line-height: 1.75rem; /* 28px */
-    margin-bottom: .5rem;
-} 
 

@@ -1,9 +1,6 @@
 const path = require('path')
 
 module.exports = {
-  presets: [
-    require('frappe-ui/src/utils/tailwind.config')
-  ],
   content: [
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",

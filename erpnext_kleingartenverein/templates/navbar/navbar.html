@@ -102,7 +102,7 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
 <div class="invisible md:visible flex items-center md:order-2">
   <button type="button" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
     data-dropdown-placement="bottom">
-    <i class="fa fa-sign-in text-nature-white text-6xl aria-hidden=" true"></i>
+    <i class="fa fa-sign-in text-nature-white text-lg aria-hidden=" true"></i>
   </button>
   <!-- Dropdown menu -->
   <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow"
@@ -146,7 +146,7 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
       </svg>
     </button>
     
-    <div class="hidden w-full md:block md:w-auto text-3xl " id="navbar-multi-level">
+    <div class="hidden w-full md:block md:w-auto text-lg " id="navbar-multi-level">
       <div class="flex justify-between">
         <ul class="w-full flex flex-col font-medium 
           md:flex-row 
@@ -154,9 +154,12 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
           text-nature-white
           ">
 
-          <li class="pl-3 flex-col"><a href="/">
-              <i class="fa fa-home text-6xl mr-4"></i>
-              <span class="visible md:invisible">Home</span>
+          <li class="pl-3 py-2 md:py-0">
+            <a href="/">
+              <div class="flex">
+                <div><i class="fa fa-home text-lg mr-4"></i></div>
+                  <div class="md:hidden">Home</div>
+              </div>  
             </a>
           </li>
           {% if top_bar_items -%}
@@ -167,7 +170,7 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
           {%- endfor %}
           {%- endif %}
 
-          <li class="flex items-center visible md:invisible">
+          <li class="flex items-center visible border-t-4 border-indigo-500 md:invisible py-2 md:py-0">
             <button class="flex w-full
             hover:bg-gray-50
             w-full
@@ -187,4 +190,14 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
       </div>
     </div>
   </div>
+
+  <!-- breadcrumbs -->
+  {%- set breadcrumb_count = breadcrumbs|length -%}
+  {%if breadcrumb_count > 0 %}
+  <div class="container bg-nature-green mx-auto items-center justify-start mt-2 px-4 py-2">
+    {% block breadcrumbs %}
+    {% include 'erpnext_kleingartenverein/templates/breadcrumbs/breadcrumbs.html' %}
+    {% endblock %}
+  </div>
+  {%- endif -%}
 </nav>

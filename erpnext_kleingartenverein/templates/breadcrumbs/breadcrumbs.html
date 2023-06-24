@@ -22,13 +22,10 @@
 </li>
 {% endmacro %}
 
-{%- set breadcrumb_count = breadcrumbs|length -%}
-<div class=" {%if breadcrumb_count > 0 %}  border-t border-nature-green-100 {%endif%} pt-2">
-  {%- if breadcrumb_count > 0 -%}
+<div>
+  
   <nav class="flex" aria-label="Breadcrumb">
     <ol class="inline-flex items-center space-x-1 md:space-x-3 ml-1">
-
-
 
       <li><a href="/">
           <i class="fa fa-home"></i>
@@ -40,5 +37,5 @@
       {% endfor %}
     </ol>
   </nav>
-  {%- endif -%}
+  
 </div>
