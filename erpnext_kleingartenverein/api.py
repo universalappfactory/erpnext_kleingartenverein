@@ -168,3 +168,20 @@ def get_breadcrumbs(context, current_route=None):
                 result.append((itm.url, itm.label))
 
     return result
+
+@frappe.whitelist(allow_guest=True)
+def get_public_events():
+    next_events = frappe.get_list(
+            "Event",
+            filters={
+                "event_type": "Public",
+                "status": "Open",
+                "_user_tags": ["like", "%homepage%"],
+            },
+            order_by="starts_on asc",
+            fields="*",
+            page_length=2,
+        )
+    return next_events
+
+

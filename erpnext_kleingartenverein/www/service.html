@@ -1,0 +1,28 @@
+{% extends base_template_path %}
+
+{% from "templates/head/head_with_image.html" import head_with_image with context %}
+
+{%- block customhead -%}
+
+    {% include 'erpnext_kleingartenverein/templates/public_js.html' %}
+    {% include 'erpnext_kleingartenverein/templates/public_script.html' %}
+    
+{%- endblock -%}
+
+{%- block content -%}
+
+{{ head_with_image(_('Dates'), default_header_image) }}
+
+<div class="w-full  flex justify-center bg-graygreen-100">
+  <div class="md:max-w-[90vh] mx-4 my-4">
+    <div id="app"></div>
+    <div id="modals"></div>
+    <div id="popovers"></div>
+  </div>
+</div>
+
+{%- endblock -%}
+
+{%- block script %}
+<script> window.csrf_token = '{{ csrf_token }}'; </script>
+{%- endblock %}

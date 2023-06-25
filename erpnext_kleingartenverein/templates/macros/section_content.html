@@ -14,9 +14,16 @@
     </h1>
     {% endif %}
 
+    {% if item.custom_template and item.custom_template != 'Markdown' %}
+      {% if item.custom_template == 'Downloads' %}
+      {% from "templates/macros/downloads.html" import downloads %}
+      {{downloads(item.custom_template_parameters)}}
+      {% endif %}
+    {% else %}
     <div class="markdown mt-4">
       {{ item.content | markdown}}
     </div>
+    {% endif %}
   </div>
 
   {% if item.content_template == 'RightPreview' %}

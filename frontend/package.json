@@ -5,16 +5,21 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=/assets/erpnext_kleingartenverein/frontend/ && yarn copy-html-entry && yarn create-script-template && yarn create-js-template",
+    "buildpublic": "vite build -c vite.public.config.js --base=/assets/erpnext_kleingartenverein/frontend/ && yarn copy-service-entry && yarn create-public-script-template && yarn create-public-js-template",
     "preview": "vite preview",
     "copy-html-entry": "cp ../erpnext_kleingartenverein/public/frontend/index.html ../erpnext_kleingartenverein/www/dashboard.html",
+    "copy-service-entry": "cp ../erpnext_kleingartenverein/public/frontend/service.html ../erpnext_kleingartenverein/www/service_template.html",
     "create-script-template": "cat ../erpnext_kleingartenverein/www/dashboard.html | grep -E  \"stylesheet\" > ../erpnext_kleingartenverein/templates/script.html ",
-    "create-js-template": "cat ../erpnext_kleingartenverein/www/dashboard.html | grep -E  \"module\" > ../erpnext_kleingartenverein/templates/js.html "
+    "create-js-template": "cat ../erpnext_kleingartenverein/www/dashboard.html | grep -E  \"module\" > ../erpnext_kleingartenverein/templates/js.html ",
+    "create-public-script-template": "cat ../erpnext_kleingartenverein/www/service_template.html | grep -E  \"stylesheet\" > ../erpnext_kleingartenverein/templates/public_script.html ",
+    "create-public-js-template": "cat ../erpnext_kleingartenverein/www/service_template.html | grep -E  \"module\" > ../erpnext_kleingartenverein/templates/public_js.html "
   },
   "dependencies": {
     "feather-icons": "^4.28.0",
     "flowbite": "^1.6.6",
     "frappe-ui": "^0.0.112",
     "vue": "^3.2.25",
+    "vue-cal": "^4.8.1",
     "vue-router": "^4.0.12"
   },
   "devDependencies": {

@@ -24,13 +24,13 @@ export default defineConfig({
     emptyOutDir: true,
     target: 'es2015',
     cssCodeSplit: true, // Stelle sicher, dass dies auf true gesetzt ist, um das CSS zu splitten
-    cssMinify: false,
-    minify: false,
+    cssMinify: true,
+    minify: true,
     rollupOptions: {
       input: [
         'src/main.ts',
         'index.html',
-        `${path.resolve(__dirname)}/test.html`
+        `${path.resolve(__dirname)}/test.html`,
       ],
       external: /^lit-element/,
     },

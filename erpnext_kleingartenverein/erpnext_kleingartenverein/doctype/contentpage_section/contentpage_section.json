@@ -14,7 +14,9 @@
   "separator_type",
   "background_css",
   "separator_background_css",
-  "custom_section_css"
+  "custom_section_css",
+  "custom_template",
+  "custom_template_parameters"
  ],
  "fields": [
   {
@@ -71,12 +73,24 @@
    "fieldname": "custom_section_css",
    "fieldtype": "Data",
    "label": "Custom Section Css"
+  },
+  {
+   "default": "Markdown",
+   "fieldname": "custom_template",
+   "fieldtype": "Select",
+   "label": "Custom Template",
+   "options": "Markdown\nDownloads\nBilder"
+  },
+  {
+   "fieldname": "custom_template_parameters",
+   "fieldtype": "Data",
+   "label": "Custom Template Parameters"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-21 11:27:30.862886",
+ "modified": "2023-06-25 10:23:07.668820",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Contentpage Section",

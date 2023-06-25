@@ -1,6 +1,6 @@
 import base64
 import frappe
-
+from drive.api.files import list_folder_contents, get_file_content
 
 def get_value(source, fieldname):
     if hasattr(source, fieldname):
@@ -30,3 +30,45 @@ def get_row_by_value(source, fieldname, matching_value):
         value = get_value(row, fieldname)
         return row if value == matching_value else None
     return None
+
+
+def parse_info(drive_entity):
+    try:
+        entity = frappe.get_doc('Drive Entity', drive_entity.name)
+        file = open(entity.path, "rb")
+        lines = file.readlines()
+
+        result = dict()
+        result['title'] = 'info.txt'
+        for line in lines:
+            asString = line.decode("utf-8")
+            if '|' in asString:
+                data = asString.split('|')
+                result[data[0]] = data[1]
+
+        return result
+    except frappe.DoesNotExist:
+        return {}
+
+def get_folder_contents(folder_name):
+    # 
+    if not folder_name:
+        return  []
+
+    all_folders = frappe.get_list('Drive Entity', fields='*', filters={
+        "is_group": 1,
+        "title": folder_name
+    })
+    result = []
+    info = None
+    for folder in all_folders:
+        contents = list_folder_contents(folder.name)
+        for item in contents:
+            if item.title == 'info.txt':
+                info = parse_info(item)
+            else:
+                result.append(item)
+            
+    if info:
+        result.append(info)
+    return result

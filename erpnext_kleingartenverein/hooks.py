@@ -60,6 +60,9 @@ website_route_rules = [
     {"from_route": "/aushaenge/<name>", "to_route": "bulletin"},
     {"from_route": "/aushaenge/page/<number>", "to_route": "Bulletin"},
     {"from_route": "/aushaenge", "to_route": "Bulletin"},
+    {"from_route": "/service/calendar", "to_route": "service"},
+    {"from_route": "/termine", "to_route": "service"},
+    {"from_route": "/kalender", "to_route": "service"},
 ]
 
 # home_page = "erpnext_kleingartenverein"
@@ -78,7 +81,8 @@ jinja = {
 	# "methods": "erpnext_kleingartenverein.utils.jinja_methods",
 	"filters": [
     	"erpnext_kleingartenverein.utils.jinja_filters.as_base_xx",
-        "erpnext_kleingartenverein.utils.jinja_filters.get_row_by_value"
+        "erpnext_kleingartenverein.utils.jinja_filters.get_row_by_value",
+        "erpnext_kleingartenverein.utils.jinja_filters.get_folder_contents"
 	]
 }
 

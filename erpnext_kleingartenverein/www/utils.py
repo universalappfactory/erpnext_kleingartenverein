@@ -1,6 +1,4 @@
-import datetime
 import frappe
-from frappe.website.utils import get_home_page
 
 
 def ensure_login():
@@ -30,8 +28,6 @@ def add_default_context_data(context):
     context.club_name = club_settings.club_name
     context.club_city = club_settings.club_city
     context.default_header_image = club_settings.default_header_image
-
-    
 
 
 class DefaultContextData:

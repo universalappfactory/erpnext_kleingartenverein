@@ -67,6 +67,18 @@ export default defineComponent({
 				href: "/paechter",
 				icon: "fa-list",
 				mode: NavigationMode.Router
+			},
+			{
+				displayTitle: "Kalender",
+				href: "/calendar",
+				icon: "fa-list",
+				mode: NavigationMode.Router
+			},
+			{
+				displayTitle: "Drive",
+				href: "/drive",
+				icon: "fa-list",
+				mode: NavigationMode.External
 			}
 		]
 

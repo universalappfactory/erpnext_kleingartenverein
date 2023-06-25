@@ -1,8 +1,6 @@
 <template>
    <NavbarComponent />
-
    
-
    <div class="p-4 sm:ml-64">
 
       <div class="m-8 p-4 mb-4 text-lg text-yellow-800 rounded-lg bg-yellow-50" role="alert">

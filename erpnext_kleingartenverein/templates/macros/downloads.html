@@ -1,0 +1,65 @@
+{% macro download_button(file) %}
+<div class="flex">
+    <a href="/api/method/drive.api.files.get_file_content?entity_name={{file.name}}&trigger_download=1"
+        class="flex items-center">
+        <svg aria-hidden="true" class="w-4 h-4 mr-2 fill-current" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+                d="M2 9.5A3.5 3.5 0 005.5 13H9v2.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 15.586V13h2.5a4.5 4.5 0 10-.616-8.958 4.002 4.002 0 10-7.753 1.977A3.5 3.5 0 002 9.5zm9 3.5H9V8a1 1 0 012 0v5z"
+                clip-rule="evenodd"></path>
+        </svg>
+        {{_('Download')}}
+    </a>
+</div>
+{% endmacro %}
+
+{% macro link_text(info, file) %}
+    {% if info %}
+        {% set text = info[file.title]  %}
+        {% if text %}
+            {{text}}
+        {%else%}
+            {{file.title}}
+        {%endif%}
+    {%else%}
+        {{file.title}}
+    {%endif%}
+{% endmacro %}
+
+
+
+{% macro downloads(options) %}
+
+{% set allOptions = options.split(';') %}
+
+<div class="bg-nature-white w-full rounded py-4">
+    {% set folder_contents = allOptions[0] | get_folder_contents %}
+
+    {% if allOptions | length > 1 %}
+    <p  class="text-lg md:text-xl ml-2 mb-4 mr-2 text-ellipsis overflow-hidden">{{allOptions[1]}}</p>
+    {% endif %}
+
+    {% set info = folder_contents | selectattr("title", "eq", "info.txt") | first %}
+
+    <div class="text-sm text-left text-gray-500 border-separate border-spacing-4">
+        {% for file in folder_contents | selectattr("title", "ne", "info.txt") %}
+        <div class="grid grid-cols-2 px-4 py-2">
+            <div class="text-ellipsis overflow-hidden">
+                {{ link_text(info, file) }}
+            </div>
+            <div class="ml-2">
+                {{ download_button(file) }}
+            </div>
+        </div>
+        {% endfor %}
+
+        </table>
+        {% if info and info.Quelle %}
+        
+        <div class="flex px-4 mt-2 font-semibold">
+            <p>{{_('Quelle')}}:</p>
+            <p class="ml-2">{{info.Quelle}}</p>
+        </div>
+        {%endif%}
+    </div>
+    {% endmacro %}

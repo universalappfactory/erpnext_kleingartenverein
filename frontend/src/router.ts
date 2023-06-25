@@ -11,6 +11,11 @@ const routes = [
     name: 'Pächter',
     component: () => import('@/pages/Paechter.vue'),
   },
+  {
+    path: '/calendar',
+    name: 'Kalender',
+    component: () => import('@/pages/InternalCalendar.vue'),
+  },
 ]
 
 let router = createRouter({
