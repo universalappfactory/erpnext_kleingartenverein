@@ -80,8 +80,11 @@
             </div>
             <h6 class="text-xl font-semibold text-nature-white">{{item.headline}}</h6>
             <ul class="text-nature-white">
-                <li>Tag des Kleingartens</li>
-                <li>Gemeinschaftsarbeit</li>
+                
+                {%- for item in next_events -%}
+                <li>{{frappe.format_date(item.starts_on)}} - {{item.subject}}</li>
+                {%- endfor -%}
+                
             </ul>
             <p>
                 <a href="{{item.link}}">{{item.link_text}}</a>
