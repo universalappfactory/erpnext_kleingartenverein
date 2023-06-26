@@ -19,9 +19,6 @@ class StartPage(WebsiteGenerator, DefaultContextData):
 
         now = datetime.datetime.now()
 
-        # "order_by": "published_at desc",
-        #             "filters": {"is_published": 1, "published_at": ["<", datetime.now()]},
-
         next_events = frappe.get_list(
             "Event",
             filters={
@@ -34,5 +31,18 @@ class StartPage(WebsiteGenerator, DefaultContextData):
             fields="*",
             page_length=2,
         )
-        print(next_events)
         context.next_events = next_events
+
+        context.next_teamwork_dates = []
+        next_teamwork_dates = frappe.get_list(
+            "Teamwork Date",
+            filters={
+                "date": [">=", now],
+                "is_published": 1
+            },
+            order_by="date asc",
+            fields="*",
+            page_length=1,
+        )
+        for date in next_teamwork_dates:
+            context.next_teamwork_dates.append(frappe.get_doc('Teamwork Date', date.name))

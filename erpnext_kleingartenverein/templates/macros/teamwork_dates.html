@@ -1,0 +1,32 @@
+{% macro teamwork_dates(options) %}
+
+{% set teamwork_dates = get_open_teamwork_dates() %}
+
+<div class="grid mt-8 mb-8 rounded-lg shadow-sm md:mb-6 grid-cols-1 md:grid-cols-2 gap-8">
+    {%- for teamwork_date in teamwork_dates -%}
+    <div id="{{teamwork_date.name}}"
+        class="rounded flex flex-col items-center justify-center p-8 text-center bg-white border-b border-gray-200  md:border-r">
+        <div class="max-w-2xl mx-auto mb-4 text-gray-500">
+            <h3 class="text-lg font-semibold text-gray-900">{{teamwork_date.headline}}</h3>
+            
+            <p class="my-4">{{teamwork_date.description}}</p>
+            <p class="font-semibold" >Wann? Am {{frappe.format_date(teamwork_date.date)}} </p>
+
+            
+            {%- set number_of_participants = teamwork_date.participants | length -%}
+            {%- set missing = teamwork_date.minimum_participants - number_of_participants -%}
+            {%- set remaining = teamwork_date.maximum_participants - number_of_participants -%}
+            <div class="text-red-900">
+                {%- if missing > 0 -%}
+                <p>{{_('Wir benötigen noch mindestens')}} {{missing}} {{_('Teilnehmer')}}</p>
+                {%- elif remaining > 0 -%}
+                <p>{{_('Wir haben noch')}} {{remaining}} {{_('freie Plätze')}}</p>
+                {%- endif -%}
+            </div>
+            
+        </div>
+    </div>
+    {%- endfor -%}
+</div>
+
+{% endmacro %}

@@ -42,21 +42,21 @@
                 inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg
                 rounded-full">
                 {%- if item.image -%}
-                    <img src="{{item.image}}" />
+                <img src="{{item.image}}" />
                 {%- endif -%}
             </div>
-            
+
             {% for entry in last_blog_entries %}
-                {%- if entry.headline -%}
-                <a href="{{entry.route}}">
-                    <h6 class="text-xl text-nature-white font-semibold">{{entry.headline}}</h6>
-                    {%- if entry.abstract -%}
-                    <p class="mt-2 mb-4 text-nature-white truncate text-ellipsis min-h-[10%] max-h-16">
+            {%- if entry.headline -%}
+            <a href="{{entry.route}}">
+                <h6 class="text-xl text-nature-white font-semibold">{{entry.headline}}</h6>
+                {%- if entry.abstract -%}
+                <p class="mt-2 mb-4 text-nature-white truncate text-ellipsis min-h-[10%] max-h-16">
                     {{entry.abstract}}
-                    </p>
-                    {%- endif -%}
-                </a>
+                </p>
                 {%- endif -%}
+            </a>
+            {%- endif -%}
             {% endfor %}
 
             <p class="mt-2">
@@ -80,12 +80,39 @@
             </div>
             <h6 class="text-xl font-semibold text-nature-white">{{item.headline}}</h6>
             <ul class="text-nature-white">
-                
-                {%- for item in next_events -%}
-                <li>{{frappe.format_date(item.starts_on)}} - {{item.subject}}</li>
+
+                {%- for evt in next_events -%}
+                <li>{{frappe.format_date(evt.starts_on)}} - {{evt.subject}}</li>
                 {%- endfor -%}
-                
+
             </ul>
+
+            {%- set number_of_teamwork_dates = next_teamwork_dates | length -%}
+            {% if number_of_teamwork_dates > 0 %}
+            <ul class="my-2 py-2 font-semibold text-red-900 border-t-2 border-nature-white  border-b-2 ">
+
+                {%- for teamwork_date in next_teamwork_dates -%}
+                {%- set number_of_participants = teamwork_date.participants | length -%}
+                {%- set missing = teamwork_date.minimum_participants - number_of_participants -%}
+                {%- set remaining = teamwork_date.maximum_participants - number_of_participants -%}
+                <li>
+                    <a href="paechter/gemeinschaftsarbeit/#{{teamwork_date.name}}">
+                        <div>
+                            {{frappe.format_date(teamwork_date.date)}} - {{teamwork_date.headline}}
+                        </div>
+                        <div>
+                            {%- if missing > 0 -%}
+                            <p>{{_('Wir benötigen noch mindestens')}} {{missing}} {{_('Teilnehmer')}}</p>
+                            {%- elif remaining > 0 -%}
+                            <p>{{_('Wir haben noch')}} {{remaining}} {{_('freie Plätze')}}</p>
+                            {%- endif -%}
+                        </div>
+                    </a>
+                </li>
+                {%- endfor -%}
+            </ul>
+            {%- endif -%}
+
             <p class="mt-2">
                 <a href="{{item.link}}">{{item.link_text}}</a>
             </p>

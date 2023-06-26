@@ -36,11 +36,24 @@ module.exports = {
         },
         'nature-white': {
           DEFAULT: '#ebebeb'
-        }
+        },
+        // 
+        'primary-page': {
+          DEFAULT: '#F2D98D'
+        },
+        'highlight-dark': {
+          DEFAULT: '#A6786D'
+        },
+        'highlight-light': {
+          DEFAULT: '#D9665B'
+        },
+        'head': {
+          DEFAULT: '##2A3E59'
+        },
       },
-      backgroundImage: theme => ({
-        'first-startpage-card': "url('/assets/erpnext_kleingartenverein/images/flower.png')",
-      })
+      // backgroundImage: theme => ({
+      //   'first-startpage-card': "url('/assets/erpnext_kleingartenverein/images/flower.png')",
+      // })
     },
     listStyleType: {
       none: 'none',

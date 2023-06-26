@@ -78,7 +78,9 @@ website_route_rules = [
 
 # add methods and filters to jinja environment
 jinja = {
-	# "methods": "erpnext_kleingartenverein.utils.jinja_methods",
+	"methods": [
+        "erpnext_kleingartenverein.utils.jinja_methods.get_open_teamwork_dates",
+    ],
 	"filters": [
     	"erpnext_kleingartenverein.utils.jinja_filters.as_base_xx",
         "erpnext_kleingartenverein.utils.jinja_filters.get_row_by_value",

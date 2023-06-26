@@ -2,14 +2,14 @@
 
 <div class="flex flex-wrap items-center card-section">
 
-  {% if item.content_template == 'LeftPreview' %}
+  {% if item.card and item.content_template == 'LeftPreview' %}
   {{ section_card(item) }}
   {% endif %}
 
-  <div class="md:w-5/12 px-4 mr-auto ml-auto">
+  <div class="{% if item.card %} md:w-5/12 {%else%} w-full {%endif%} px-4 mr-auto ml-auto">
 
     {% if item.headline %}
-    <h1 class="text-nature-white mb-2 text-lg">
+    <h1 class="text-nature-white mb-4 text-lg {% if not item.card %}text-center{%endif%} mt-4">
       {{ item.headline }}
     </h1>
     {% endif %}
@@ -19,6 +19,10 @@
       {% from "templates/macros/downloads.html" import downloads %}
       {{downloads(item.custom_template_parameters)}}
       {% endif %}
+      {% if item.custom_template == 'Teamwork Dates' %}
+      {% from "templates/macros/teamwork_dates.html" import teamwork_dates %}
+      {{teamwork_dates(item.custom_template_parameters)}}
+      {% endif %}
     {% else %}
     <div class="markdown mt-4">
       {{ item.content | markdown}}
@@ -26,7 +30,7 @@
     {% endif %}
   </div>
 
-  {% if item.content_template == 'RightPreview' %}
+  {% if item.card and item.content_template == 'RightPreview' %}
   {{ section_card(item) }}
   {% endif %}
 </div>
