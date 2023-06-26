@@ -36,7 +36,7 @@
     {% set folder_contents = allOptions[0] | get_folder_contents %}
 
     {% if allOptions | length > 1 %}
-    <p  class="text-lg md:text-xl ml-2 mb-4 mr-2 text-ellipsis overflow-hidden">{{allOptions[1]}}</p>
+    <p  class="text-center text-lg md:text-xl ml-2 mb-4 mr-2 text-ellipsis overflow-hidden">{{allOptions[1]}}</p>
     {% endif %}
 
     {% set info = folder_contents | selectattr("title", "eq", "info.txt") | first %}
