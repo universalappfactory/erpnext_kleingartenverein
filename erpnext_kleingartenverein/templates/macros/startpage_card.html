@@ -1,10 +1,31 @@
+{% macro bulletin_item(item, submenu=False, parent=False) %}
+<li class="text-font-link-400">
+
+    <a href="{{item.route}}" class="inline-flex items-center font-medium hover:underline">
+        {{item.headline}}
+        <svg aria-hidden="true" class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                clip-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</li>
+{% endmacro %}
+
+{% macro show_all(item) %}
+<p class="mt-2 text-font-dark">
+    <a href="{{item.link}}">{{item.link_text}}</a>
+</p>
+{% endmacro %}
+
 {% macro bulletin_card(item) %}
 <div class="w-full md:w-4/12  lg:pt-12 pt-6  px-4 text-center">
-    <div class="relative flex flex-col min-w-0 break-words bg-nature-green w-full mb-8 shadow-lg rounded-lg">
-        <div class="px-4 py-5 flex-auto text-white">
-            <div class="text-nature-white  text-center
+    <div class="relative text-font-light flex flex-col min-w-0 break-words bg-highlight-light-100 w-full mb-8 shadow-lg rounded-lg">
+        <div class="px-4 py-5 flex-auto">
+            <div class="text-center
                 inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg
-                bg-first-startpage-card
                 rounded-full">
                 <a href="{{item.link}}">
                     {%- if item.image -%}
@@ -12,19 +33,16 @@
                     {%- endif -%}
                 </a>
             </div>
-            <h6 class="text-xl font-semibold mb-2">
+            <h1 class="text-xl font-semibold mb-2">
                 <a href="{{item.link}}">{{ item.headline }}</a>
-            </h6>
+            </h1>
             <ul>
                 {% for item in bulletins %}
                 {{ bulletin_item(item, parent=True) }}
                 {% endfor %}
             </ul>
-            <p class="mt-2 text-gray-800">
-                <a href="{{item.link}}">
-                    {{ item.link_text }}
-                </a>
-            </p>
+            
+            {{show_all(item)}}
         </div>
     </div>
 </div>
@@ -36,9 +54,9 @@
 
 {%- macro blog_card(item) -%}
 <div class="w-full md:w-4/12 px-4 text-center">
-    <div class="relative flex flex-col min-w-0 break-words bg-nature-green-300 w-full mb-8 shadow-lg rounded-lg">
+    <div class="relative text-font-light flex flex-col min-w-0 break-words bg-highlight-light-200 w-full mb-8 shadow-lg rounded-lg">
         <div class="px-4 py-5 flex-auto">
-            <div class="text-nature-white  text-center
+            <div class="  text-center
                 inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg
                 rounded-full">
                 {%- if item.image -%}
@@ -49,9 +67,9 @@
             {% for entry in last_blog_entries %}
             {%- if entry.headline -%}
             <a href="{{entry.route}}">
-                <h6 class="text-xl text-nature-white font-semibold">{{entry.headline}}</h6>
+                <h6 class="text-xl font-semibold">{{entry.headline}}</h6>
                 {%- if entry.abstract -%}
-                <p class="mt-2 mb-4 text-nature-white truncate text-ellipsis min-h-[10%] max-h-16">
+                <p class="mt-2 mb-4 truncate text-ellipsis min-h-[10%] max-h-16">
                     {{entry.abstract}}
                 </p>
                 {%- endif -%}
@@ -59,9 +77,7 @@
             {%- endif -%}
             {% endfor %}
 
-            <p class="mt-2">
-                <a href="{{item.link}}">{{item.link_text}}</a>
-            </p>
+            {{ show_all(item) }}
         </div>
     </div>
 </div>
@@ -69,17 +85,17 @@
 
 {%- macro calendar_card(item) -%}
 <div class="w-full md:w-4/12 px-4 lg:pt-8 pt-4  text-center">
-    <div class="relative flex flex-col min-w-0 break-words bg-nature-green-200 w-full mb-8 shadow-lg rounded-lg">
+    <div class="text-font-light relative flex flex-col min-w-0 break-words bg-highlight-light-300 w-full mb-8 shadow-lg rounded-lg">
         <div class="px-4 py-5 flex-auto">
-            <div class="text-nature-white  text-center
+            <div class="text-center
                 inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg
                 rounded-full">
                 {%- if item.image -%}
                 <img src="{{item.image}}" />
                 {%- endif -%}
             </div>
-            <h6 class="text-xl font-semibold text-nature-white">{{item.headline}}</h6>
-            <ul class="text-nature-white">
+            <h6 class="text-xl font-semibold">{{item.headline}}</h6>
+            <ul>
 
                 {%- for evt in next_events -%}
                 <li>{{frappe.format_date(evt.starts_on)}} - {{evt.subject}}</li>
@@ -89,22 +105,22 @@
 
             {%- set number_of_teamwork_dates = next_teamwork_dates | length -%}
             {% if number_of_teamwork_dates > 0 %}
-            <ul class="my-2 py-2 font-semibold text-red-900 border-t-2 border-nature-white  border-b-2 ">
+            <ul class="my-2 py-2 font-semibold  border-t-2 border-nature-white  border-b-2 ">
 
                 {%- for teamwork_date in next_teamwork_dates -%}
                 {%- set number_of_participants = teamwork_date.participants | length -%}
                 {%- set missing = teamwork_date.minimum_participants - number_of_participants -%}
                 {%- set remaining = teamwork_date.maximum_participants - number_of_participants -%}
-                <li>
+                <li class="text-font-warn">
                     <a href="paechter/gemeinschaftsarbeit/#{{teamwork_date.name}}">
                         <div>
                             {{frappe.format_date(teamwork_date.date)}} - {{teamwork_date.headline}}
                         </div>
                         <div>
                             {%- if missing > 0 -%}
-                            <p>{{_('Wir benötigen noch mindestens')}} {{missing}} {{_('Teilnehmer')}}</p>
+                            <p>{{_('We still need')}} {{missing}} {{_('members')}}</p>
                             {%- elif remaining > 0 -%}
-                            <p>{{_('Wir haben noch')}} {{remaining}} {{_('freie Plätze')}}</p>
+                            <p>{{_('We have')}} {{remaining}} {{_('remaining places')}}</p>
                             {%- endif -%}
                         </div>
                     </a>
@@ -113,9 +129,7 @@
             </ul>
             {%- endif -%}
 
-            <p class="mt-2">
-                <a href="{{item.link}}">{{item.link_text}}</a>
-            </p>
+            {{ show_all(item) }}
         </div>
     </div>
 </div>

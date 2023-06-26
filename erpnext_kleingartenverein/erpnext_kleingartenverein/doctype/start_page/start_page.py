@@ -14,7 +14,9 @@ class StartPage(WebsiteGenerator, DefaultContextData):
             "Bulletin", fields="*", order_by="date desc", page_length=2
         )
         context.last_blog_entries = frappe.get_list(
-            "Blog Page", fields="*", order_by="published_at desc", page_length=1
+            "Blog Page", fields="*", 
+            order_by="published_at desc", 
+            page_length=1
         )
 
         now = datetime.datetime.now()

@@ -4,6 +4,7 @@
 # import frappe
 from datetime import datetime
 
+import frappe
 from frappe.exceptions import DoesNotExistError
 from frappe.website.website_generator import WebsiteGenerator
 from erpnext_kleingartenverein.api import get_breadcrumbs
@@ -43,13 +44,25 @@ class BlogPage(WebsiteGenerator, DefaultContextData):
         context.breadcrumbs = get_breadcrumbs(context, route)
 
 
+def get_list(doctype, txt, filters, limit_start, limit_page_length=20, order_by="modified"):
+    items = frappe.get_list(
+        doctype, filters={"is_published": 1, "published_at": ["<", datetime.now()]},
+                             order_by="published_at desc",fields="*")
+    result = []
+    # for itm in items:
+    #     result.append(frappe.get_doc('Blog Page', itm.name))
+
+    return items
+
+
 def get_list_context(context=None):
     add_default_context_data(context)
 
+# 
     context.update(
         {
             "order_by": "published_at desc",
-            "filters": {"is_published": 1, "published_at": ["<", datetime.now()]},
+            "filters": {"is_published": 1, "published_at": ["<=", datetime.now()]},
             "breadcrumbs": get_breadcrumbs(context),
         }
     )

@@ -7,8 +7,16 @@
 {% from "templates/macros/default_section.html" import render_section with context %}
 
 {% block page_content %}
-      
-    {{ head_with_image(headline, default_header_image) }}
+    
+    {% set ns = namespace(background='text-primary-page') %}
+
+    {%- if sections | length > 0 -%}
+      {% if  sections[0].separator_background_css %}
+        {%set ns.background=sections[0].separator_background_css %}
+      {%- endif -%}
+    {%- endif -%}
+
+    {{ head_with_image(headline, default_header_image, ns.background) }}
     
     {% for item in sections %}
       {{ render_section(item) }}

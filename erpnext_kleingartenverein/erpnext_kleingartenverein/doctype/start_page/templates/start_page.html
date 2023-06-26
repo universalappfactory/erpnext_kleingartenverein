@@ -1,13 +1,5 @@
 {% extends "templates/web.html" %}
 
-{% macro bulletin_item(item, submenu=False, parent=False) %}
-<li>
-  <a href="{{item.route}}">
-    {{item.headline}}
-  </a>
-</li>
-{% endmacro %}
-
 {% from "templates/macros/separator.html" import separator with context %}
 {% from "templates/macros/section_card.html" import section_card with context %}
 {% from "templates/macros/section_content.html" import section_content with context %}
