@@ -12,7 +12,6 @@ def get_open_teamwork_dates():
         },
         order_by="date asc",
         fields="*",
-        page_length=2,
     )
     for date in next_teamwork_dates:
         result.append(frappe.get_doc('Teamwork Date', date.name))
