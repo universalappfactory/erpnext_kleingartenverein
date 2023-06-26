@@ -54,7 +54,7 @@ export default defineComponent({
       orderBy: 'starts_on asc',
       start: 0,
       pageLength: 20,
-      url: 'http://localhost:8000/api/method/erpnext_kleingartenverein.api.get_public_events'
+      url: '/api/method/erpnext_kleingartenverein.api.get_public_events'
     })
 
     events.fetch()
