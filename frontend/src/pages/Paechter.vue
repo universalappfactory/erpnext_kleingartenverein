@@ -19,7 +19,7 @@
          </p>
       </div>
    
-      <TableComponent @loadMore="loadMoreData" :items="tenants.data" :checkable="false" :hasNext="tenants.hasNextPage"
+      <GridTable @loadMore="loadMoreData" :items="tenants.data" :checkable="false" :hasNext="tenants.hasNextPage"
          :columns="tableColumns" />
    </div>
 </template>
@@ -29,7 +29,7 @@ import { initFlowbite } from 'flowbite'
 
 import NavbarComponent from "../components/Navbar.vue";
 import FooterComponent from "../components/Footer.vue";
-import TableComponent from "../components/Table.vue";
+import GridTable from "../components/GridTable.vue";
 import { Dropdown } from 'frappe-ui'
 import { Alert, Button } from 'frappe-ui'
 import { Button, LoadingText, createListResource } from 'frappe-ui'
@@ -43,7 +43,7 @@ export default defineComponent({
       Dropdown,
       Alert,
       Button,
-      TableComponent
+      GridTable
    },
 
    methods: {

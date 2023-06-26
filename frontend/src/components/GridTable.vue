@@ -72,7 +72,7 @@
                         </th>
                     </template>
 
-                    <TableHead v-for="col in columns" :key="col.DisplayTitle" :name="col.DisplayTitle" />
+                    <TableHead v-for="col in customColumns" :key="col.DisplayTitle" :name="col.DisplayTitle" />
                 </tr>
             </thead>
             <tbody>
@@ -87,7 +87,9 @@
                             </div>
                         </td>
                     </template>
-                    <ColumnValue :column="col" :item="row" v-for="col in columns" :key="col.DisplayTitle" />
+                    <td>
+                        <PaechterGrid :item="row"></PaechterGrid>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -119,14 +121,14 @@
 <script lang="ts">
 import { PropType, defineComponent, ref } from 'vue';
 import TableHead from "../components/TableHead.vue";
-import ColumnValue from "../components/ColumnValue.vue";
+import PaechterGrid from "../components/PaechterGrid.vue";
 
-import { TableColumn } from '../ts/table'
+import { ColumnMode, TableColumn } from '../ts/table'
 export default defineComponent({
-    name: "navbar",
+    name: "GridTable",
     components: {
         TableHead,
-        ColumnValue,
+        PaechterGrid,
     },
     methods: {
         executeLoadMore() {
@@ -162,8 +164,16 @@ export default defineComponent({
     },
     data() {
         const isLoading: boolean = false
+        const customColumns : TableColumn[] = [
+            {
+                DisplayTitle: 'Pächter',
+                Mode: ColumnMode.Default,
+                PropertyNames: []
+            }
+        ]
         return {
-            isLoading
+            isLoading,
+            customColumns
         }
     },
 
