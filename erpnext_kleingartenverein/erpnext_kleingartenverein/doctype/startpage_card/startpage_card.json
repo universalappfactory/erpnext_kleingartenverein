@@ -41,7 +41,7 @@
   },
   {
    "fieldname": "image",
-   "fieldtype": "Image",
+   "fieldtype": "Attach Image",
    "label": "Image"
   },
   {
@@ -61,7 +61,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-20 15:56:07.381087",
+ "modified": "2023-06-26 18:32:15.431814",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Startpage Card",
