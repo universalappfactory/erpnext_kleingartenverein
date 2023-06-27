@@ -1,14 +1,7 @@
 {% macro render_dropdown(parent_item) %}
-<button  data-dropdown-toggle="{{parent_item.name}}"
-
-class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b 
-         border-gray-100 
-         hover:bg-gray-50
-         w-full
-         md:hover:bg-transparent 
-         md:border-0 
-         md:hover:text-blue-700 
-         md:p-0 md:w-auto">
+<button data-dropdown-toggle="{{parent_item.name}}" class="
+      hidden sm:flex items-center {{button_css()}}
+         ">
   {{parent_item.label}}
   <svg class="w-5 h-5 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
     xmlns="http://www.w3.org/2000/svg">
@@ -39,6 +32,75 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
 {% endmacro %}
 
 
+{% macro dropdown_children(parent_item) %}
+{% if top_bar_items -%}
+<div id="accordion-collapse-body-{{parent_item.name}}" class="hidden"
+  aria-labelledby="accordion-collapse-heading-{{parent_item.name}}">
+  <div class="border border-gray-200">
+    {%- for childitem in top_bar_items -%}
+
+    {% if childitem.parent_label and childitem.parent_label != '' and childitem.parent_label == parent_item.label -%}
+
+    <a href="{{childitem.url}}">
+    <p class="{{child_button_css()}}">
+      {{childitem.label}}
+    </p>
+    </a>
+
+    {%- else -%}
+    {%- endif -%}
+    {%- endfor %}
+  </div>
+</div>
+{%- endif %}
+{% endmacro %}
+
+{% macro render_accordion(parent_item) %}
+<div id="accordion-collapse" data-accordion="collapse" class="w-full text-font-light block md:hidden mb-2">
+  <h2 id="accordion-collapse-heading-{{parent_item.name}}">
+    <button type="button"
+      class="{{button_css()}}"
+      data-accordion-target="#accordion-collapse-body-{{parent_item.name}}" aria-expanded="false"
+      aria-controls="accordion-collapse-body-{{parent_item.name}}">
+      <div class="flex">
+        <p class="w-full text-left">{{parent_item.label}}</p>
+        <svg data-accordion-icon class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          clip-rule="evenodd"></path>
+      </svg>
+      </div>
+    </button>
+  </h2>
+
+  {{ dropdown_children(parent_item) }}
+</div>
+
+
+{% endmacro %}
+
+{% macro button_css() %}
+         py-2 pl-3 pr-4 border-b 
+         border-gray-100 
+         hover:bg-gray-50
+         w-full
+         md:hover:bg-transparent 
+         md:border-0 
+         md:hover:text-blue-700 
+         md:p-0 md:w-auto
+{% endmacro %}
+
+{% macro child_button_css() %}
+         py-2 pl-3 pr-4
+         border-gray-100 
+         hover:bg-gray-50
+         w-full
+         md:hover:bg-transparent 
+         md:hover:text-blue-700 
+         
+{% endmacro %}
+
 {% macro render_item(navbar_item, submenu=False, parent=False) %}
 <ul class="w-full md:w-fit flex flex-col lg:flex-row list-none mr-auto justify-center">
 
@@ -53,10 +115,10 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
   <li class="flex items-center">
     {% if ns.has_children -%}
     {{render_dropdown(navbar_item)}}
+    {{render_accordion(navbar_item)}}
     {% else %}
-  <li>
-    <a href="{{navbar_item.url}}"
-      class="block py-2 pl-3 pr-4 bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0" aria-current="page">
+  <li class="flex items-center">
+    <a href="{{navbar_item.url}}" class="{{button_css()}}">
       {{navbar_item.label}}
     </a>
   </li>
@@ -125,8 +187,7 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
 <nav class="top-0 absolute z-50 w-full flex flex-wrap">
   <div class="container bg-head mx-auto items-center justify-start mt-4 px-4 py-4">
 
-    <button data-collapse-toggle="navbar-multi-level" type="button"
-      class="inline-flex items-center ml-3 text-sm text-nature-white 
+    <button data-collapse-toggle="navbar-multi-level" type="button" class="inline-flex items-center ml-3 text-sm text-nature-white 
              rounded-sm
              md:hidden 
              p-2
@@ -135,8 +196,7 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
              hover:opacity-75
              focus:outline-none 
              focus:ring-2 
-             focus:ring-gray-200"
-      aria-controls="navbar-multi-level" aria-expanded="false">
+             focus:ring-gray-200" aria-controls="navbar-multi-level" aria-expanded="false">
       <span class="sr-only">Open main menu</span>
       <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg">
@@ -145,7 +205,7 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
           clip-rule="evenodd"></path>
       </svg>
     </button>
-    
+
     <div class="hidden w-full md:block md:w-auto text-lg " id="navbar-multi-level">
       <div class="flex justify-between">
         <ul class="w-full flex flex-col font-medium 
@@ -158,8 +218,8 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
             <a href="/">
               <div class="flex h-full items-center">
                 <div><i class="fa fa-home text-lg mr-4"></i></div>
-                  <div class="md:hidden">Home</div>
-              </div>  
+                <div class="md:hidden">Home</div>
+              </div>
             </a>
           </li>
           {% if top_bar_items -%}
@@ -171,17 +231,14 @@ class="flex items-center justify-between w-full py-2 pl-3 pr-4 border-b
           {%- endif %}
 
           <li class="flex items-center visible mt-4 md:invisible py-2 md:py-0">
-            <button class="flex w-full
-            hover:bg-gray-50
-            w-full
+            <button class="
+            {{button_css()}}
             " 
-            id="user-dropdown-button-2"
-            aria-expanded="false"
-            data-dropdown-toggle="user-dropdown"
-            data-dropdown-placement="bottom">
+            id="user-dropdown-button-2" aria-expanded="false" data-dropdown-toggle="user-dropdown"
+              data-dropdown-placement="bottom">
               <a>Mein Kleingartenverein</a>
-            </li>
-          </button>  
+          </li>
+          </button>
         </ul>
 
         {%- if user and user != '' and user != 'Guest' -%}
