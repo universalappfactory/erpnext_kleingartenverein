@@ -20,7 +20,7 @@ export default defineConfig({
     extract: true
   },
   build: {
-    outDir: `../${path.basename(path.resolve('..'))}/public/frontend`,
+    outDir: `../${path.basename(path.resolve('..'))}/public/frontend/db`,
     emptyOutDir: true,
     target: 'es2015',
     cssCodeSplit: true, // Stelle sicher, dass dies auf true gesetzt ist, um das CSS zu splitten
