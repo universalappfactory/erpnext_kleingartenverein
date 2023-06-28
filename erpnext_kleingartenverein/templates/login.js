@@ -148,7 +148,7 @@ login.call = function (args, callback) {
 }
 
 login.set_status = function (message, color) {
-	$('section:visible .btn-primary').text(message)
+	$('#login_button').text(message)
 	if (color == "red") {
 		$('section:visible .page-card-body').addClass("invalid");
 	}

@@ -50,3 +50,7 @@
 {
     @apply text-left leading-relaxed text-xl
 }
+
+.invalid-login {
+    @apply bg-red-800 !important
+}
