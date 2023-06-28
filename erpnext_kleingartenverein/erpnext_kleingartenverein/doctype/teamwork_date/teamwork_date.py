@@ -5,9 +5,14 @@ import frappe
 from frappe import _
 from frappe.website.website_generator import WebsiteGenerator
 from itertools import groupby
-
+from erpnext_kleingartenverein.www.utils import ensure_login
 
 class TeamworkDate(WebsiteGenerator):
+
+    def get_context(self, context):
+        ensure_login()
+        super().get_context(context)
+
     def after_insert(self):
         self.make_validations()
 

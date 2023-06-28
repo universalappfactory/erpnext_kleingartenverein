@@ -7,10 +7,12 @@ from frappe import _
 from erpnext_kleingartenverein.api import get_breadcrumbs
 from erpnext_kleingartenverein.www.utils import (
     DefaultContextData,
+    ensure_login
 )
 
 
 class MemberDashboard(WebsiteGenerator, DefaultContextData):
     def get_context(self, context):
+        ensure_login()
         super().get_context(context)
         context.breadcrumbs = get_breadcrumbs(context, self.route)

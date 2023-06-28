@@ -2,6 +2,7 @@
  "actions": [],
  "allow_guest_to_view": 1,
  "allow_rename": 1,
+ "autoname": "format:Bulletin-{YY}-{MM}-{DD}-{##}",
  "creation": "2023-05-29 07:10:36.212276",
  "default_view": "List",
  "doctype": "DocType",
@@ -47,10 +48,11 @@
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-16 20:02:40.112738",
+ "modified": "2023-06-28 16:09:37.898440",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Bulletin",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

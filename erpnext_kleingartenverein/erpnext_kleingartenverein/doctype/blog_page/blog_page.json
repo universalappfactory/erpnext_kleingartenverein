@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_guest_to_view": 1,
  "allow_rename": 1,
  "autoname": "format:BlogPage-{YY}-{MM}-{DD}-{###}",
  "creation": "2023-06-13 17:39:31.345715",
@@ -93,7 +94,7 @@
  "index_web_pages_for_search": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-06-26 11:52:40.870248",
+ "modified": "2023-06-28 16:06:02.093817",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Blog Page",

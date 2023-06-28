@@ -11,6 +11,7 @@ from erpnext_kleingartenverein.api import get_breadcrumbs
 from erpnext_kleingartenverein.www.utils import (
     DefaultContextData,
     add_default_context_data,
+    ensure_login
 )
 
 
@@ -39,6 +40,7 @@ class BlogPage(WebsiteGenerator, DefaultContextData):
         if not self.is_published or self.published_at > datetime.now():
             raise DoesNotExistError()
 
+        ensure_login()
         super().get_context(context)
         route = "/".join(self.route.split("/")[:-1])
         context.breadcrumbs = get_breadcrumbs(context, route)
@@ -56,6 +58,7 @@ def get_list(doctype, txt, filters, limit_start, limit_page_length=20, order_by=
 
 
 def get_list_context(context=None):
+    ensure_login()
     add_default_context_data(context)
 
 # 

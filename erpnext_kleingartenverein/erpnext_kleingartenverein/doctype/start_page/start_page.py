@@ -4,11 +4,12 @@
 import datetime
 import frappe
 from frappe.website.website_generator import WebsiteGenerator
-from erpnext_kleingartenverein.www.utils import DefaultContextData
+from erpnext_kleingartenverein.www.utils import DefaultContextData, ensure_login
 
 
 class StartPage(WebsiteGenerator, DefaultContextData):
     def get_context(self, context):
+        ensure_login()
         super().get_context(context)
         context.bulletins = frappe.get_list(
             "Bulletin", fields="*", order_by="date desc", page_length=2

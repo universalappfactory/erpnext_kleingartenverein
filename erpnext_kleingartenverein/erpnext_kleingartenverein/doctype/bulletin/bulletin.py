@@ -8,6 +8,7 @@ from erpnext_kleingartenverein.api import get_breadcrumbs
 from erpnext_kleingartenverein.www.utils import (
     DefaultContextData,
     add_default_context_data,
+    ensure_login
 )
 
 
@@ -46,11 +47,13 @@ class Bulletin(WebsiteGenerator, DefaultContextData):
         return self.scrub(self.headline)
 
     def get_context(self, context):
+        ensure_login()
         super().get_context(context)
         context.breadcrumbs = get_breadcrumbs(context, self.route)
 
 
 def get_list_context(context=None):
+    ensure_login()
     add_default_context_data(context)
     context.order_by = "date desc"
     context.breadcrumbs = get_breadcrumbs(context)
