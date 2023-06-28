@@ -9,7 +9,7 @@
 
 .card-section ul
 {
-    @apply max-w-md space-y-1 text-gray-800 list-square pt-4 pb-4;
+    @apply max-w-xl space-y-1 list-square pt-4 pb-4;
 }
 
 .card-section p {

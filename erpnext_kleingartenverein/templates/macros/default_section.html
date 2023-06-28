@@ -1,6 +1,6 @@
 {% macro render_section(item) %}
 
-{% set ns = namespace(css='py-20') %}
+{% set ns = namespace(css='pb-20',padding_top='') %}
 {%- if item.custom_section_css -%}
     {% set ns.css = item.custom_section_css %}
 {%- endif -%}
@@ -8,8 +8,12 @@
 <section class="relative {{ns.css}} {{item.background_css}}">
     {% if item.separator_type == 'Top' %}
     {{ separator(item)}}
+    {% else %}
+    {% set ns.padding_top = 'pt-20' %}
     {% endif %}
-    <div class="container mx-auto px-4">
+
+    
+    <div class="container mx-auto px-4 {{ns.padding_top}}">
         {{ section_content(item)}}
     </div>
     {% if item.separator_type == 'Bottom' %}
