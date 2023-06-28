@@ -6,6 +6,7 @@
 
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
+  import './tailwind.css'
 
   export default defineComponent({
   name: 'App',
