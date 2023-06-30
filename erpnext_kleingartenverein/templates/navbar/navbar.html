@@ -1,6 +1,6 @@
 {% macro render_dropdown(parent_item) %}
 <button data-dropdown-toggle="{{parent_item.name}}" class="
-      hidden sm:flex items-center {{button_css()}}
+      hidden md:flex md:fit items-center {{button_css()}}
          ">
   {{parent_item.label}}
   <svg class="w-5 h-5 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
@@ -187,24 +187,28 @@
 <nav class="top-0 absolute z-50 w-full flex flex-wrap">
   <div class="container bg-head mx-auto items-center justify-start mt-4 px-4 py-4">
 
-    <button data-collapse-toggle="navbar-multi-level" type="button" class="inline-flex items-center ml-3 text-sm text-nature-white 
-             rounded-sm
-             md:hidden 
-             p-2
-             hover:bg-gray-100 
-             hover:text-white
-             hover:opacity-75
-             focus:outline-none 
-             focus:ring-2 
-             focus:ring-gray-200" aria-controls="navbar-multi-level" aria-expanded="false">
-      <span class="sr-only">Open main menu</span>
-      <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd"
-          d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-          clip-rule="evenodd"></path>
-      </svg>
-    </button>
+    <div class="flex items-center md:hidden ">
+      <button data-collapse-toggle="navbar-multi-level" type="button" class="inline-flex items-center ml-3 text-sm text-nature-white 
+              rounded-sm
+              p-2
+              hover:bg-gray-100 
+              hover:text-white
+              hover:opacity-75
+              focus:outline-none 
+              focus:ring-2 
+              focus:ring-gray-200" aria-controls="navbar-multi-level" aria-expanded="false">
+        <span class="sr-only">Open main menu</span>
+        <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd"
+            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+            clip-rule="evenodd"></path>
+        </svg>
+      </button>
+      <div class="text-font-light text-lg text-center w-full -ml-8">
+        {{club_name}}
+      </div>
+    </div>
 
     <div class="hidden w-full md:block md:w-auto text-lg " id="navbar-multi-level">
       <div class="flex justify-between">
@@ -213,15 +217,16 @@
           md:space-x-8 md:mt-0 md:border-0  
           text-nature-white
           ">
-
+          
           <li class="pl-3 py-2 md:py-0">
             <a href="/">
               <div class="flex h-full items-center">
                 <div><i class="fa fa-home text-lg mr-4"></i></div>
-                <div class="md:hidden">Home</div>
+                <div class="md:hidden">{{_('Home')}}</div>
               </div>
             </a>
           </li>
+
           {% if top_bar_items -%}
           {%- for itm in top_bar_items -%}
           {% if not itm.parent_label and not itm.right -%}

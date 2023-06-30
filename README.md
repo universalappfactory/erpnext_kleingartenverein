@@ -44,7 +44,7 @@ code .
 
 # launch a terminal in vs-code and call bench init
 nvm use v16
-PYENV_VERSION=3.10.5 bench init --skip-redis-config-generation --frappe-branch version-14 frappe-bench
+PYENV_VERSION=3.10.12 bench init --skip-redis-config-generation --frappe-branch version-14 frappe-bench
 cd frappe-bench
 
 bench set-config -g db_host mariadb
@@ -58,6 +58,8 @@ bench --site mysite.localhost clear-cache
 
 bench get-app payments
 bench get-app --branch version-14 --resolve-deps erpnext
+bench get-app https://github.com/frappe/drive
+bench get-app https://github.com/universalappfactory/erpnext_kleingartenverein
 
 bench --site mysite.localhost install-app erpnext
 bench --site mysite.localhost install-app erpnext_kleingartenverein

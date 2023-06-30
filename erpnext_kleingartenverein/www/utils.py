@@ -1,5 +1,5 @@
 import frappe
-
+from frappe.exceptions import DoesNotExistError
 
 def ensure_login():
     if frappe.session.user == "Guest":
@@ -24,10 +24,14 @@ def add_default_context_data(context):
     context.user = frappe.session.user
     context.csrf_token = csrf_token
 
-    club_settings = frappe.get_last_doc("Club Settings")
-    context.club_name = club_settings.club_name
-    context.club_city = club_settings.club_city
-    context.default_header_image = club_settings.default_header_image
+    try:
+        club_settings = frappe.get_last_doc("Club Settings")
+        context.club_name = club_settings.club_name
+        context.club_city = club_settings.club_city
+        context.default_header_image = club_settings.default_header_image
+    except DoesNotExistError:
+        pass
+
 
 
 class DefaultContextData:

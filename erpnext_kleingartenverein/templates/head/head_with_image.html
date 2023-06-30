@@ -2,13 +2,13 @@
 
 {%- set breadcrumb_count = breadcrumbs|length -%}
 
-<div class="relative flex h-[25vh] md:h-[30vh] primary-page">
+<div class="relative flex h-[20vh] md:h-[30vh] primary-page">
 
     <div class="absolute top-0 w-full h-full bg-center bg-cover " style='background-image: url("{{ image }}");'>
         <span id="blackOverlay" class="w-full h-full absolute opacity-50 bg-black"></span>
     </div>
 
-    <div class="w-full h-full grid content-center justify-center">
+    <div class="w-full hidden md:flex h-full grid content-center justify-center">
         <div>
             <div
                 class="mx-4 md:max-w-lg py-4 px-4 text-center {%if breadcrumb_count > 0 %} mt-[5em] {%endif%}  border rounded border-solid border-nature-white shadow-lg opacity-75">
