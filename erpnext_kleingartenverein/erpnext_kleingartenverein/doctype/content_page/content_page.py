@@ -7,12 +7,14 @@ from erpnext_kleingartenverein.api import get_breadcrumbs
 from erpnext_kleingartenverein.www.utils import (
     DefaultContextData,
     add_default_context_data,
-    ensure_login
+    ensure_login,
+    invalidate_caches
 )
 
 class ContentPage(WebsiteGenerator, DefaultContextData):
     def validate(self):
         self.set_route()
+        invalidate_caches()
 
     def set_route(self):
         if self.is_website_published() and not self.route:

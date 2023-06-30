@@ -70,9 +70,13 @@ export default defineComponent({
   },
   methods: {
     getDate(date): string {
-      const dt = new Date(date)
-      console.log(dt)
-      return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDay()} ${dt.getHours()}:${dt.getMinutes()}`
+      try {
+        const dt = new Date(date)
+        return dt;
+      } catch(e) {
+        console.log('fail')
+        console.error(e)
+      }
     },
     getStartDate(event): string {
       return this.getDate(event.starts_on)
@@ -84,8 +88,13 @@ export default defineComponent({
       return this.getStartDate(event)
     },
     formatedDate(input: string) {
-      const dt = new Date(input)
-      return dt.toLocaleDateString("de-DE")
+      try {
+        const dt = new Date(input)
+        console.log(dt, input)
+        return dt.toLocaleDateString("de-DE")
+      } catch(e) {
+        console.error(e)
+      }
     },
     logEvents(name, event) {
       const matching = this.calendarEvents.find(e => e.index === event.index)

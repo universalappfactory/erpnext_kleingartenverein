@@ -76,8 +76,7 @@ export default defineComponent({
   methods: {
     getDate(date): string {
       const dt = new Date(date)
-      console.log(dt)
-      return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDay()} ${dt.getHours()}:${dt.getMinutes()}`
+      return dt
     },
     getStartDate(event): string {
       return this.getDate(event.starts_on)
