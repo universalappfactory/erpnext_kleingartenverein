@@ -176,7 +176,7 @@ def get_public_events():
             filters={
                 "event_type": "Public",
                 "status": "Open",
-                "_user_tags": ["like", "%homepage%"],
+                "_user_tags": ["like", "%omepage%"],
             },
             order_by="starts_on asc",
             fields="*",

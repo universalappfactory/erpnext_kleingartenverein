@@ -32,6 +32,14 @@ def add_default_context_data(context):
     except DoesNotExistError:
         pass
 
+def invalidate_caches():
+    try:
+        start_pages = frappe.get_list('Start Page', pluck="name")
+        for p in start_pages:
+            frappe.cache.delete_value(p)
+
+    except Exception as e:
+        frappe.log_error(e)
 
 
 class DefaultContextData:

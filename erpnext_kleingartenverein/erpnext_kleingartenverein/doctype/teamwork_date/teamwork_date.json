@@ -19,7 +19,8 @@
   "participants",
   "date",
   "is_published",
-  "route"
+  "route",
+  "event_link"
  ],
  "fields": [
   {
@@ -66,8 +67,7 @@
   {
    "fieldname": "route",
    "fieldtype": "Data",
-   "label": "Route",
-   "reqd": 1
+   "label": "Route"
   },
   {
    "default": "0",
@@ -85,12 +85,18 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Description"
+  },
+  {
+   "fieldname": "event_link",
+   "fieldtype": "Link",
+   "label": "Event Link",
+   "options": "Event"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-06-28 16:06:50.869536",
+ "modified": "2023-06-30 14:41:28.255744",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Teamwork Date",
