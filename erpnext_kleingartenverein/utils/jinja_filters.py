@@ -53,22 +53,25 @@ def parse_info(drive_entity):
 
 
 def get_folder_contents(folder_name):
-    if not folder_name:
-        return []
+    try:
+        if not folder_name:
+            return []
 
-    all_folders = frappe.get_list(
-        "Drive Entity", fields="*", filters={"is_group": 1, "title": folder_name}
-    )
-    result = []
-    info = None
-    for folder in all_folders:
-        contents = list_folder_contents(folder.name)
-        for item in contents:
-            if item.title == "info.txt":
-                info = parse_info(item)
-            else:
-                result.append(item)
+        all_folders = frappe.get_list(
+            "Drive Entity", fields="*", filters={"is_group": 1, "title": folder_name}
+        )
+        result = []
+        info = None
+        for folder in all_folders:
+            contents = list_folder_contents(folder.name)
+            for item in contents:
+                if item.title == "info.txt":
+                    info = parse_info(item)
+                else:
+                    result.append(item)
 
-    if info:
-        result.append(info)
-    return result
+        if info:
+            result.append(info)
+        return result
+    except:
+        return [] # ToDo make frappe errorlog

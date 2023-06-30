@@ -27,21 +27,19 @@
 {% block page_content %}
 
 <div class="relative left-8 mr-8 pt-16 pb-32 flex content-center items-center justify-center" style="min-height: 25vh;">
-
     <div class="absolute top-0 w-full mr-8 h-full bg-center bg-cover"
         style="background-image: url(&quot;{{image}}&quot;);">
     </div>
 </div>
 
-
 <section class="blog-page pb-20 -mt-24">
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto md:px-4">
         <div class="flex flex-wrap">
-            <div class="md:w-full px-4 text-center">
+            <div class="md:w-full md:px-4 text-center">
                 <div
-                    class="relative flex flex-col min-w-0 break-words {{background_css}} w-full mb-8 shadow-lg rounded-lg">
+                    class="relative flex flex-col min-w-0 break-words {{background_css}} w-full mb-8 md:shadow-lg md:rounded-lg">
 
-                    <div class="mt-8 text-white text-3xl mb-8">
+                    <div class="mt-12 md:mt-8 text-white text-3xl mb-8 px-2">
                         <h1>{{headline}}</h1>
                     </div>
 
