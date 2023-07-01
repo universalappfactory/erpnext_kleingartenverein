@@ -1,18 +1,32 @@
+{%- macro padding(space_value, padding_kind) -%}
+{%- if space_value == 'Extra Small' -%}
+    -{{padding_kind}}-10
+{%- elif space_value == 'Small' -%}
+    -{{padding_kind}}-6
+{%- elif space_value == 'Medium' -%}
+    {{padding_kind}}-20
+{%- elif space_value == 'Large' -%}
+    {{padding_kind}}-32
+{%- elif space_value == 'Extra Large' -%}
+    {{padding_kind}}-48
+{%- elif space_value == 'Default' -%}
+    {{padding_kind}}-20
+{%- endif -%}
+{%- endmacro -%}
+
+
 {% macro render_section(item) %}
 
-{% set ns = namespace(css='pb-20',padding_top='') %}
+{% set ns = namespace(css='', padding_top='', top_space='', bottom_space='') %}
 {%- if item.custom_section_css -%}
     {% set ns.css = item.custom_section_css %}
 {%- endif -%}
 
-<section class="relative {{ns.css}} {{item.background_css}}">
+<section class="relative {{ns.css}} {{item.background_css}} {{padding(item.top_space,'pt')}} {{padding(item.bottom_space,'pb')}} ">
     {% if item.separator_type == 'Top' %}
     {{ separator(item)}}
-    {% else %}
-    {% set ns.padding_top = 'pt-20' %}
-    {% endif %}
+    {%- endif -%}
 
-    
     <div class="container mx-auto px-4 {{ns.padding_top}}">
         {{ section_content(item)}}
     </div>

@@ -17,7 +17,9 @@
   "custom_section_css",
   "custom_template",
   "custom_template_parameters",
-  "separator_style"
+  "separator_style",
+  "top_space",
+  "bottom_space"
  ],
  "fields": [
   {
@@ -92,12 +94,26 @@
    "fieldtype": "Select",
    "label": "SeparatorStyle",
    "options": "Up\nDown\nWave"
+  },
+  {
+   "default": "Default",
+   "fieldname": "top_space",
+   "fieldtype": "Select",
+   "label": "Top Space",
+   "options": "Default\nExtra Small\nSmall\nMedium\nLarge\nExtra Large"
+  },
+  {
+   "default": "Default",
+   "fieldname": "bottom_space",
+   "fieldtype": "Select",
+   "label": "Bottom Space",
+   "options": "Default\nExtra Small\nSmall\nMedium\nLarge\nExtra Large"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-28 14:32:51.322802",
+ "modified": "2023-07-01 11:08:57.715030",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Contentpage Section",
