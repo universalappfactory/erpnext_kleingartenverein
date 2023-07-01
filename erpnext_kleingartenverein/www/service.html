@@ -11,10 +11,10 @@
 
 {%- block content -%}
 
-{{ head_with_image(_('Dates'), default_header_image) }}
+{{ head_with_image(_('Dates'), default_header_image, separator=False ) }}
 
-<div class="w-full  flex justify-center bg-graygreen-100">
-  <div class="md:max-w-[90vh] mx-4 my-4">
+<div class="w-full flex justify-center bg-graygreen-100 bg-[url('/files/20230529_202141.jpg')]">
+  <div class="w-full md:max-w-[90vh] md:mx-4 md:my-4">
     <div id="app"></div>
     <div id="modals"></div>
     <div id="popovers"></div>

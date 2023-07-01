@@ -1,6 +1,7 @@
 # Copyright (c) 2023, Kleingartenverein and contributors
 # For license information, please see license.txt
 
+from frappe.desk.doctype.tag.tag import DocTags
 import frappe
 from frappe import _
 from frappe.utils import getdate
@@ -81,8 +82,10 @@ class TeamworkDate(WebsiteGenerator):
         event.event_type = "Public"
         event.description = self.description
         event.starts_on = self.date
-        event.add_tag('Homepage')
         event.save()
+        
+        if self.is_published:
+            event.add_tag('Homepage')
         return event.name
 
     def event_exists(self):
@@ -111,8 +114,12 @@ class TeamworkDate(WebsiteGenerator):
 
             tags = event.get_tags()
             # homepage_tag = 
-            if not 'Homepage' in (t for t in tags):
+            if self.is_published and not 'Homepage' in (t for t in tags):
                 event.add_tag('Homepage')
+                save_event = True
+            
+            if not self.is_published:
+                DocTags(event.doctype).remove(event.name, 'Homepage')
                 save_event = True
 
             if save_event:

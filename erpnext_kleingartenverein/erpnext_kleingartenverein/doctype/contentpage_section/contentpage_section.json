@@ -45,7 +45,7 @@
    "fieldname": "content_template",
    "fieldtype": "Select",
    "label": "Content Template",
-   "options": "LeftPreview\nRightPreview",
+   "options": "LeftPreview\nRightPreview\nTopLeftPreview\nTopRightPreview",
    "reqd": 1
   },
   {
@@ -113,7 +113,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-07-01 11:08:57.715030",
+ "modified": "2023-07-01 11:59:47.737509",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Contentpage Section",

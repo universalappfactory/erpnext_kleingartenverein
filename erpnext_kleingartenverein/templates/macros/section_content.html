@@ -1,8 +1,16 @@
 {% macro section_content(item) %}
 
-<div class="flex flex-wrap items-center justify-center card-section">
+{% set ns = namespace(align='items-center') %}
+{%- if item.card and item.content_template == 'TopLeftPreview'  -%}
+    {% set ns.align = '' %}
+{%- endif -%}
+{%- if item.card and item.content_template == 'TopRightPreview'  -%}
+    {% set ns.align = '' %}
+{%- endif -%}
 
-  {% if item.card and item.content_template == 'LeftPreview' %}
+<div class="flex flex-wrap {{ns.align}} justify-center card-section">
+
+  {% if item.card and (item.content_template == 'LeftPreview' or item.content_template == 'TopLeftPreview') %}
   {{ section_card(item) }}
   {% endif %}
 
@@ -30,7 +38,7 @@
     {% endif %}
   </div>
 
-  {% if item.card and item.content_template == 'RightPreview' %}
+  {% if item.card and (item.content_template == 'RightPreview' or item.content_template == 'TopRightPreview')%}
   {{ section_card(item) }}
   {% endif %}
 </div>

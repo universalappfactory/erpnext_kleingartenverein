@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="">
     <div class="hidden md:block">
     <vue-cal 
         class="bg-nature-white"  
@@ -15,12 +15,12 @@
     </vue-cal>
     </div>
 
-    <div>
-      <h1 class="text-center text-2xl mt-8">Alle Termine</h1>
+    <div class="bg-sand md:mt-8">
+      <h1 class="text-center text-2xl py-8">Alle Termine</h1>
     </div>
-    <div class="flex justify-center mt-4">
+    <div class="flex justify-center">
       <div class="overflow-x-auto w-full">
-        <table class="w-full text-sm text-left text-gray-500 border-separate border-spacing-4">
+        <table class="w-full text-sm text-left text-gray-500 body border border-gray-400 border-spacing-4">
           <tbody>
             <tr v-for="(event, index) in calendarEvents" :key="index"
               class="border-b dark:bg-gray-900 dark:border-gray-700" :class="event.selected ? 'bg-red-100' : 'bg-gray-50'">

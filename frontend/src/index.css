@@ -9,7 +9,7 @@
 
 .card-section ul
 {
-    @apply max-w-xl space-y-1 list-square pt-4 pb-4;
+    @apply max-w-xl space-y-1 list-square pt-2 pb-1 font-semibold;
 }
 
 .card-section p {
@@ -46,11 +46,26 @@
     @apply text-nature-white
 }
 
-.blog-page .markdown p
+/* .blog-page .markdown p
 {
     @apply text-left leading-relaxed text-xl
-}
+} */
 
 .invalid-login {
     @apply bg-red-800 !important
+}
+
+.markdown h1
+{
+    @apply mb-2
+}
+
+.markdown h2
+{
+    @apply mb-2
+}
+
+.markdown h3
+{
+    @apply mb-2
 }
