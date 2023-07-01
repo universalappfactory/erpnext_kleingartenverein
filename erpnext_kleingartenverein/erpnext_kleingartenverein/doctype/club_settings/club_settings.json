@@ -14,7 +14,13 @@
   "sec_picture",
   "tab_picture",
   "website_column",
-  "default_header_image"
+  "default_header_image",
+  "club_mail_contact",
+  "club_phone_contact",
+  "club_contact_message",
+  "club_phone_message",
+  "club_mail_message",
+  "service_section_background"
  ],
  "fields": [
   {
@@ -62,11 +68,41 @@
    "fieldname": "default_header_image",
    "fieldtype": "Attach Image",
    "label": "Default Header Image"
+  },
+  {
+   "fieldname": "club_mail_contact",
+   "fieldtype": "Data",
+   "label": "Club Mail Contact"
+  },
+  {
+   "fieldname": "club_phone_contact",
+   "fieldtype": "Data",
+   "label": "Club Phone Contact"
+  },
+  {
+   "fieldname": "club_contact_message",
+   "fieldtype": "Markdown Editor",
+   "label": "Club Contact Message"
+  },
+  {
+   "fieldname": "club_phone_message",
+   "fieldtype": "Markdown Editor",
+   "label": "Club Phone Message"
+  },
+  {
+   "fieldname": "club_mail_message",
+   "fieldtype": "Markdown Editor",
+   "label": "Club Mail Message"
+  },
+  {
+   "fieldname": "service_section_background",
+   "fieldtype": "Attach Image",
+   "label": "Service Section Background Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-21 14:15:44.018662",
+ "modified": "2023-07-01 15:01:12.521919",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Club Settings",

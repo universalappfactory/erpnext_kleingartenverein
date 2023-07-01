@@ -69,3 +69,24 @@
 {
     @apply mb-2
 }
+
+.markdown table
+{
+    @apply rounded w-full text-left text-nature-white bg-highlight-light-200 mt-4
+}
+
+
+.markdown table thead tr th
+{
+    @apply py-4 text-center
+}
+
+.markdown table td
+{
+    @apply px-4 text-center
+}
+
+.markdown table tr:last-child td 
+{
+    @apply pb-4
+}

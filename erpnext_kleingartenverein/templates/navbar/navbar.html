@@ -88,6 +88,9 @@ md:hover:bg-transparent
 md:border-0
 md:hover:text-blue-700
 md:p-0 md:w-auto
+
+max-[1025px]:text-sm
+
 {% endmacro %}
 
 {% macro child_button_css() %}
@@ -101,7 +104,7 @@ md:hover:text-blue-700
 {% endmacro %}
 
 {% macro render_item(navbar_item, submenu=False, parent=False) %}
-<ul class="w-full  md:max-w-fit flex flex-col lg:flex-row list-none mr-4 justify-center">
+<ul class="whitespace-nowrap">
 
   {% set ns = namespace(has_children=false) %}
   {% if top_bar_items -%}
@@ -128,10 +131,7 @@ md:hover:text-blue-700
 
 {% macro usermenu() %}
 <div class="invisible md:visible flex items-center md:order-2">
-  <button type="button" 
-    id="user-menu-button" 
-    aria-expanded="false" 
-    data-dropdown-toggle="user-dropdown"
+  <button type="button" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
     data-dropdown-placement="bottom">
     <i class="fa fa-sign-in text-nature-white text-lg aria-hidden=" true"></i>
   </button>
@@ -157,8 +157,7 @@ md:hover:text-blue-700
   <div class="container bg-head mx-auto items-center justify-start mt-4 px-4 py-4">
 
     <div class="flex items-center md:hidden ">
-      <button data-collapse-toggle="navbar-multi-level" type="button" 
-              class="inline-flex items-center 
+      <button data-collapse-toggle="navbar-multi-level" type="button" class="inline-flex items-center 
               text-sm text-nature-white 
               rounded-sm
               p-2
@@ -201,7 +200,9 @@ md:hover:text-blue-700
           {% if top_bar_items -%}
           {%- for itm in top_bar_items -%}
           {% if not itm.parent_label and not itm.right -%}
-          {{ render_item(itm, parent=True) }}
+          <li class="w-full flex flex-col md:max-w-fit justify-center justify-center mr-4">
+            {{ render_item(itm, parent=True) }}
+          </li>
           {%- endif -%}
           {%- endfor %}
           {%- endif %}
@@ -212,12 +213,14 @@ md:hover:text-blue-700
             " id="user-dropdown-button-2" aria-expanded="false" data-dropdown-toggle="user-dropdown"
               data-dropdown-placement="bottom">
               <a>Mein Kleingartenverein</a>
+            </button>
           </li>
-          </button>
+
+
         </ul>
 
         {%- if user and user != '' and user != 'Guest' -%}
-        {{ usermenu() }}
+          {{ usermenu() }}
         {%- endif -%}
       </div>
     </div>

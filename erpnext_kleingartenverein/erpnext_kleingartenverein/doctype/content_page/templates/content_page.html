@@ -8,16 +8,20 @@
 
 {% block page_content %}
     
-    {% set ns = namespace(background='text-primary-page') %}
+    {% set ns = namespace(background='text-primary-page', header_image=header_image) %}
 
     {%- if sections | length > 0 -%}
       {% if  sections[0].separator_background_css %}
         {%set ns.background=sections[0].separator_background_css %}
       {%- endif -%}
     {%- endif -%}
-
-    {{ head_with_image(headline, default_header_image, ns.background) }}
     
+    {%- if not ns.header_image -%}
+    {% set ns.header_image = default_header_image %}
+    {%- endif -%}
+
+    {{ head_with_image(headline, ns.header_image, ns.background) }}
+
     {% for item in sections %}
       {{ render_section(item) }}
     {% endfor %}      

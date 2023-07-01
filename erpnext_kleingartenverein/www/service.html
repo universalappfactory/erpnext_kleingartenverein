@@ -13,7 +13,13 @@
 
 {{ head_with_image(_('Dates'), default_header_image, separator=False ) }}
 
-<div class="w-full flex justify-center bg-graygreen-100 bg-[url('/files/20230529_202141.jpg')]">
+{% set ns = namespace(background='') %}
+{%- if service_section_background  -%}
+    {% set ns.background = service_section_background %}
+{%- endif -%}
+
+
+<div class="w-full flex justify-center" style="background-image: url('{{ns.background}}'); background-size: cover;">
   <div class="w-full md:max-w-[90vh] md:mx-4 md:my-4">
     <div id="app"></div>
     <div id="modals"></div>

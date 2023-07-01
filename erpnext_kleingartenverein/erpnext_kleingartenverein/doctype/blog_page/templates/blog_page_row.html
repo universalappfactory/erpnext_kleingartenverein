@@ -1,19 +1,20 @@
 <article class="pt-4 pb-2 bg-highlight-dark-300 
 		px-4 
 		md:rounded w-full md:w-3/4 grid grid-cols-1 content-between">
-	
-	<h2 class="mb-2 text-center text-xl md:text-2xl font-bold tracking-tight text-gray-900 dark:text-white hover:underline"><a
-		href="/{{route}}">{{headline}}</a></h2>
-	
-		
+
+	<h2
+		class="mb-2 text-center text-xl md:text-2xl font-bold tracking-tight text-gray-900 dark:text-white hover:underline">
+		<a href="/{{route}}">{{headline}}</a></h2>
+
+
 	<div class="flex overflow-hidden text-clip">
 		{% if image %}
-				<img class="hidden md:block rounded-full w-24 h-24" src="{{image}}"></img>
+		<img class="hidden md:block rounded-full w-24 h-24" src="{{image}}"></img>
 		{% endif %}
 		{% if abstract %}
-			<a href="/{{route}}">
-				<p class="mb-5 md:pl-4 text-nature-white text-ellipsis overflow-hidden">{{abstract}}</p>
-			</a>
+		<a href="/{{route}}">
+			<p class="mb-5 md:pl-4 text-nature-white text-ellipsis overflow-hidden">{{abstract}}</p>
+		</a>
 		{% endif %}
 	</div>
 
@@ -21,56 +22,18 @@
 		<div class="flex text-sm text-gray-900">
 			<div class="hidden md:block md:pr-2">Veröffentlicht am</div>
 			<time>{{
-				frappe.format_date(published_at) }}</time></div>
-	
-		<a class="inline-flex items-center font-medium text-nature-white hover:underline"
-			href="/{{route}}">
-	
+				frappe.format_date(published_at) }}</time>
+		</div>
+
+		<a class="inline-flex items-center font-medium text-nature-white hover:underline" href="/{{route}}">
+
 			<div class="hidden md:block">Weiterlesen</div>
-			
-			<svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20"
-				xmlns="http://www.w3.org/2000/svg">
+
+			<svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 				<path fill-rule="evenodd"
 					d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
 					clip-rule="evenodd"></path>
 			</svg>
 		</a>
-	</div> 
-</article>
-
-
-<!-- <div class="flex items-center justify-center mb-3 text-gray-500">
-	<div>
-		<h2 class="mb-2 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white hover:underline"><a
-			href="/{{route}}">{{headline}}</a></h2>
 	</div>
-</div>
-	
-<div class="flex max-h-[10vh]">
-	{% if image %}
-	<img class="hidden md:block rounded-full w-32 h-32" src="{{image}}"></img>
-	{% endif %}
-		{% if abstract %}
-		<p class="mb-5 md:pl-4 text-nature-white text-ellipsis overflow-hidden">{{abstract}}</p>
-		{% endif %}
-</div>
-
-<div class="mt-4 flex items-center justify-between">
-	<div class="flex text-sm text-gray-900">
-		<div class="hidden md:block md:pr-2">Veröffentlicht am</div>
-		<time>{{
-			frappe.format_date(published_at) }}</time></div>
-
-	<a class="inline-flex items-center font-medium text-nature-white hover:underline"
-		href="/{{route}}">
-
-		<div class="hidden md:block">Weiterlesen</div>
-		
-		<svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20"
-			xmlns="http://www.w3.org/2000/svg">
-			<path fill-rule="evenodd"
-				d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-				clip-rule="evenodd"></path>
-		</svg>
-	</a>
-</div> -->
+</article>

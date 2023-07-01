@@ -1,4 +1,49 @@
 <footer class="bg-grayblue-100">
+    <div class="bg-graygreen-100 w-full pt-12 pb-12">
+
+        <div class="flex flex-wrap text-center justify-center">
+            <div class="w-full lg:w-6/12 px-4">
+                <h2 class="text-4xl font-semibold text-white">{{_('Contact')}}</h2>
+                <div class="py-4">
+                    {{club_contact_message | markdown}}
+                </div>
+            </div>
+        </div>
+
+        <div class="flex w-full justify-center mt-8">
+            <div class="text-center px-8">
+                <a href="mailto:{{club_mail_contact}}">
+                    <div
+                        class=" p-3 w-12 h-12 shadow-lg rounded-full bg-white inline-flex items-center justify-center">
+                        <i class="fa fa-envelope-o text-xl"></i>
+                    </div>
+                </a>
+
+                <h6 class="text-xl mt-5 font-semibold text-white">{{_('Per Mail')}}</h6>
+                {{club_mail_message | markdown}}
+                <p class="mt-2 mb-4">
+                    <a href="mailto:{{club_mail_contact}}">{{club_mail_contact}}</a>
+                </p>
+            </div>
+            <div class="text-center px-8">
+                <a href="tel:{{club_phone_contact}}">
+                    <div
+                        class="p-3 w-12 h-12 shadow-lg rounded-full bg-white inline-flex items-center justify-center">
+                        <i class="fa fa-phone text-xl"></i>
+                    </div>
+                </a>
+
+                <h6 class="text-xl mt-5 font-semibold text-white">{{_('Per Telefon')}}</h6>
+                
+                {{club_phone_message | markdown}}
+                <p>
+                    <a href="tel:{{club_phone_contact}}">
+                        {{club_phone_contact}}
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
     <div class="mx-auto w-full max-w-screen-xl p-8 py-6 lg:py-8">
         <hr class="my-6 border-gray-200 sm:mx-auto lg:my-8" />
         <div class="flex justify-center ...">
