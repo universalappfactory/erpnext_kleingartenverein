@@ -28,12 +28,31 @@
 				<span class="sr-only">Close menu</span>
 			</button>
 			<ul class="space-y-2 font-medium">
-				<li v-for="item in items" :key="item.displayTitle">
+				<li v-for="item in dashboard.navigation.data" :key="item.displayTitle">
 					<template v-if="isRouter(item)">
 						<a @click="navigateTo(item)"
 							class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
-							<i class="fa text-gray-500 text-6xl" :class="item.icon"></i>
-							<span class="ml-3">{{ item.displayTitle }}</span>
+							<i class=" text-gray-500 text-6xl" fa :class="item.icon"></i>
+							<div class="ml-3">{{ item.displayTitle }}
+								<div class="text-sm
+									relative
+									inline-flex 
+									items-center 
+									justify-center 
+									w-6 
+									h-6 
+									text-xs 
+									font-bold 
+									text-white 
+									bg-red-500 
+									border-2 
+									border-white 
+									rounded-full 
+									-top-2
+									-right-30 
+									dark:border-gray-900">20</div>	
+							</div>
+							
 						</a>
 					</template>
 					<template v-else>
@@ -50,9 +69,16 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { NavigationItem, NavigationMode } from '../ts/navigation';
+import { useDashboard } from '../ts/dashboard.ts'
 export default defineComponent({
 	name: "navbar",
 	components: {
+	},
+	setup() {
+		const dashboard = useDashboard();
+		return {
+			dashboard
+		}
 	},
 	methods: {
 		navigateTo(item: NavigationItem) {

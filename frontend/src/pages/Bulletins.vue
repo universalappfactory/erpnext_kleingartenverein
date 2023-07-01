@@ -35,7 +35,7 @@ import { Alert, Button, createListResource } from 'frappe-ui'
 import { ColumnMode, TableColumn } from '../ts/table';
 
 export default defineComponent({
-   name: "paechter",
+   name: "bulletins",
    components: {
       NavbarComponent,
       FooterComponent,

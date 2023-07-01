@@ -4,13 +4,16 @@ import { createApp } from 'vue'
 import router from './router_service'
 import App from './App.vue'
 import 'flowbite'
+import { createPinia } from 'pinia'
 
 import { Button, setConfig, frappeRequest, resourcesPlugin } from 'frappe-ui'
 
-let app = createApp(App)
+const pinia = createPinia()
+const app = createApp(App)
 
 setConfig('resourceFetcher', frappeRequest)
 
+app.use(pinia)
 app.use(router)
 app.use(resourcesPlugin)
 

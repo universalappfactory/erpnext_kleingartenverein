@@ -10,7 +10,7 @@ import json
 import random
 from datetime import datetime
 from frappe import _
-
+from frappe.permissions import get_user_permissions
 
 @frappe.whitelist()
 def execute_invoice_calculation(names, status):
@@ -184,3 +184,84 @@ def get_public_events():
     return next_events
 
 
+@frappe.whitelist(allow_guest=False)
+def get_dashboard_navigation():
+    user = frappe.session.user
+    if not user or user == 'Guest':
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    roles = frappe.get_roles(user)
+
+    if not 'MemberDashboard' in roles:
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    basic_navigation = [
+        {
+            'displayTitle': _('Dashboard'),
+            'href': '/dashboard',
+            'icon': 'fa-home',
+            'mode': 'NavigationMode.Router'
+
+        },
+        {
+            'displayTitle': _('Zur Homepage'),
+            'href': '/',
+            'icon': 'fa-globe',
+            'mode': 'NavigationMode.External'
+
+        }
+    ]
+    
+    if not 'Vorstand' in roles:
+        return basic_navigation
+    
+    basic_navigation.append(
+        {
+            'displayTitle': _('Zum Desk'),
+            'href': '/app/',
+            'icon': 'fa-desktop',
+            'mode': 'NavigationMode.External'
+
+        }
+    )
+
+    basic_navigation.append(
+        {
+            'displayTitle': _('Pächter'),
+            'href': '/paechter/',
+            'icon': 'fa-list',
+            'mode': 'NavigationMode.Router'
+
+        }
+    )
+
+    basic_navigation.append(
+        {
+            'displayTitle': _('Kalender'),
+            'href': '/calendar/',
+            'icon': 'fa-list',
+            'mode': 'NavigationMode.Router'
+
+        }
+    )
+
+    basic_navigation.append(
+        {
+            'displayTitle': _('Drive'),
+            'href': '/drive/',
+            'icon': 'fa-list',
+            'mode': 'NavigationMode.External'
+
+        }
+    )
+
+    basic_navigation.append(
+        {
+            'displayTitle': _('Logout'),
+            'href': '/logout/',
+            'icon': 'fa-sign',
+            'mode': 'NavigationMode.External'
+
+        }
+    )
+    return basic_navigation
