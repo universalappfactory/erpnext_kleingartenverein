@@ -101,7 +101,7 @@ md:hover:text-blue-700
 {% endmacro %}
 
 {% macro render_item(navbar_item, submenu=False, parent=False) %}
-<ul class="w-full md:w-fit flex flex-col lg:flex-row list-none mr-auto justify-center">
+<ul class="w-full  md:max-w-fit flex flex-col lg:flex-row list-none mr-4 justify-center">
 
   {% set ns = namespace(has_children=false) %}
   {% if top_bar_items -%}
@@ -182,14 +182,14 @@ md:hover:text-blue-700
       <div class="flex justify-between">
         <ul class="w-full flex flex-col font-medium 
           md:flex-row 
-          md:space-x-8 md:mt-0 md:border-0  
+          md:mt-0 md:border-0  
           text-nature-white
           ">
 
-          <li class="pl-3 py-2 md:py-0">
+          <li class="pl-3  md:pl-0 py-2 md:py-0">
             <a href="/">
               <div class="flex h-full items-center">
-                <div><i class="fa fa-home text-lg mr-4"></i></div>
+                <div><i class="fa fa-home text-lg mr-4 md:mr-8"></i></div>
                 <div class="md:hidden">{{_('Home')}}</div>
               </div>
             </a>

@@ -10,6 +10,7 @@
  "engine": "InnoDB",
  "field_order": [
   "startpage_name",
+  "title",
   "route",
   "is_published",
   "sections",
@@ -88,13 +89,20 @@
    "fieldname": "background_css",
    "fieldtype": "Data",
    "label": "BackgroundCss"
+  },
+  {
+   "default": "Title",
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Titel",
+   "reqd": 1
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-06-28 16:06:02.093817",
+ "modified": "2023-07-01 06:44:36.139971",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Blog Page",

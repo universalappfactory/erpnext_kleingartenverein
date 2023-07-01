@@ -2,7 +2,7 @@
  "actions": [],
  "allow_guest_to_view": 1,
  "allow_rename": 1,
- "autoname": "format:ContentPage-{name}-{YY}-{MM}-{DD}",
+ "autoname": "format:ContentPage-{startpage_name}-{YY}-{MM}-{DD}-{###}",
  "creation": "2023-06-13 17:22:27.153565",
  "default_view": "List",
  "doctype": "DocType",
@@ -11,6 +11,7 @@
  "field_order": [
   "startpage_name",
   "headline",
+  "title",
   "route",
   "is_published",
   "sections",
@@ -52,13 +53,20 @@
    "fieldtype": "Table",
    "label": "Cards",
    "options": "Section Card"
+  },
+  {
+   "default": "Titel",
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "reqd": 1
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-06-28 16:08:54.082009",
+ "modified": "2023-07-01 06:46:02.335509",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Content Page",
