@@ -1,5 +1,6 @@
 import frappe
 from frappe.exceptions import DoesNotExistError
+from frappe.website.utils import clear_website_cache
 
 def ensure_login():
     if frappe.session.user == "Guest":
@@ -43,8 +44,9 @@ def invalidate_caches():
     try:
         start_pages = frappe.get_list('Start Page', pluck="name")
         for p in start_pages:
-            frappe.cache.delete_value(p)
+            frappe.cache().delete_value(p)
 
+        clear_website_cache()
     except Exception as e:
         frappe.log_error(e)
 
