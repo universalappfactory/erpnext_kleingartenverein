@@ -20,7 +20,9 @@
   "club_contact_message",
   "club_phone_message",
   "club_mail_message",
-  "service_section_background"
+  "service_section_background",
+  "dashboard_column",
+  "read_marker_mappings"
  ],
  "fields": [
   {
@@ -98,11 +100,22 @@
    "fieldname": "service_section_background",
    "fieldtype": "Attach Image",
    "label": "Service Section Background Image"
+  },
+  {
+   "fieldname": "dashboard_column",
+   "fieldtype": "Section Break",
+   "label": "Dashboard"
+  },
+  {
+   "fieldname": "read_marker_mappings",
+   "fieldtype": "Table",
+   "label": "Read Markers",
+   "options": "Read Marker Mapping"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-01 15:01:12.521919",
+ "modified": "2023-07-02 14:00:24.633410",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Club Settings",

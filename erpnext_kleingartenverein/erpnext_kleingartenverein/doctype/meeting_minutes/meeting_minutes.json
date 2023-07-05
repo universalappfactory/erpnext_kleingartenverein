@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format: MoM-{YYYY}-{MM}-{DD}-{##}",
+ "autoname": "{YY}-{MM}-{DD}",
  "creation": "2023-03-14 10:16:52.094658",
  "default_view": "List",
  "doctype": "DocType",
@@ -67,7 +67,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-14 10:24:40.719347",
+ "modified": "2023-07-05 20:46:22.824270",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Meeting Minutes",

@@ -2,24 +2,9 @@
    <NavbarComponent />
    
    <div class="p-4 sm:ml-64">
-
-      <div class="m-8 p-4 mb-4 text-lg text-yellow-800 rounded-lg bg-yellow-50" role="alert">
-         <span class="font-semibold">Info</span>
-         <p>
-            Hier entsteht eine neue Liste in der man einfach Pächter und Gärten angezeigt bekommt.
-         </p>
-         <p>
-            Diese Liste wird dann auch auf dem Mobiltelefon ordentlich angezeigt.
-         </p>
-         <br/>
-         
-         <span class="font-semibold">Achtung</span>
-         <p>
-            Ist noch ne Baustelle, funktioniert also noch nicht richtig.
-         </p>
-      </div>
    
-      <GridTable @loadMore="loadMoreData" :items="tenants.data" :checkable="false" :hasNext="tenants.hasNextPage"
+      <GridTable @loadMore="loadMoreData" :items="tenants.data" :checkable="false" 
+         :hasNext="tenants.hasNextPage"
          :columns="tableColumns" />
    </div>
 </template>
@@ -35,7 +20,7 @@ import { Alert, Button, createListResource } from 'frappe-ui'
 import { ColumnMode, TableColumn } from '../ts/table';
 
 export default defineComponent({
-   name: "bulletins",
+   name: "Meeting Minutes",
    components: {
       NavbarComponent,
       FooterComponent,
@@ -55,9 +40,8 @@ export default defineComponent({
       console.log('SETUP')
 
       let tenants = createListResource({
-         doctype: 'Customer',
+         doctype: 'Bulletin',
          fields: ['*'],
-         orderBy: 'plot_link asc',
          start: 0,
          pageLength: 20,
       })
@@ -83,7 +67,7 @@ export default defineComponent({
          },
          {
             DisplayTitle: "Garten",
-            PropertyNames: ["plot_link"],
+            PropertyNames: ["title"],
             Mode: ColumnMode.Default
          }
       ]

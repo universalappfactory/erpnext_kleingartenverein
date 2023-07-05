@@ -5,4 +5,13 @@ from frappe.model.document import Document
 
 
 class ClubSettings(Document):
-    pass
+    def has_readmarker_for_role(self, role):
+        readmarker_for_role = next(
+            (
+                doc
+                for doc in self.read_marker_mappings
+                if doc.role_link == role
+            ),
+            None,
+        )
+        return readmarker_for_role != None

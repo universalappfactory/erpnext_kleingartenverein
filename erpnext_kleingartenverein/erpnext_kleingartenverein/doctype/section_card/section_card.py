@@ -3,6 +3,11 @@
 
 # import frappe
 from frappe.model.document import Document
+from erpnext_kleingartenverein.www.utils import (
+    invalidate_caches
+)
 
 class SectionCard(Document):
-	pass
+	
+	def validate(self):
+		invalidate_caches()

@@ -16,6 +16,16 @@ const routes = [
     name: 'Kalender',
     component: () => import('@/pages/InternalCalendar.vue'),
   },
+  {
+    path: '/myclub',
+    name: 'MyClub',
+    component: () => import('@/pages/MyClub.vue'),
+  },
+  {
+    path: '/meetingminutes',
+    name: 'Bulletins',
+    component: () => import('@/pages/MeetingMinutes.vue'),
+  },
 ]
 
 let router = createRouter({

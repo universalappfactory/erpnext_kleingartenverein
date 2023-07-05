@@ -3,9 +3,6 @@
 
 # import frappe
 from frappe.model.document import Document
-from erpnext_kleingartenverein.api import create_read_marker
 
-
-class MeetingMinutes(Document):
-    def after_insert(self):
-        create_read_marker(self)
+class ReadMarker(Document):
+	pass

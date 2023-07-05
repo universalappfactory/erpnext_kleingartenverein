@@ -1,0 +1,88 @@
+<template>
+    <NavbarComponent />
+
+    <div class="p-4 sm:ml-64">
+
+        <div class="m-8 p-4 mb-4 text-lg text-yellow-800 rounded-lg bg-yellow-50" role="alert">
+            <span class="font-semibold">Info</span>
+            <p>
+                Mein Kleingartenverein
+            </p>
+        </div>
+       
+    </div>
+</template>
+<script lang="ts">
+import { PropType, defineComponent, ref } from 'vue';
+import { initFlowbite } from 'flowbite'
+
+import NavbarComponent from "../components/Navbar.vue";
+import FooterComponent from "../components/Footer.vue";
+import GridTable from "../components/GridTable.vue";
+import { Dropdown } from 'frappe-ui'
+import { Alert, Button, createListResource } from 'frappe-ui'
+import { ColumnMode, TableColumn } from '../ts/table';
+
+export default defineComponent({
+    name: "MyClub",
+    components: {
+        NavbarComponent,
+        FooterComponent,
+        Dropdown,
+        Alert,
+        Button,
+        GridTable
+    },
+
+    methods: {
+        loadMoreData() {
+            console.log('LoadMore')
+            this.tenants.next();
+        }
+    },
+    setup() {
+        console.log('SETUP')
+
+        let tenants = createListResource({
+            doctype: 'Customer',
+            fields: ['*'],
+            orderBy: 'plot_link asc',
+            start: 0,
+            pageLength: 20,
+        })
+
+        tenants.fetch()
+        return {
+            tenants
+        }
+
+    },
+    data() {
+
+        const tableColumns: TableColumn[] = [
+            {
+                DisplayTitle: "Name",
+                PropertyNames: ["customer_name", "email_id"],
+                Mode: ColumnMode.DoubleEntry
+            },
+            {
+                DisplayTitle: "Contact",
+                PropertyNames: ["email_id", "mobile_no"],
+                Mode: ColumnMode.DoubleEntry
+            },
+            {
+                DisplayTitle: "Garten",
+                PropertyNames: ["plot_link"],
+                Mode: ColumnMode.Default
+            }
+        ]
+
+        return {
+            tableColumns
+        }
+    },
+    mounted() {
+        initFlowbite();
+    }
+});
+</script>

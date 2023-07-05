@@ -1,6 +1,6 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useDashboardStore  } from './dashboardstore'
-import { createListResource } from 'frappe-ui'
+import { createListResource, createResource } from 'frappe-ui'
 
 export function useDashboard() {
     // state encapsulated and managed by the composable
@@ -20,8 +20,12 @@ export function useDashboard() {
         pageLength: 20,
         url: '/api/method/erpnext_kleingartenverein.api.get_dashboard_navigation'
      })
-
      navigation.fetch()
+
+     const readMarker = createResource({
+        url: '/api/method/erpnext_kleingartenverein.api.get_unread_document_count'
+     })
+     readMarker.fetch()
 
     // a composable can update its managed state over time.
     function update(event) {
@@ -41,5 +45,5 @@ export function useDashboard() {
     })
   
     // expose managed state as return value
-    return { x, y, navigation }
+    return { x, y, navigation, readMarker }
   }
