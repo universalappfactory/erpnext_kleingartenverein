@@ -14,29 +14,26 @@
 {% endmacro %}
 
 {% macro link_text(info, file) %}
-    {% if info %}
-        {% set text = info[file.title]  %}
-        {% if text %}
-            {{text}}
-        {%else%}
-            {{file.title}}
-        {%endif%}
-    {%else%}
-        {{file.title}}
-    {%endif%}
+{% if info %}
+{% set text = info[file.title] %}
+{% if text %}
+{{text}}
+{%else%}
+{{file.title}}
+{%endif%}
+{%else%}
+{{file.title}}
+{%endif%}
 {% endmacro %}
-
-
 
 {% macro downloads(options) %}
 
 {% set allOptions = options.split(';') %}
-
 <div class="bg-nature-white w-full rounded py-4">
     {% set folder_contents = allOptions[0] | get_folder_contents %}
 
     {% if allOptions | length > 1 %}
-    <p  class="text-center text-lg md:text-xl ml-2 mb-4 mr-2 text-ellipsis overflow-hidden">{{allOptions[1]}}</p>
+    <p class="text-center text-lg md:text-xl ml-2 mb-4 mr-2 text-ellipsis overflow-hidden">{{allOptions[1]}}</p>
     {% endif %}
 
     {% set info = folder_contents | selectattr("title", "eq", "info.txt") | first %}
@@ -55,11 +52,12 @@
 
         </table>
         {% if info and info.Quelle %}
-        
+
         <div class="flex px-4 mt-2 font-semibold">
             <p>{{_('Quelle')}}:</p>
             <p class="ml-2">{{info.Quelle}}</p>
         </div>
         {%endif%}
     </div>
-    {% endmacro %}
+</div>
+{% endmacro %}
