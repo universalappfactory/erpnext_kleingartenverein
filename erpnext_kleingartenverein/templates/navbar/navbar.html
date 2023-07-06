@@ -62,7 +62,7 @@
     <button type="button" class="{{button_css()}}" data-accordion-target="#accordion-collapse-body-{{parent_item.name}}"
       aria-expanded="false" aria-controls="accordion-collapse-body-{{parent_item.name}}">
       <div class="flex">
-        <p class="w-full text-left">{{parent_item.label}}</p>
+        <p class="w-full text-left text-font-light focus:text-font-light">{{parent_item.label}}</p>
         <svg data-accordion-icon class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd"
@@ -133,7 +133,7 @@ md:hover:text-blue-700
 <div class="invisible md:visible flex items-center md:order-2">
   <button type="button" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
     data-dropdown-placement="bottom">
-    <i class="fa fa-sign-in text-nature-white text-lg aria-hidden=" true"></i>
+    <i class="fa fa-sign-in text-nature-white text-lg aria-hidden=true" ></i>
   </button>
   <!-- Dropdown menu -->
   <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow"
@@ -207,15 +207,15 @@ md:hover:text-blue-700
           {%- endfor %}
           {%- endif %}
 
+          {%- if user and user != '' and user != 'Guest' -%}
           <li class="flex items-center visible mt-4 md:invisible py-2 md:py-0">
-            <button class="
-            {{button_css()}}
-            " id="user-dropdown-button-2" aria-expanded="false" data-dropdown-toggle="user-dropdown"
+            <button class="{{button_css()}}" 
+              
               data-dropdown-placement="bottom">
               <a>Mein Kleingartenverein</a>
             </button>
           </li>
-
+          {%- endif -%}
 
         </ul>
 
