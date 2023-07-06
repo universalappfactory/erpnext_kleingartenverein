@@ -4,12 +4,16 @@
 import datetime
 import frappe
 from frappe.website.website_generator import WebsiteGenerator
-from erpnext_kleingartenverein.www.utils import DefaultContextData, ensure_login
+from erpnext_kleingartenverein.www.utils import (
+    DefaultContextData,
+    ensure_login,
+    invalidate_caches,
+)
 
 
 class StartPage(WebsiteGenerator, DefaultContextData):
-    
-    
+    def validate(self):
+        invalidate_caches()
 
     def get_context(self, context):
         ensure_login()
@@ -18,9 +22,7 @@ class StartPage(WebsiteGenerator, DefaultContextData):
             "Bulletin", fields="*", order_by="date desc", page_length=2
         )
         context.last_blog_entries = frappe.get_list(
-            "Blog Page", fields="*", 
-            order_by="published_at desc", 
-            page_length=1
+            "Blog Page", fields="*", order_by="published_at desc", page_length=1
         )
 
         now = datetime.datetime.now()
@@ -42,13 +44,12 @@ class StartPage(WebsiteGenerator, DefaultContextData):
         context.next_teamwork_dates = []
         next_teamwork_dates = frappe.get_list(
             "Teamwork Date",
-            filters={
-                "date": [">=", now],
-                "is_published": 1
-            },
+            filters={"date": [">=", now], "is_published": 1},
             order_by="date asc",
             fields="*",
             page_length=1,
         )
         for date in next_teamwork_dates:
-            context.next_teamwork_dates.append(frappe.get_doc('Teamwork Date', date.name))
+            context.next_teamwork_dates.append(
+                frappe.get_doc("Teamwork Date", date.name)
+            )

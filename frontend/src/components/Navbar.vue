@@ -34,24 +34,26 @@
 						<a @click="navigateTo(item)"
 							class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
 							<i class=" text-gray-500 text-6xl" fa :class="item.icon"></i>
-							<div class="ml-3">{{ item.displayTitle }}
-								<div class="text-sm
-									relative
-									inline-flex 
-									items-center 
-									justify-center 
-									w-6 
-									h-6 
-									text-xs 
-									font-bold 
-									text-white 
-									bg-red-500 
-									border-2 
-									border-white 
-									rounded-full 
-									-top-2
-									-right-30 
-									dark:border-gray-900">20</div>	
+							<div class="ml-3 cursor-pointer">{{ item.displayTitle }}
+								<template v-if="item.openCount > 0">
+									<div class="text-sm
+										relative
+										inline-flex 
+										items-center 
+										justify-center 
+										w-6 
+										h-6 
+										text-xs 
+										font-bold 
+										text-white 
+										bg-red-500 
+										border-2 
+										border-white 
+										rounded-full 
+										-top-2
+										-right-30 
+										dark:border-gray-900">20</div>	
+								</template>
 							</div>
 							
 						</a>
@@ -87,60 +89,13 @@ export default defineComponent({
 				this.$router.push(item.href)
 			}
 		},
-		isRouter(item: NavigationItem): boolean {
-			return item.mode == NavigationMode.Router
+		isRouter(item: any): boolean {
+			return item.mode === 'NavigationMode.Router'
 		}
 	},
 	data() {
 
-		const items: NavigationItem[] = [
-			{
-				displayTitle: "Zum Desk",
-				href: "/app/",
-				icon: "fa-desktop",
-				mode: NavigationMode.External
-			},
-			{
-				displayTitle: "Zur Homepage",
-				href: "/",
-				icon: "fa-globe",
-				mode: NavigationMode.External
-			},
-			{
-				displayTitle: "Dashboard",
-				href: "/dashboard",
-				icon: "fa-home",
-				mode: NavigationMode.External
-			},
-			{
-				displayTitle: "Pächter",
-				href: "/paechter",
-				icon: "fa-list",
-				mode: NavigationMode.Router
-			},
-			{
-				displayTitle: "Kalender",
-				href: "/calendar",
-				icon: "fa-list",
-				mode: NavigationMode.Router
-			},
-			{
-				displayTitle: "Drive",
-				href: "/drive",
-				icon: "fa-list",
-				mode: NavigationMode.External
-			},
-			{
-				displayTitle: "Logout",
-				href: "/logout",
-				icon: "fa-sign",
-				mode: NavigationMode.External
-			}
-		]
-
-		return {
-			items
-		}
+		
 	},
 
 	mounted() {

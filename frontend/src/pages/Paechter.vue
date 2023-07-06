@@ -58,6 +58,9 @@ export default defineComponent({
          doctype: 'Customer',
          fields: ['*'],
          orderBy: 'plot_link asc',
+         filters:{
+            customer_group: 'Tenant'
+         },
          start: 0,
          pageLength: 20,
       })

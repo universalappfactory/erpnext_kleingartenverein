@@ -352,7 +352,7 @@ def get_unread_document_count():
 
     values = {
         "user": user,
-        "roles": roles,
+        "roles": ','.join(roles),
     }
     data = frappe.db.sql(
         """
