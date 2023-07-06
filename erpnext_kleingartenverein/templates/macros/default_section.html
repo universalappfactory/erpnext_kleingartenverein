@@ -22,17 +22,14 @@
     {% set ns.css = item.custom_section_css %}
 {%- endif -%}
 
-<section class="relative {{ns.css}} {{item.background_css}} {{padding(item.top_space,'pt')}} {{padding(item.bottom_space,'pb')}} ">
+<section class="relative pt-8 pb-8 {{ns.css}} {{item.background_css}}  ">
     {% if item.separator_type == 'Top' %}
     {{ separator(item)}}
     {%- endif -%}
 
-    <div class="container mx-auto px-4 {{ns.padding_top}}">
+    <div class="container mx-auto px-4 {{padding(item.top_space,'md:pt')}} {{padding(item.bottom_space,'md:pb')}}">
         {{ section_content(item)}}
     </div>
-    {% if item.separator_type == 'Bottom' %}
-    {{ separator(item)}}
-    {% endif %}
 </section>
 
 {% endmacro %}

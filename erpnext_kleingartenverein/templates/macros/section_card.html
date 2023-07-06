@@ -13,9 +13,9 @@
 
 {% set card = frappe.get_doc('Section Card', item.card) %}
 
-<div class="sm:full-width md:w-4/12 {{ns.align}} px-4 mr-auto ml-auto  {% if card.additional_css  %} {{ card.additional_css }} {%endif%}">
+<div class="sm:full-width mt-4 mb-4 md:mt-0 md:mb-0 md:w-4/12 {{ns.align}} px-4 mr-auto ml-auto  {% if card.additional_css  %} {{ card.additional_css }} {%endif%}">
     <div
-      class="relative flex flex-col min-w-0 break-words bg-white mb-6 shadow-lg rounded-lg bg-nature-white"
+      class="relative flex flex-col min-w-0 break-words bg-white shadow-lg rounded-lg bg-nature-white"
     >
       <img
         alt="..."

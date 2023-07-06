@@ -104,7 +104,7 @@ md:hover:text-blue-700
 {% endmacro %}
 
 {% macro render_item(navbar_item, submenu=False, parent=False) %}
-<ul class="whitespace-nowrap">
+<ul class="whitespace-nowrap text-white">
 
   {% set ns = namespace(has_children=false) %}
   {% if top_bar_items -%}
@@ -114,12 +114,12 @@ md:hover:text-blue-700
   {%- endif -%}
   {%- endfor %}
   {%- endif %}
-  <li class="flex items-center">
+  <li class="flex items-center text-font-light">
     {% if ns.has_children -%}
     {{render_dropdown(navbar_item)}}
     {{render_accordion(navbar_item)}}
     {% else %}
-  <li class="flex items-center">
+  <li class="flex items-center text-font-light">
     <a href="{{navbar_item.url}}" class="{{button_css()}}">
       {{navbar_item.label}}
     </a>
@@ -154,7 +154,7 @@ md:hover:text-blue-700
 {% endmacro %}
 
 <nav class="top-0 absolute z-50 w-full flex flex-wrap">
-  <div class="container bg-head mx-auto items-center justify-start mt-4 px-4 py-4">
+  <div class="container bg-head mx-auto items-center justify-start mt-4 px-4 py-4 bg-opacity-75"> 
 
     <div class="flex items-center md:hidden ">
       <button data-collapse-toggle="navbar-multi-level" type="button" class="inline-flex items-center 
@@ -229,7 +229,7 @@ md:hover:text-blue-700
   <!-- breadcrumbs -->
   {%- set breadcrumb_count = breadcrumbs|length -%}
   {%if breadcrumb_count > 0 %}
-  <div class="container bg-head mx-auto items-center justify-start mt-2 px-4 py-2">
+  <div class="container bg-head mx-auto items-center justify-start mt-2 px-4 py-2 bg-opacity-75">
     {% block breadcrumbs %}
     {% include 'erpnext_kleingartenverein/templates/breadcrumbs/breadcrumbs.html' %}
     {% endblock %}

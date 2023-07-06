@@ -1,44 +1,54 @@
-{% macro separator_wave(item) %}
-<div class="bottom-auto left-0 right-0 w-full absolute pointer-events-none -mt-20"
+{% macro separator_wave(item, top_background, bottom_background) %}
+<div class="hidden md:block bottom-auto left-0 {{top_background}} right-0 w-full absolute pointer-events-none -mt-20"
      style="height: 82px;">
-  <svg class="absolute bottom-0 overflow-hidden {{item.separator_background_css}}"   xmlns="http://www.w3.org/2000/svg"
-       preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 300" x="0" y="0">
+  <svg class="absolute bottom-0 overflow-hidden {{bottom_background}}"   xmlns="http://www.w3.org/2000/svg"
+       preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 295" x="0" y="0">
     <path class="fill-current" d="M0,100 C640,200 1920,0 2560,100 L2560,300 L0,300 Z"></path>
   </svg>
 </div>
 
 {%endmacro%}
 
-{% macro separator_up(item) %}
-<div class="bottom-auto left-0 right-0  w-full absolute pointer-events-none overflow-hidden -mt-20"
+{% macro separator_up(item, top_background, bottom_background) %}
+<div class="hidden md:block bottom-auto left-0 right-0 {{top_background}}  w-full absolute pointer-events-none overflow-hidden -mt-20"
   style="height: 82px;">
-  <svg class="absolute bottom-0 overflow-hidden {{item.separator_background_css}}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
+  <svg class="absolute bottom-0 overflow-hidden {{bottom_background}}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
     version="1.1" viewBox="0 0 2560 100" x="0" y="0">
-    <polygon class="fill-current" points="2560 0 2560 100 0 100"></polygon>
+    <polygon class="fill-current" points="2560 0 2560 102 0 102"></polygon>
   </svg>
 </div>
 {%endmacro%}
 
-{% macro separator_down(item) %}
-<div class="bottom-auto left-0 right-0  w-full absolute pointer-events-none overflow-hidden -mt-20"
+{% macro separator_down(item, top_background, bottom_background) %}
+<div class="hidden md:block bottom-auto left-0 right-0 {{top_background}}  w-full absolute pointer-events-none overflow-hidden -mt-20"
   style="height: 82px;">
-  <svg class="absolute bottom-0 overflow-hidden {{item.separator_background_css}}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
+  <svg class="absolute bottom-0 overflow-hidden {{bottom_background}}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
     version="1.1" viewBox="0 0 2560 100" x="0" y="0">
-    <polygon class="fill-current" points="0 0 2560 100 0 100"></polygon>
+    <polygon class="fill-current" points="0 0 2560 102 0 102"></polygon>
   </svg>
 </div>
 {%endmacro%}
 
 {% macro separator(item) %}
 
+  {% set ns = namespace(top_background='', bottom_background='') %}
+
+  {% set colors = item.separator_background_css.split(';') %}
+
+  {% set ns.top_background = colors[0] %}
+  {%- if  colors|length > 1 -%}
+  {% set ns.bottom_background = colors[1] %}
+  {%- endif -%}
+
+
   {%- if item.separator_style == 'Up' -%}
-    {{separator_up(item)}}
+    {{separator_up(item, ns.top_background, ns.bottom_background)}}
   {%- elif item.separator_style == 'Down' -%}
-    {{separator_down(item)}}
+    {{separator_down(item, ns.top_background, ns.bottom_background)}}
   {%- elif item.separator_style == 'Wave' -%}
-    {{separator_wave(item)}}
+    {{separator_wave(item, ns.top_background, ns.bottom_background)}}
   {%- else -%}
-    {{separator_up(item)}}
+    {{separator_up(item, ns.top_background, ns.bottom_background)}}
   {%- endif -%}
 
 {%endmacro%}

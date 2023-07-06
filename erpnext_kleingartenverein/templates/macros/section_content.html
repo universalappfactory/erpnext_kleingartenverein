@@ -1,14 +1,20 @@
 {% macro section_content(item) %}
 
 {% set ns = namespace(align='items-center') %}
-{%- if item.card and item.content_template == 'TopLeftPreview'  -%}
-    {% set ns.align = '' %}
+{%- if item.card and item.content_template == 'TopLeftPreview' -%}
+{% set ns.align = '' %}
 {%- endif -%}
-{%- if item.card and item.content_template == 'TopRightPreview'  -%}
-    {% set ns.align = '' %}
+{%- if item.card and item.content_template == 'TopRightPreview' -%}
+{% set ns.align = '' %}
 {%- endif -%}
 
 <div class="flex flex-wrap {{ns.align}} justify-center card-section">
+
+  {% if item.headline %}
+  <h1 class="block md:hidden text-nature-white mb-8 text-lg text-center">
+    {{ item.headline }}
+  </h1>
+  {% endif %}
 
   {% if item.card and (item.content_template == 'LeftPreview' or item.content_template == 'TopLeftPreview') %}
   {{ section_card(item) }}
@@ -17,22 +23,22 @@
   <div class="{% if item.card %} md:w-5/12 {%else%}  {%endif%} px-4 mr-auto ml-auto">
 
     {% if item.headline %}
-    <h1 class="text-nature-white mb-4 text-lg {% if not item.card %}text-center{%endif%} mt-4">
+    <h1 class="hidden md:block text-nature-white mb-4 text-lg {% if not item.card %}text-center{%endif%} mt-4">
       {{ item.headline }}
     </h1>
     {% endif %}
 
     {% if item.custom_template and item.custom_template != 'Markdown' %}
-      {% if item.custom_template == 'Downloads' %}
-      {% from "templates/macros/downloads.html" import downloads %}
-      {{downloads(item.custom_template_parameters)}}
-      {% endif %}
-      {% if item.custom_template == 'Teamwork Dates' %}
-      {% from "templates/macros/teamwork_dates.html" import teamwork_dates %}
-      {{teamwork_dates(item.custom_template_parameters)}}
-      {% endif %}
+    {% if item.custom_template == 'Downloads' %}
+    {% from "templates/macros/downloads.html" import downloads %}
+    {{downloads(item.custom_template_parameters)}}
+    {% endif %}
+    {% if item.custom_template == 'Teamwork Dates' %}
+    {% from "templates/macros/teamwork_dates.html" import teamwork_dates %}
+    {{teamwork_dates(item.custom_template_parameters)}}
+    {% endif %}
     {% else %}
-    <div class="markdown mt-4">
+    <div class="markdown">
       {{ item.content | markdown}}
     </div>
     {% endif %}
