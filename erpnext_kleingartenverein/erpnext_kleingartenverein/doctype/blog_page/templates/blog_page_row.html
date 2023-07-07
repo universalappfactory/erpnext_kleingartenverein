@@ -3,8 +3,9 @@
 		md:rounded w-full md:w-3/4 grid grid-cols-1 content-between">
 
 	<h2
-		class="mb-2 text-center text-xl md:text-2xl font-bold tracking-tight text-gray-900 dark:text-white hover:underline">
-		<a href="/{{route}}">{{headline}}</a></h2>
+		class="mb-4 text-center text-xl md:text-2xl font-bold tracking-tight text-font-dark hover:underline">
+		<a href="/{{route}}">{{headline}}</a>
+	</h2>
 
 
 	<div class="flex overflow-hidden text-clip">
@@ -20,9 +21,10 @@
 
 	<div class="mt-4 flex items-center justify-between">
 		<div class="flex text-sm text-gray-900">
-			<div class="hidden md:block md:pr-2">Veröffentlicht am</div>
+			<div class="hidden md:block md:pr-2">{{_('Published At')}}
 			<time>{{
 				frappe.format_date(published_at) }}</time>
+			</div>
 		</div>
 
 		<a class="inline-flex items-center font-medium text-nature-white hover:underline" href="/{{route}}">

@@ -17,16 +17,19 @@
 
 {% macro render_section(item) %}
 
-{% set ns = namespace(css='', padding_top='', top_space='', bottom_space='') %}
+{% set ns = namespace(css='', padding='pt-8 pb-8', top_space='', bottom_space='') %}
 {%- if item.custom_section_css -%}
     {% set ns.css = item.custom_section_css %}
 {%- endif -%}
 
-<section class="relative pt-8 pb-8 {{ns.css}} {{item.background_css}}  ">
+{% if item.separator_type == 'Top' %}
+    {% set ns.padding = 'pb-8' %}
+{%- endif -%}
+
+<section class="relative {{ns.padding}} {{ns.css}} {{item.background_css}}  ">
     {% if item.separator_type == 'Top' %}
     {{ separator(item)}}
     {%- endif -%}
-
     <div class="container mx-auto px-4 {{padding(item.top_space,'md:pt')}} {{padding(item.bottom_space,'md:pb')}}">
         {{ section_content(item)}}
     </div>

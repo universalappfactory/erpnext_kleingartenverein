@@ -15,7 +15,7 @@
       <div class="overflow-x-auto w-full">
         <table class="w-full text-sm text-left text-gray-500 border-separate border-spacing-4">
           <tbody>
-            <tr v-for="(event, index) in calendarEvents" :key="index"
+            <tr v-for="(event, index) in getUpcoming(calendarEvents)" :key="index"
               class="border-b dark:bg-gray-900 dark:border-gray-700"
               :class="event.selected ? 'bg-red-100' : 'bg-gray-50'">
               <td scope="row" class="align-top px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -69,14 +69,17 @@ export default defineComponent({
     }
   },
   methods: {
-    getDate(date): string {
+    getDate(date): Date {
       try {
         const dt = new Date(date)
         return dt;
       } catch(e) {
-        console.log('fail')
         console.error(e)
       }
+    },
+    getUpcoming(events) {
+        const now = new Date()
+        return events.filter(f => f.start >= now)
     },
     getStartDate(event): string {
       return this.getDate(event.starts_on)

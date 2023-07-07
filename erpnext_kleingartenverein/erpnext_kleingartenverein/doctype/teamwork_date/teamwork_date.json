@@ -12,6 +12,7 @@
   "teamwork_date_name",
   "headline",
   "description",
+  "internal_text",
   "minimum_participants",
   "maximum_participants",
   "is_complete",
@@ -91,12 +92,17 @@
    "fieldtype": "Link",
    "label": "Event Link",
    "options": "Event"
+  },
+  {
+   "fieldname": "internal_text",
+   "fieldtype": "Small Text",
+   "label": "Internal Text"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-06-30 14:41:28.255744",
+ "modified": "2023-07-07 09:14:32.516009",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Teamwork Date",

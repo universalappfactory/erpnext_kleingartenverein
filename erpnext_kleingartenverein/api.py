@@ -173,17 +173,49 @@ def get_breadcrumbs(context, current_route=None):
 
 @frappe.whitelist(allow_guest=True)
 def get_public_events():
-    next_events = frappe.get_list(
-        "Event",
-        filters={
-            "event_type": "Public",
-            "status": "Open",
-            "_user_tags": ["like", "%omepage%"],
-        },
-        order_by="starts_on asc",
-        fields="*",
-    )
-    return next_events
+    try:
+        club_settings = frappe.get_last_doc("Club Settings")
+
+        all_events = []
+
+        if club_settings.public_date_tags:
+            next_events = frappe.get_list(
+                "Event",
+                filters={
+                    "event_type": "Public",
+                    "status": "Open",
+                    "_user_tags": ["like", f"%{club_settings.public_date_tags}%"],
+                },
+                order_by="starts_on asc",
+                fields="*",
+            )
+            all_events = all_events + next_events
+
+        if club_settings.stripped_date_tags:
+            next_events = frappe.get_list(
+                "Event",
+                filters={
+                    "event_type": "Public",
+                    "status": "Open",
+                    "_user_tags": ["like", f"%{club_settings.stripped_date_tags}%"],
+                },
+                order_by="starts_on asc",
+                fields="*",
+            )
+
+            for evt in next_events:
+                evt.subject = club_settings.stripped_date_tags
+                evt.details = ''
+
+            all_events = all_events + next_events
+
+        return map(lambda x: {
+            "subject": x.subject,
+            "starts_on": x.starts_on
+        }, all_events)
+    except Exception as e:
+        frappe.log_error(e)
+        return []
 
 
 def get_or_create_read_marker(document_type, document_name):
@@ -352,7 +384,7 @@ def get_unread_document_count():
 
     values = {
         "user": user,
-        "roles": ','.join(roles),
+        "roles": ",".join(roles),
     }
     data = frappe.db.sql(
         """
@@ -361,7 +393,7 @@ def get_unread_document_count():
         ON marker.document_type = mapping.document_type
         LEFT JOIN `tabRead Marker Entry`  entry
         ON entry.user_link = %(user)s
-        WHERE  entry.user_link IS NULL AND mapping.role_name IN (%(roles)s)
+        WHERE  entry.user_link IS NULL AND mapping.role_link IN (%(roles)s)
         GROUP BY mapping.document_type
     """,
         values=values,

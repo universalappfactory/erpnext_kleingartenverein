@@ -83,7 +83,7 @@
 
 .markdown table td
 {
-    @apply px-4 text-center
+    @apply px-4
 }
 
 .markdown table tr:last-child td 

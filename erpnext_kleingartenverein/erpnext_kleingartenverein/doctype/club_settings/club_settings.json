@@ -21,6 +21,8 @@
   "club_phone_message",
   "club_mail_message",
   "service_section_background",
+  "public_date_tags",
+  "stripped_date_tags",
   "dashboard_column",
   "read_marker_mappings"
  ],
@@ -111,11 +113,23 @@
    "fieldtype": "Table",
    "label": "Read Markers",
    "options": "Read Marker Mapping"
+  },
+  {
+   "description": "comma separated list of tags which must be assigned in order to show the event on the homepage calendar\n\nthe event subject is shown on the homepage as well",
+   "fieldname": "public_date_tags",
+   "fieldtype": "Data",
+   "label": "Public Date Tags"
+  },
+  {
+   "description": "comma separated list of tags which must be assigned in order to show the event on the homepage calendar\n\nthe subject of the event is replaced by the tag list",
+   "fieldname": "stripped_date_tags",
+   "fieldtype": "Data",
+   "label": "Stripped Date Tags"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-02 14:00:24.633410",
+ "modified": "2023-07-07 09:24:21.935601",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Club Settings",

@@ -19,8 +19,8 @@
   "abstract",
   "author",
   "image",
-  "cards",
-  "background_css"
+  "background_css",
+  "header_css"
  ],
  "fields": [
   {
@@ -79,12 +79,6 @@
    "label": "Image"
   },
   {
-   "fieldname": "cards",
-   "fieldtype": "Table",
-   "label": "Cards",
-   "options": "Section Card"
-  },
-  {
    "default": "bg-nature-green-300",
    "fieldname": "background_css",
    "fieldtype": "Data",
@@ -96,13 +90,19 @@
    "fieldtype": "Data",
    "label": "Titel",
    "reqd": 1
+  },
+  {
+   "default": "bg-nature-green-300",
+   "fieldname": "header_css",
+   "fieldtype": "Data",
+   "label": "HeaderCss"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-07-01 06:44:36.139971",
+ "modified": "2023-07-07 08:15:29.581345",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Blog Page",

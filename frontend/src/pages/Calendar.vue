@@ -16,13 +16,13 @@
     </div>
 
     <div class="bg-sand md:mt-8">
-      <h1 class="text-center text-2xl py-8">Alle Termine</h1>
+      <h1 class="text-center text-2xl py-8">Kommende Termine</h1>
     </div>
     <div class="flex justify-center">
       <div class="overflow-x-auto w-full">
         <table class="w-full text-sm text-left text-gray-500 body border border-gray-400 border-spacing-4">
           <tbody>
-            <tr v-for="(event, index) in calendarEvents" :key="index"
+            <tr v-for="(event, index) in getUpcoming(calendarEvents)" :key="index"
               class="border-b dark:bg-gray-900 dark:border-gray-700" :class="event.selected ? 'bg-red-100' : 'bg-gray-50'">
               <td scope="row" class="align-top px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                 {{ this.formatedDate(event.start) }}
@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { createListResource } from 'frappe-ui'
+import { createListResource, createResource } from 'frappe-ui'
 import { defineComponent, reactive } from 'vue';
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
@@ -49,16 +49,16 @@ import 'vue-cal/dist/vuecal.css'
 export default defineComponent({
   name: 'Calendar',
   setup() {
-    let events = createListResource({
-      doctype: 'Event',
-      fields: ['*'],
-      filters: {
-        event_type: "Public",
-        status: "Open",
-      },
-      orderBy: 'starts_on asc',
-      start: 0,
-      pageLength: 20,
+    let events = createResource({
+      // doctype: 'Event',
+      // fields: ['*'],
+      // filters: {
+      //   event_type: "Public",
+      //   status: "Open",
+      // },
+      // orderBy: 'starts_on asc',
+      // start: 0,
+      // pageLength: 20,
       url: '/api/method/erpnext_kleingartenverein.api.get_public_events'
     })
 
@@ -74,7 +74,7 @@ export default defineComponent({
     }
   },
   methods: {
-    getDate(date): string {
+    getDate(date): Date {
       const dt = new Date(date)
       return dt
     },
@@ -100,6 +100,10 @@ export default defineComponent({
         matching.selected = !matching.selected
       }
     },
+    getUpcoming(events) {
+        const now = new Date()
+        return events.filter(f => f.start >= now)
+    }
   },
   computed: {
     calendarEvents() {
@@ -135,10 +139,6 @@ export default defineComponent({
         ])
       }
     },
-    getRowClass(x) {
-      console.log(x.value)
-      return 'bg-red-100'
-    }
   },
   components: {
     VueCal

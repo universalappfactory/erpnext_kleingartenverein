@@ -73,5 +73,5 @@ def get_folder_contents(folder_name):
         if info:
             result.append(info)
         return result
-    except:
-        return [] # ToDo make frappe errorlog
+    except Exception as e:
+        frappe.log_error(e)

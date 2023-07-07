@@ -1,28 +1,44 @@
 {% macro separator_wave(item, top_background, bottom_background) %}
-<div class="hidden md:block bottom-auto left-0 {{top_background}} right-0 w-full absolute pointer-events-none -mt-20"
-     style="height: 82px;">
-  <svg class="absolute bottom-0 overflow-hidden {{bottom_background}}"   xmlns="http://www.w3.org/2000/svg"
+<div class="hidden 
+            md:block 
+            {{top_background}}
+            w-full 
+            overflow-hidden 
+            "
+  >
+  <svg class="overflow-hidden {{bottom_background}}"   xmlns="http://www.w3.org/2000/svg"
        preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 295" x="0" y="0">
     <path class="fill-current" d="M0,100 C640,200 1920,0 2560,100 L2560,300 L0,300 Z"></path>
   </svg>
 </div>
-
 {%endmacro%}
 
 {% macro separator_up(item, top_background, bottom_background) %}
-<div class="hidden md:block bottom-auto left-0 right-0 {{top_background}}  w-full absolute pointer-events-none overflow-hidden -mt-20"
-  style="height: 82px;">
-  <svg class="absolute bottom-0 overflow-hidden {{bottom_background}}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
-    version="1.1" viewBox="0 0 2560 100" x="0" y="0">
-    <polygon class="fill-current" points="2560 0 2560 102 0 102"></polygon>
+<div class="hidden 
+            md:block 
+            {{top_background}}
+            w-full 
+            overflow-hidden 
+            "
+  >
+  <svg class="overflow-hidden {{bottom_background}}" 
+    xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
+    version="1.1" viewBox="0 0 2560 80" x="0" y="0">
+    <polygon class="fill-current" points="2560 0 2560 82 0 82"></polygon>
   </svg>
 </div>
 {%endmacro%}
 
 {% macro separator_down(item, top_background, bottom_background) %}
-<div class="hidden md:block bottom-auto left-0 right-0 {{top_background}}  w-full absolute pointer-events-none overflow-hidden -mt-20"
-  style="height: 82px;">
-  <svg class="absolute bottom-0 overflow-hidden {{bottom_background}}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
+<div class="hidden 
+            md:block 
+            {{top_background}}
+            w-full 
+            overflow-hidden 
+            "
+  >
+  <svg class="overflow-hidden {{bottom_background}}" 
+    xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
     version="1.1" viewBox="0 0 2560 100" x="0" y="0">
     <polygon class="fill-current" points="0 0 2560 102 0 102"></polygon>
   </svg>

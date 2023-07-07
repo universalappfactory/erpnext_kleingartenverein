@@ -3,23 +3,7 @@
 {% from "templates/macros/separator.html" import separator with context %}
 {% from "templates/macros/section_card.html" import section_card with context %}
 {% from "templates/macros/section_content.html" import section_content with context %}
-
-
-{% macro render_section(item) %}
-
-<section class="relative {{item.background_css}} {{item.section_css_class}}">
-    {% if item.separator_type == 'Top' %}
-    {{ separator(item)}}
-    {% endif %}
-    <div class="container mx-auto px-4 py-8">
-        {{ section_content(item)}}
-    </div>
-    {% if item.separator_type == 'Bottom' %}
-    {{ separator(item)}}
-    {% endif %}
-</section>
-
-{% endmacro %}
+{% from "templates/macros/default_section.html" import render_section with context %}
 
 {% block breadcrumbs %}
 {% endblock %}
@@ -37,10 +21,36 @@
         <div class="flex flex-wrap">
             <div class="md:w-full md:px-4 text-center">
                 <div
-                    class="relative flex flex-col min-w-0 break-words {{background_css}} w-full mb-8 md:shadow-lg md:rounded-lg">
+                    class="relative flex flex-col min-w-0 
+                        break-words {{background_css}} 
+                        w-full 
+                        mb-8 
+                        md:shadow-lg 
+                        md:rounded-lg">
 
-                    <div class="mt-12 md:mt-8 text-white text-3xl mb-8 px-2">
+                        
+
+                    <div class="
+                        pt-8 md:pt-12
+                        pb-8 md:pb-12
+                        md:rounded-t-lg 
+                        text-font-light
+                        {%- if header_css -%} {{header_css}} {% endif %}
+                        text-3xl 
+                        px-2
+                        ">
+
+                        <div class="absolute right-4 top-2 text-sm">
+                            <div>Veröffentlicht am
+                                <time>{{
+                                    frappe.format_date(published_at) }}
+                                </time>
+                            </div>
+                        </div>
+
                         <h1>{{headline}}</h1>
+
+                        
                     </div>
 
                     <div class="flex-auto">
