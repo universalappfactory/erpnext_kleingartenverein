@@ -1,18 +1,10 @@
 <template>
   <div class="">
     <div class="hidden md:block">
-    <vue-cal 
-        class="bg-nature-white"  
-        locale="de" 
-        events-on-month-view="short"
-        :events="calendarEvents" 
-        active-view="month" 
-        :disable-views="['years', 'year']"
-        :cell-contextmenu="true"
-        @cell-contextmenu="logEvents('cell-contextmenu', $event)"
-        @event-focus="logEvents('event-focus', $event)"
-        >
-    </vue-cal>
+      <vue-cal class="bg-nature-white" locale="de" events-on-month-view="short" :events="calendarEvents"
+        active-view="month" :disable-views="['years', 'year']" :cell-contextmenu="true"
+        @cell-contextmenu="logEvents('cell-contextmenu', $event)" @event-focus="logEvents('event-focus', $event)">
+      </vue-cal>
     </div>
 
     <div class="bg-sand md:mt-8">
@@ -23,7 +15,8 @@
         <table class="w-full text-sm text-left text-gray-500 body border border-gray-400 border-spacing-4">
           <tbody>
             <tr v-for="(event, index) in getUpcoming(calendarEvents)" :key="index"
-              class="border-b dark:bg-gray-900 dark:border-gray-700" :class="event.selected ? 'bg-red-100' : 'bg-gray-50'">
+              class="border-b dark:bg-gray-900 dark:border-gray-700"
+              :class="event.selected ? 'bg-red-100' : 'bg-gray-50'">
               <td scope="row" class="align-top px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                 {{ this.formatedDate(event.start) }}
               </td>
@@ -76,6 +69,9 @@ export default defineComponent({
   methods: {
     getDate(date): Date {
       const dt = new Date(date)
+      if (dt.getHours() <= 0) {
+        dt.setHours(1)
+      }
       return dt
     },
     getStartDate(event): string {
@@ -101,8 +97,8 @@ export default defineComponent({
       }
     },
     getUpcoming(events) {
-        const now = new Date()
-        return events.filter(f => f.start >= now)
+      const now = new Date()
+      return events.filter(f => f.start >= now)
     }
   },
   computed: {
@@ -119,24 +115,7 @@ export default defineComponent({
         })
         return reactive(calendarEvents);
       } else {
-        return reactive([
-        {
-            title: "TestEvent",
-            start: "2023-06-10",
-            end: "2023-06-10",
-            selected: false,
-            index: 0,
-            description: "my description"
-          },
-          {
-            title: "TestEvent2",
-            start: "2023-06-10",
-            end: "2023-06-10",
-            selected: false,
-            index: 1,
-            description: "my description"
-          }
-        ])
+        return reactive([])
       }
     },
   },

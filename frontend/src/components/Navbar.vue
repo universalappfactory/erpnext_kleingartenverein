@@ -72,19 +72,25 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { NavigationItem, NavigationMode } from '../ts/navigation';
-import { useDashboard } from '../ts/dashboard.ts'
+import { useSharedDashboard } from '../ts/dashboard.ts'
 export default defineComponent({
 	name: "navbar",
 	components: {
 	},
 	setup() {
-		const dashboard = useDashboard();
+		const dashboard = useSharedDashboard();
 		return {
 			dashboard
 		}
 	},
 	methods: {
 		navigateTo(item: NavigationItem) {
+
+			console.log(this.$route.name)
+			if (item.href.toLocaleLowerCase() === `/${this.$route.name.toLocaleLowerCase()}`) {
+				console.log('NOO')
+				return;
+			}
 			if (item.href) {
 				this.$router.push(item.href)
 			}

@@ -205,14 +205,13 @@ def get_public_events():
 
             for evt in next_events:
                 evt.subject = club_settings.stripped_date_tags
-                evt.details = ''
+                evt.details = ""
 
             all_events = all_events + next_events
 
-        return map(lambda x: {
-            "subject": x.subject,
-            "starts_on": x.starts_on
-        }, all_events)
+        return map(
+            lambda x: {"subject": x.subject, "starts_on": x.starts_on}, all_events
+        )
     except Exception as e:
         frappe.log_error(e)
         return []
@@ -294,84 +293,88 @@ def get_dashboard_navigation():
     if not "MemberDashboard" in roles:
         frappe.throw(_("Not permitted"), frappe.PermissionError)
 
-    basic_navigation = [
-        {
-            "displayTitle": _("Dashboard"),
-            "href": "/dashboard",
-            "icon": "fa-home",
-            "mode": "NavigationMode.Router",
-        },
-        {
-            "displayTitle": _("My Club"),
-            "href": "/myclub",
-            "icon": "fa-home",
-            "mode": "NavigationMode.Router",
-        },
-        {
-            "displayTitle": _("Zur Homepage"),
-            "href": "/",
-            "icon": "fa-globe",
-            "mode": "NavigationMode.External",
-        },
-    ]
+    try:
+        basic_navigation = [
+            {
+                "displayTitle": _("Dashboard"),
+                "href": "/",
+                "icon": "fa-home",
+                "mode": "NavigationMode.Router",
+            },
+            {
+                "displayTitle": _("My Club"),
+                "href": "/myclub",
+                "icon": "fa-home",
+                "mode": "NavigationMode.Router",
+            },
+            {
+                "displayTitle": _("Zur Homepage"),
+                "href": "/",
+                "icon": "fa-globe",
+                "mode": "NavigationMode.External",
+            },
+        ]
 
-    if not "Vorstand" in roles:
+        if not "Vorstand" in roles:
+            return basic_navigation
+
+        basic_navigation.append(
+            {
+                "displayTitle": _("Meeting Minutes"),
+                "href": "/meetingminutes",
+                "icon": "fa-desktop",
+                "mode": "NavigationMode.Router",
+            }
+        )
+
+        basic_navigation.append(
+            {
+                "displayTitle": _("Zum Desk"),
+                "href": "/app/",
+                "icon": "fa-desktop",
+                "mode": "NavigationMode.External",
+            }
+        )
+
+        basic_navigation.append(
+            {
+                "displayTitle": _("Pächter"),
+                "href": "/paechter/",
+                "icon": "fa-list",
+                "mode": "NavigationMode.Router",
+            }
+        )
+
+        basic_navigation.append(
+            {
+                "displayTitle": _("Kalender"),
+                "href": "/calendar/",
+                "icon": "fa-list",
+                "mode": "NavigationMode.Router",
+            }
+        )
+
+        basic_navigation.append(
+            {
+                "displayTitle": _("Drive"),
+                "href": "/drive/",
+                "icon": "fa-list",
+                "mode": "NavigationMode.External",
+            }
+        )
+
+        basic_navigation.append(
+            {
+                "displayTitle": _("Logout"),
+                "href": "/logout/",
+                "icon": "fa-sign",
+                "mode": "NavigationMode.External",
+            }
+        )
         return basic_navigation
-
-    basic_navigation.append(
-        {
-            "displayTitle": _("Meeting Minutes"),
-            "href": "/meetingminutes",
-            "icon": "fa-desktop",
-            "mode": "NavigationMode.Router",
-        }
-    )
-
-    basic_navigation.append(
-        {
-            "displayTitle": _("Zum Desk"),
-            "href": "/app/",
-            "icon": "fa-desktop",
-            "mode": "NavigationMode.External",
-        }
-    )
-
-    basic_navigation.append(
-        {
-            "displayTitle": _("Pächter"),
-            "href": "/paechter/",
-            "icon": "fa-list",
-            "mode": "NavigationMode.Router",
-        }
-    )
-
-    basic_navigation.append(
-        {
-            "displayTitle": _("Kalender"),
-            "href": "/calendar/",
-            "icon": "fa-list",
-            "mode": "NavigationMode.Router",
-        }
-    )
-
-    basic_navigation.append(
-        {
-            "displayTitle": _("Drive"),
-            "href": "/drive/",
-            "icon": "fa-list",
-            "mode": "NavigationMode.External",
-        }
-    )
-
-    basic_navigation.append(
-        {
-            "displayTitle": _("Logout"),
-            "href": "/logout/",
-            "icon": "fa-sign",
-            "mode": "NavigationMode.External",
-        }
-    )
-    return basic_navigation
+    except Exception as e:
+        frappe.log_error(e)
+        return []
 
 
 @frappe.whitelist(allow_guest=False)
@@ -382,22 +385,47 @@ def get_unread_document_count():
 
     roles = frappe.get_roles(user)
 
-    values = {
-        "user": user,
-        "roles": ",".join(roles),
-    }
-    data = frappe.db.sql(
-        """
-    SELECT DISTINCT(mapping.document_type), COUNT(mapping.document_type) FROM `tabRead Marker Mapping` mapping
-        JOIN `tabRead Marker` marker
-        ON marker.document_type = mapping.document_type
-        LEFT JOIN `tabRead Marker Entry`  entry
-        ON entry.user_link = %(user)s
-        WHERE  entry.user_link IS NULL AND mapping.role_link IN (%(roles)s)
-        GROUP BY mapping.document_type
-    """,
-        values=values,
-        as_dict=0,
-    )
-    print(data)
-    return data
+    try:
+        values = {
+            "user": user,
+            "roles": ",".join(roles), # ToDo this does not build the correct query
+        }
+        data = frappe.db.sql(
+            """
+        SELECT DISTINCT(mapping.document_type), COUNT(mapping.document_type) FROM `tabRead Marker Mapping` mapping
+            JOIN `tabRead Marker` marker
+            ON marker.document_type = mapping.document_type
+            LEFT JOIN `tabRead Marker Entry`  entry
+            ON entry.user_link = %(user)s
+            WHERE  entry.user_link IS NULL AND mapping.role_link IN (roles)
+            GROUP BY mapping.document_type
+        """,
+            values=values,
+            as_dict=0,
+        )
+        return data
+    except Exception as e:
+        frappe.log_error(e)
+        return []
+
+
+@frappe.whitelist(allow_guest=False)
+def get_user_info():
+    user = frappe.session.user
+    if not user or user == "Guest":
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    roles = frappe.get_roles(user)
+    if not "MemberDashboard" in roles:
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    try:
+        user = frappe.get_doc("User", frappe.session.user)
+        print(user)
+
+        return {
+            "user": frappe.session.user,
+            "email": user.email
+        }
+    except Exception as e:
+        frappe.log_error(e)

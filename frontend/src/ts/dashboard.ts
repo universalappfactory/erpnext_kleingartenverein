@@ -1,6 +1,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useDashboardStore  } from './dashboardstore'
 import { createListResource, createResource } from 'frappe-ui'
+import { createSharedComposable, useMouse } from '@vueuse/core'
 
 export function useDashboard() {
     // state encapsulated and managed by the composable
@@ -27,6 +28,11 @@ export function useDashboard() {
      })
      readMarker.fetch()
 
+     const userInfo = createResource({
+        url: '/api/method/erpnext_kleingartenverein.api.get_user_info'
+     })
+     userInfo.fetch()
+
     // a composable can update its managed state over time.
     function update(event) {
       x.value = event.pageX
@@ -45,5 +51,7 @@ export function useDashboard() {
     })
   
     // expose managed state as return value
-    return { x, y, navigation, readMarker }
+    return { x, y, navigation, readMarker, userInfo }
   }
+
+  export const useSharedDashboard = createSharedComposable(useDashboard)

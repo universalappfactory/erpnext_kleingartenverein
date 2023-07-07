@@ -21,7 +21,8 @@
   "date",
   "is_published",
   "route",
-  "event_link"
+  "event_link",
+  "time_for_applications"
  ],
  "fields": [
   {
@@ -97,12 +98,17 @@
    "fieldname": "internal_text",
    "fieldtype": "Small Text",
    "label": "Internal Text"
+  },
+  {
+   "fieldname": "time_for_applications",
+   "fieldtype": "Date",
+   "label": "Time For Applications"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-07-07 09:14:32.516009",
+ "modified": "2023-07-07 16:27:34.539467",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Teamwork Date",

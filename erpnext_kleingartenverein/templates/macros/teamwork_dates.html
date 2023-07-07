@@ -24,6 +24,11 @@
                 {%- endif -%}
             </div>
             
+            {%- if teamwork_date.time_for_applications -%}
+            <div class="text-red-900 font-semibold mt-4">
+                {{_('Anmeldefrist:')}} {{frappe.format_date(teamwork_date.time_for_applications)}}
+            </div>
+            {%- endif -%}
         </div>
     </div>
     {%- endfor -%}

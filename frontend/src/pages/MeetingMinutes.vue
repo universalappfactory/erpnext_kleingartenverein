@@ -3,9 +3,10 @@
    
    <div class="p-4 sm:ml-64">
    
-      <GridTable @loadMore="loadMoreData" :items="tenants.data" :checkable="false" 
+      <!-- <GridTable @loadMore="loadMoreData" :items="tenants.data" :checkable="false" 
          :hasNext="tenants.hasNextPage"
-         :columns="tableColumns" />
+         :columns="tableColumns" /> -->
+         ToDo
    </div>
 </template>
 <script lang="ts">

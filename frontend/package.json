@@ -16,6 +16,7 @@
     "create-public-js-template": "cat ../erpnext_kleingartenverein/www/service_template.html | grep -E  \"module\" > ../erpnext_kleingartenverein/templates/public_js.html "
   },
   "dependencies": {
+    "@vueuse/core": "^10.2.1",
     "feather-icons": "^4.29.0",
     "flowbite": "^1.6.6",
     "frappe-ui": "^0.0.112",

@@ -223,7 +223,7 @@ import NavbarComponent from "../components/Navbar.vue";
 import FooterComponent from "../components/Footer.vue";
 import { Dropdown } from 'frappe-ui'
 import { Alert, Button } from 'frappe-ui'
-import { useDashboard } from '../ts/dashboard.ts'
+import { useSharedDashboard } from '../ts/dashboard.ts'
 
 export default defineComponent({
     name: "dashboard",
@@ -235,7 +235,7 @@ export default defineComponent({
         Button
     },
     setup() {
-        const dashboard = useDashboard();
+        const dashboard = useSharedDashboard();
         return {
             dashboard
         }

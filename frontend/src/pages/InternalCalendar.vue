@@ -72,6 +72,9 @@ export default defineComponent({
     getDate(date): Date {
       try {
         const dt = new Date(date)
+        if (dt.getHours() <= 0) {
+          dt.setHours(1)
+        }
         return dt;
       } catch(e) {
         console.error(e)
