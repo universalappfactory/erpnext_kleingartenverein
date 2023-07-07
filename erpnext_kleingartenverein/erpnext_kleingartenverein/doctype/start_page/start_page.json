@@ -14,9 +14,9 @@
   "route",
   "is_published",
   "sections",
-  "cards",
   "primary_cards",
-  "header_image"
+  "header_image",
+  "login_required"
  ],
  "fields": [
   {
@@ -44,12 +44,6 @@
    "options": "Contentpage Section"
   },
   {
-   "fieldname": "cards",
-   "fieldtype": "Table",
-   "label": "Cards",
-   "options": "Section Card"
-  },
-  {
    "fieldname": "primary_cards",
    "fieldtype": "Table",
    "label": "Primary Cards",
@@ -66,13 +60,19 @@
    "fieldtype": "Data",
    "label": "Title",
    "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "login_required",
+   "fieldtype": "Check",
+   "label": "Login Required"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-07-01 06:24:25.894190",
+ "modified": "2023-07-07 16:43:30.596986",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Start Page",

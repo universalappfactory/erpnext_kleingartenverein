@@ -46,6 +46,13 @@
 		{% include "erpnext_kleingartenverein/templates/navbar/navbar.html" %}
 		{%- endblock -%}
 	</header>
+	
+	<noscript>
+		<div class="bg-red-500 grid-flow-row text-center" style="padding-top: 10vh">
+			<p style="text-decoration: underline;">Javascript is disabled! But you may reach all sites via the links provided below</p>
+			{% include "erpnext_kleingartenverein/templates/navbar/navbar_no_script.html" %}
+		</div>
+	</noscript>
 
 	{% block content %}
 	{{ content }}

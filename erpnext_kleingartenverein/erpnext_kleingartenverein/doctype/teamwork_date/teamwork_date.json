@@ -22,7 +22,8 @@
   "is_published",
   "route",
   "event_link",
-  "time_for_applications"
+  "time_for_applications",
+  "login_required"
  ],
  "fields": [
   {
@@ -103,12 +104,18 @@
    "fieldname": "time_for_applications",
    "fieldtype": "Date",
    "label": "Time For Applications"
+  },
+  {
+   "default": "1",
+   "fieldname": "login_required",
+   "fieldtype": "Check",
+   "label": "Login Required"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-07-07 16:27:34.539467",
+ "modified": "2023-07-07 16:44:46.656293",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Teamwork Date",

@@ -11,7 +11,9 @@ from erpnext_kleingartenverein.www.utils import ensure_login, invalidate_caches
 
 class TeamworkDate(WebsiteGenerator):
     def get_context(self, context):
-        ensure_login()
+        if self.login_required:
+            ensure_login()
+            
         super().get_context(context)
 
     def after_insert(self):

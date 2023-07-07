@@ -2,22 +2,14 @@ import frappe
 from frappe.exceptions import DoesNotExistError
 from frappe.website.utils import clear_website_cache
 
+
 def ensure_login():
     if frappe.session.user == "Guest":
         frappe.local.flags.redirect_location = "/login"
         raise frappe.Redirect
 
-    # if frappe.session.user != "Guest":
-    # 	if not redirect_to:
-    # 		if frappe.session.data.user_type == "Website User":
-    # 			redirect_to = get_home_page()
-    # 		else:
-    # 			redirect_to = "/dashboard"
-
-    # 	if redirect_to != "login":
-    # 		frappe.local.flags.redirect_location = redirect_to
-    # 		raise frappe.Redirect
-
+def is_guest():
+    return frappe.session.user == "Guest"
 
 def add_default_context_data(context):
     csrf_token = frappe.sessions.get_csrf_token()
@@ -40,9 +32,10 @@ def add_default_context_data(context):
     except DoesNotExistError:
         pass
 
+
 def invalidate_caches():
     try:
-        start_pages = frappe.get_list('Start Page', pluck="name")
+        start_pages = frappe.get_list("Start Page", pluck="name")
         for p in start_pages:
             frappe.cache().delete_value(p)
 

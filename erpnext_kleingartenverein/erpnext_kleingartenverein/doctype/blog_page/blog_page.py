@@ -12,7 +12,8 @@ from erpnext_kleingartenverein.www.utils import (
     DefaultContextData,
     add_default_context_data,
     ensure_login,
-    invalidate_caches
+    invalidate_caches,
+    is_guest
 )
 
 
@@ -42,7 +43,9 @@ class BlogPage(WebsiteGenerator, DefaultContextData):
         if not self.is_published or self.published_at > datetime.now():
             raise DoesNotExistError()
 
-        ensure_login()
+        if self.login_required:
+            ensure_login()
+
         super().get_context(context)
         route = "/".join(self.route.split("/")[:-1])
         context.breadcrumbs = get_breadcrumbs(context, route)
@@ -60,14 +63,17 @@ def get_list(doctype, txt, filters, limit_start, limit_page_length=20, order_by=
 
 
 def get_list_context(context=None):
-    ensure_login()
     add_default_context_data(context)
 
-# 
+    filters = {"is_published": 1, "published_at": ["<=", datetime.now()]}
+
+    if is_guest():
+        filters['login_required'] = 0
+
     context.update(
         {
             "order_by": "published_at desc",
-            "filters": {"is_published": 1, "published_at": ["<=", datetime.now()]},
+            "filters": filters,
             "breadcrumbs": get_breadcrumbs(context),
         }
     )

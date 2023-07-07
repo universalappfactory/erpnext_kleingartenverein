@@ -1,14 +1,15 @@
 # Copyright (c) 2023, Kleingartenverein and contributors
 # For license information, please see license.txt
 
-# import frappe
+from datetime import datetime
 from frappe.website.website_generator import WebsiteGenerator
 from erpnext_kleingartenverein.api import get_breadcrumbs
 from erpnext_kleingartenverein.www.utils import (
     DefaultContextData,
     add_default_context_data,
     ensure_login,
-    invalidate_caches
+    invalidate_caches,
+    is_guest
 )
 
 class ContentPage(WebsiteGenerator, DefaultContextData):
@@ -34,13 +35,25 @@ class ContentPage(WebsiteGenerator, DefaultContextData):
         return self.scrub(self.headline)
 
     def get_context(self, context):
-        ensure_login()
+        if self.login_required:
+            ensure_login()
+        
         super().get_context(context)
         context.breadcrumbs = get_breadcrumbs(context, self.route)
 
 
 def get_list_context(context=None):
-    ensure_login()
     add_default_context_data(context)
-    context.order_by = "date published_at"
-    context.breadcrumbs = get_breadcrumbs(context)
+
+    filters = {"is_published": 1, "published_at": ["<=", datetime.now()]}
+
+    if is_guest():
+        filters['login_required'] = 0
+
+    context.update(
+        {
+            "order_by": "date published_at",
+            "filters": filters,
+            "breadcrumbs": get_breadcrumbs(context),
+        }
+    )

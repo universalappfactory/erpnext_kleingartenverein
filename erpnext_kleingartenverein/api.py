@@ -149,8 +149,8 @@ def customer_before_insert(doc, method=None):
 
 @frappe.whitelist()
 def get_homepage(user):
-    if user == "Guest":
-        return "login"
+    if user != "Guest":
+        return "dashboard"
     return "index"
 
 
@@ -179,7 +179,7 @@ def get_public_events():
         all_events = []
 
         if club_settings.public_date_tags:
-            next_events = frappe.get_list(
+            next_events = frappe.get_all(
                 "Event",
                 filters={
                     "event_type": "Public",
@@ -192,7 +192,7 @@ def get_public_events():
             all_events = all_events + next_events
 
         if club_settings.stripped_date_tags:
-            next_events = frappe.get_list(
+            next_events = frappe.get_all(
                 "Event",
                 filters={
                     "event_type": "Public",

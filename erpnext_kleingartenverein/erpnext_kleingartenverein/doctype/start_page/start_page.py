@@ -16,7 +16,10 @@ class StartPage(WebsiteGenerator, DefaultContextData):
         invalidate_caches()
 
     def get_context(self, context):
-        ensure_login()
+        
+        if self.login_required:
+            ensure_login()
+        
         super().get_context(context)
         context.bulletins = frappe.get_list(
             "Bulletin", fields="*", order_by="date desc", page_length=2
@@ -27,7 +30,7 @@ class StartPage(WebsiteGenerator, DefaultContextData):
 
         now = datetime.datetime.now()
 
-        next_events = frappe.get_list(
+        next_events = frappe.get_all(
             "Event",
             filters={
                 "starts_on": [">=", now],
@@ -42,7 +45,7 @@ class StartPage(WebsiteGenerator, DefaultContextData):
         context.next_events = next_events
 
         context.next_teamwork_dates = []
-        next_teamwork_dates = frappe.get_list(
+        next_teamwork_dates = frappe.get_all(
             "Teamwork Date",
             filters={"date": [">=", now], "is_published": 1},
             order_by="date asc",

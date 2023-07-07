@@ -4,7 +4,7 @@ import datetime
 def get_open_teamwork_dates():
     now = datetime.datetime.now()
     result = []
-    next_teamwork_dates = frappe.get_list(
+    next_teamwork_dates = frappe.get_all(
         "Teamwork Date",
         filters={
             "date": [">=", now],

@@ -1,0 +1,14 @@
+<div class="grid-flow-row mr-4 pt-2">
+  
+  <a href="/">
+    {{_('Home')}}
+  </a>
+
+  {% if top_bar_items -%}
+  {%- for itm in top_bar_items -%}
+  {% if itm.url -%}
+  <a class="pr-4" href="{{itm.url}}">{{itm.label}}</a>
+  {%- endif -%}
+  {%- endfor %}
+  {%- endif %}
+</div>
