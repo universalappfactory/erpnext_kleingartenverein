@@ -210,7 +210,7 @@ def get_public_events():
             all_events = all_events + next_events
 
         return sorted(map(
-            lambda x: {"subject": x.subject, "starts_on": x.starts_on}, all_events
+            lambda x: {"subject": x.subject, "starts_on": x.starts_on, "ends_on": x.ends_on}, all_events
         ), key=lambda x: x["starts_on"])
     except Exception as e:
         frappe.log_error(e)
