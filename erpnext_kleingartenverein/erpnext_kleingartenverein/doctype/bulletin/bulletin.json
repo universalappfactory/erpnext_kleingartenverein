@@ -15,7 +15,8 @@
   "route",
   "login_required",
   "is_published",
-  "published_at"
+  "published_at",
+  "title"
  ],
  "fields": [
   {
@@ -63,13 +64,18 @@
    "fieldname": "published_at",
    "fieldtype": "Date",
    "label": "Published At"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title"
   }
  ],
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2023-07-07 17:01:18.046517",
+ "modified": "2023-07-16 12:18:25.383027",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Bulletin",

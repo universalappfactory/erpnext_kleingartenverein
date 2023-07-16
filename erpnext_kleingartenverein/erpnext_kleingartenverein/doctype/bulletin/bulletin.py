@@ -57,6 +57,7 @@ class Bulletin(WebsiteGenerator, DefaultContextData):
 
 def get_list_context(context=None):
     add_default_context_data(context)
+    context.title = _("Bulletins")
 
     filters = {"is_published": 1, "published_at": ["<=", datetime.now()]}
 
