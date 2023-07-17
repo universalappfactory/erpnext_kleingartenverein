@@ -13,6 +13,7 @@ bench -v setup requirements
 echo "Setting Up erpnext_kleingartenverein App..."
 bench get-app payments
 bench get-app erpnext
+bench get-app drive
 bench get-app erpnext_kleingartenverein "${GITHUB_WORKSPACE}"
 
 echo "Setting Up Sites & Database..."
