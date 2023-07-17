@@ -72,9 +72,8 @@ class InvoiceCalculator:
         if not p:
             raise frappe.DoesNotExistError("product does not exist")
 
-        item = frappe.new_doc("Sales Invoice Item", invoice)
+        item = frappe.new_doc("Sales Invoice Item")
         item_price = self.get_item_price(p)
-
         item.item_name = p.name
         item.qty = 1
         item.uom = p.stock_uom
@@ -84,6 +83,7 @@ class InvoiceCalculator:
         item.parentfield = "items"
         item.parenttype = "Sales Invoice"
         item.income_account = income_account
+
         return item
 
     def create_item_from_plot(self, invoice, invoice_calculation_item, income_account):
@@ -91,7 +91,8 @@ class InvoiceCalculator:
         if not p:
             raise frappe.DoesNotExistError("product does not exist")
 
-        item = frappe.new_doc("Sales Invoice Item", invoice)
+        item = frappe.new_doc("Sales Invoice Item")
+        
         item_price = self.get_item_price(p)
 
         customer = frappe.get_doc("Customer", invoice.customer)

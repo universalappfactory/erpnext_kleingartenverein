@@ -186,5 +186,5 @@ class TestInvoiceCalculation(FrappeTestCase):
         )
         self.assertIsNotNone(matching_invoice)
 
-        expected_grand_total = flt(522.3 * 1.75, precision=2)
+        expected_grand_total = flt(522.3 * 1.75, precision=2) # plotsize * price
         self.assertEqual(matching_invoice.grand_total, expected_grand_total)
