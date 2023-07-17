@@ -76,11 +76,11 @@ jobs:
       - name: Install
         working-directory: /home/runner/frappe-bench
         run: |
+          bench start
           bench get-app erpnext
           bench get-app erpnext_kleingartenverein $GITHUB_WORKSPACE
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
-          bench start
           bench --site test_site install-app erpnext erpnext_kleingartenverein
           bench build
         env:
