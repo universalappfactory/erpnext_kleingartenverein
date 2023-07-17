@@ -15,13 +15,19 @@ class TestApi(FrappeTestCase):
     def setUpClass(cls) -> None:
         templates = frappe.get_list(
             "Address Template",
-            filters={"country": "Germany", "is_default": 1},
+            filters={"country": "Germany"},
             pluck="name",
         )
+
         if len(templates) == 0:
             frappe.get_doc(
                 {"doctype": "Address Template", "country": "Germany", "is_default": 1}
             ).insert()
+        else:
+            doc = frappe.get_doc("Address Template", templates[0])
+            doc.is_default = 1
+            doc.save()
+        
 
     @classmethod
     def addClassCleanup(cls):

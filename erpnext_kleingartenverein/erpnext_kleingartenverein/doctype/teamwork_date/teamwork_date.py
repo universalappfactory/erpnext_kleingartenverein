@@ -1,6 +1,7 @@
 # Copyright (c) 2023, Kleingartenverein and contributors
 # For license information, please see license.txt
 
+from datetime import timedelta
 from frappe.desk.doctype.tag.tag import DocTags
 import frappe
 from frappe import _
@@ -19,19 +20,23 @@ class TeamworkDate(WebsiteGenerator):
     def after_insert(self):
         self.make_validations()
         self.sync_event()
+        self.save()
 
     def make_validations(self):
         self.validate_participant_count()
         self.validate_unique_customers()
         if len(self.participants) == self.maximum_participants:
             self.is_complete = True
-        elif len(self.participants) < self.maximum_participants:
+        elif self.maximum_participants and len(self.participants) < self.maximum_participants:
             self.is_complete = False
 
-        if len(self.participants) >= self.minimum_participants:
+        if self.minimum_participants and len(self.participants) >= self.minimum_participants:
             self.minimum_reached = True
         else:
             self.minimum_reached = False
+
+        if self.time_for_applications is None:
+            self.time_for_applications = self.date + timedelta(days=-7)
 
     def on_update(self):
         self.make_validations()
@@ -53,6 +58,9 @@ class TeamworkDate(WebsiteGenerator):
 
     def validate_participant_count(self):
         participant_count = len(self.participants)
+
+        if not self.maximum_participants:
+            return
 
         if participant_count > self.maximum_participants:
             frappe.throw(
