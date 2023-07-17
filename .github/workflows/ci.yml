@@ -86,6 +86,10 @@ jobs:
       #   env:
       #     CI: "Yes"
 
+      - name: Install dependencies
+        run: |
+          bash ${GITHUB_WORKSPACE}/.github/helper/install.sh
+
       - name: Install
         run: |
           pip install frappe-bench
@@ -94,18 +98,17 @@ jobs:
           DB: mariadb
           TYPE: server
 
-      - name: Install App
-        working-directory: /home/runner/frappe-bench
-        run: |
-          bench get-app erpnext
-          bench get-app erpnext_kleingartenverein $GITHUB_WORKSPACE
-          bench setup requirements --dev
-          bench new-site --db-root-password root --admin-password admin test_site
-          bench start
-          bench --site test_site install-app erpnext erpnext_kleingartenverein
-          bench build
-        env:
-          CI: "Yes"
+      # - name: Install App
+      #   working-directory: /home/runner/frappe-bench
+      #   run: |
+      #     bench get-app erpnext_kleingartenverein $GITHUB_WORKSPACE
+      #     bench setup requirements --dev
+      #     bench new-site --db-root-password root --admin-password admin test_site
+      #     bench start
+      #     bench --site test_site install-app erpnext erpnext_kleingartenverein
+      #     bench build
+      #   env:
+      #     CI: "Yes"
 
       - name: Run Tests
         working-directory: /home/runner/frappe-bench

@@ -46,7 +46,7 @@ CI=Yes bench build &
 build_pid=$!
 
 bench --site test_site reinstall --yes
-# bench --site test_site install-app 
+bench --site test_site install-app erpnext_kleingartenverein 
 
 # wait till assets are built succesfully
 wait $build_pid
