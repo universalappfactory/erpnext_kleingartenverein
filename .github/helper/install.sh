@@ -33,10 +33,10 @@ echo "Setting Up Procfile..."
 sed -i 's/^watch:/# watch:/g' Procfile
 sed -i 's/^schedule:/# schedule:/g' Procfile
 
-echo "Setting up redisearch module..."
-echo "loadmodule ${GITHUB_WORKSPACE}/.github/helper/redisearch.so" >> ./config/redis_cache.conf
-chmod +x "${GITHUB_WORKSPACE}/.github/helper/redisearch.so"
-cat ./config/redis_cache.conf
+# echo "Setting up redisearch module..."
+# echo "loadmodule ${GITHUB_WORKSPACE}/.github/helper/redisearch.so" >> ./config/redis_cache.conf
+# chmod +x "${GITHUB_WORKSPACE}/.github/helper/redisearch.so"
+# cat ./config/redis_cache.conf
 
 echo "Starting Bench..."
 
