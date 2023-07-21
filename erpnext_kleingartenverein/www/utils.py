@@ -14,7 +14,7 @@ def is_guest():
 def add_default_context_data(context):
     csrf_token = frappe.sessions.get_csrf_token()
     frappe.db.commit()
-    context.user = frappe.session.user
+    # context.user = frappe.session.user
     context.csrf_token = csrf_token
 
     try:

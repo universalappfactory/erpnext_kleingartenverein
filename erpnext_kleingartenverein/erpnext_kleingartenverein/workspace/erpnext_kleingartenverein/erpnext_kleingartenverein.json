@@ -1,7 +1,8 @@
 {
  "charts": [],
- "content": "[{\"id\":\"9hWP1_oGf4\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h3\\\" style=\\\"\\\"><a target=\\\"_blank\\\" href=\\\"/wiki/kleingartenverein\\\">Hilfeseiten im Wiki</a></span>\",\"col\":12}},{\"id\":\"j9dbYihsOG\",\"type\":\"card\",\"data\":{\"card_name\":\"Verwaltung\",\"col\":5}},{\"id\":\"UZ8Q5QaIXX\",\"type\":\"card\",\"data\":{\"card_name\":\"Buchhaltung\",\"col\":4}},{\"id\":\"bH2f6LNxpg\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"XBir9liXnw\",\"type\":\"card\",\"data\":{\"card_name\":\"Club Management\",\"col\":4}},{\"id\":\"J4ap8JMlzu\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Formulare\",\"col\":4}}]",
+ "content": "[{\"id\":\"9hWP1_oGf4\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h3\\\" style=\\\"\\\"><a target=\\\"_blank\\\" href=\\\"/wiki/kleingartenverein\\\">Hilfeseiten im Wiki</a></span>\",\"col\":12}},{\"id\":\"j9dbYihsOG\",\"type\":\"card\",\"data\":{\"card_name\":\"Verwaltung\",\"col\":5}},{\"id\":\"UZ8Q5QaIXX\",\"type\":\"card\",\"data\":{\"card_name\":\"Buchhaltung\",\"col\":4}},{\"id\":\"bH2f6LNxpg\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"XBir9liXnw\",\"type\":\"card\",\"data\":{\"card_name\":\"Club Management\",\"col\":4}},{\"id\":\"J4ap8JMlzu\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Formulare\",\"col\":4}},{\"id\":\"VA8r4O7aop\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"jEI6NTp8CP\",\"type\":\"card\",\"data\":{\"card_name\":\"Verschiedenes\",\"col\":4}}]",
  "creation": "2022-09-17 11:48:26.825712",
+ "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
@@ -124,12 +125,41 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Verschiedenes",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gemeinschaftsarbeit",
+   "link_count": 0,
+   "link_to": "Teamwork Date",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Aush\u00e4nge",
+   "link_count": 0,
+   "link_to": "Bulletin",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-03-21 08:43:44.406381",
- "modified_by": "Administrator",
+ "modified": "2023-07-21 10:04:55.955243",
+ "modified_by": "dirk@dirk-lehmeier.de",
  "module": "Erpnext Kleingartenverein",
  "name": "Erpnext Kleingartenverein",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
