@@ -1,10 +1,10 @@
 <template>
-  <div class="">
-    <div class="hidden md:block">
+  <div>
+    <div class="hidden md:block blog-page pb-20">
       <CalendarComponent :events="calendar.calendarEvents" @event-focused="calendar.eventFocused" />
     </div>
 
-    <div class="bg-sand md:mt-8">
+    <div class="bg-sand md:mt-4">
       <h1 class="text-center text-2xl py-8">Kommende Termine</h1>
     </div>
     <div class="flex justify-center">

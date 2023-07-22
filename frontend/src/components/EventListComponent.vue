@@ -4,7 +4,7 @@
             <tr v-for="(evt, index) of events" :key="index"
                 class="border-b"
                 :class="evt.selected ? 'bg-red-100' : 'bg-gray-50'">
-                <td scope="row" class="align-top px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td scope="row" class="align-top px-6 py-4 font-medium whitespace-nowrap ">
                     {{ getDate(evt) }}                                        
                 </td>
                 <td class="px-6 py-4">
