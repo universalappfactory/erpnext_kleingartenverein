@@ -36,12 +36,19 @@ def create_letters_and_submit(member_letter_shipping_name):
         frappe.throw('you must provide a member_letter_shipping_name')
 
     try:
-        frappe.enqueue(
-                background_create_letters,
-                member_letter_shipping_name=member_letter_shipping_name,
-                queue="long",
-                job_name=f"create_letters_for_{member_letter_shipping_name}",
-            )
+        letter_shipment = frappe.get_doc("Member Letter Shipment", member_letter_shipping_name)
+        if not letter_shipment:
+            frappe.throw(_("cannot find Member Letter Shipment: {0}").format(member_letter_shipping_name))
+
+        if letter_shipment.customer_table and len(letter_shipment.customer_table) == 1:
+            background_create_letters(member_letter_shipping_name)
+        else:
+            frappe.enqueue(
+                    background_create_letters,
+                    member_letter_shipping_name=member_letter_shipping_name,
+                    queue="long",
+                    job_name=f"create_letters_for_{member_letter_shipping_name}",
+                )
 
     except Exception as e:
         frappe.log_error(e)
