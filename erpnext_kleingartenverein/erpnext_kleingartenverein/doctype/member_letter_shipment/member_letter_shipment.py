@@ -6,10 +6,12 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils.file_manager import add_attachments
 from frappe.utils.weasyprint import PrintFormatGenerator, download_pdf
-from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter_shipment.shipping import MemberLetterShipping, STATUS_SUBMITTED
+from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter_shipment.shipping import MemberLetterShipping, STATUS_SUBMITTED, create_letters_and_submit
 
 SHIPMENTTYPE_CREATE = 'Create'
 SHIPMENTTYPE_DRAFT = 'Create Drafts'
+
+
 
 class MemberLetterShipment(Document):
 
@@ -43,7 +45,7 @@ class MemberLetterShipment(Document):
 			frappe.throw(_("Shipment has no valid recipients"))
 
 		if self.docstatus == STATUS_SUBMITTED and self.shipment_type == SHIPMENTTYPE_CREATE:
-			MemberLetterShipping().create_letters_and_submit(self)
+			create_letters_and_submit(self.name)
 
 		if self.docstatus == STATUS_SUBMITTED and self.shipment_type == SHIPMENTTYPE_DRAFT:
 			MemberLetterShipping().create_letters(self)

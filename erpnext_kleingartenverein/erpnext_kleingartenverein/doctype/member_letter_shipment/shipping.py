@@ -1,4 +1,5 @@
 import frappe
+from datetime import datetime
 from frappe import _
 from frappe.utils.file_manager import add_attachments
 from frappe.utils.weasyprint import PrintFormatGenerator
@@ -7,6 +8,44 @@ class ShippingError(Exception):
     pass
 
 STATUS_SUBMITTED = 1
+
+
+def background_create_letters(member_letter_shipping_name):
+    try:
+        if not member_letter_shipping_name or member_letter_shipping_name == '':
+            frappe.throw('you must provide a member_letter_shipping_name')
+
+        letter_shipment = frappe.get_doc("Member Letter Shipment", member_letter_shipping_name)
+        if not letter_shipment:
+            frappe.throw(_("cannot find Member Letter Shipment: {0}").format(member_letter_shipping_name))
+
+        shipping = MemberLetterShipping()
+        shipping.create_letters_and_submit(letter_shipment)
+
+        frappe.publish_realtime(
+            "background_create_letters_start", {"Done": member_letter_shipping_name}
+        )
+    except Exception as error:
+        frappe.log_error(error)
+
+
+@frappe.whitelist()
+def create_letters_and_submit(member_letter_shipping_name):
+
+    if not member_letter_shipping_name or member_letter_shipping_name == '':
+        frappe.throw('you must provide a member_letter_shipping_name')
+
+    try:
+        frappe.enqueue(
+                background_create_letters,
+                member_letter_shipping_name=member_letter_shipping_name,
+                queue="long",
+                job_name=f"create_letters_for_{member_letter_shipping_name}",
+            )
+
+    except Exception as e:
+        frappe.log_error(e)
+        frappe.throw(str(e))
 
 class MemberLetterShipping:
     def __init__(self, throw_on_error=False) -> None:
@@ -61,17 +100,23 @@ class MemberLetterShipping:
 
     def create_letters(self, letter, submit=False):
         customer_list = self.get_matching_customers(letter)
+        now = datetime.now()
+
+        date = now.strftime('%Y-%m-%d-%H-%M')
+        idx = 0
         for customer in customer_list:
             try:
+                description = f"{letter.description}-{date}-{idx}"
                 sent_letter = frappe.new_doc("Single Member Letter")
                 sent_letter.customer = customer.name
                 sent_letter.content = letter.content
                 sent_letter.member_letter_shipment = letter.name
-                sent_letter.description = letter.description
+                sent_letter.description = description
                 sent_letter.target_folder = letter.target_folder
                 sent_letter.print_format = letter.print_format
 
                 sent_letter.save()
+                idx = idx + 1
                 if submit:
                     sent_letter.submit()
             except Exception as error:
@@ -101,7 +146,6 @@ class MemberLetterShipping:
                 )
                 sent_letter.attachment = pdf.file_url
                 sent_letter.success = True
-                # sent_letter.save()
 
                 self.add_attchment_to_customer(sent_letter.customer, [pdf.name])
             except Exception as error:
@@ -110,48 +154,7 @@ class MemberLetterShipping:
                 else:
                     sent_letter.error_message = str(error)
                     sent_letter.success = False
-                    # sent_letter.save()
 
         except Exception as error:
             frappe.log_error(error)
             frappe.throw("Error while sending", error)
-
-    # def create_letters_with_pdf(self, letter):
-    #     result = []
-    #     customer_list = self.get_matching_customers(letter)
-    #     for customer in customer_list:
-    #         try:
-    #             sent_letter = frappe.new_doc("Single Member Letter")
-    #             sent_letter.customer = customer.name
-    #             sent_letter.content = letter.content
-    #             sent_letter.member_letter_shipment = letter.name
-    #             sent_letter.description = letter.description
-    #             sent_letter.save()
-
-    #             target_folder = (
-    #                 letter.target_folder if letter.target_folder else "Home/letters"
-    #             )
-    #             try:
-    #                 pdf = self.attch_to_file(
-    #                     letter.print_format,
-    #                     target_folder,
-    #                     sent_letter,
-    #                     f"{letter.description}.pdf",
-    #                 )
-    #                 sent_letter.attachment = pdf.file_url
-    #                 sent_letter.success = True
-
-    #                 self.add_attchment_to_customer(customer.name, [pdf.name])
-    #                 sent_letter.save()
-    #             except Exception as error:
-    #                 if self._throw_on_error:
-    #                     raise error
-    #                 else:
-    #                     sent_letter.error_message = str(error)
-    #                     sent_letter.success = False
-    #                     sent_letter.save()
-
-    #             result.append(sent_letter)
-    #         except Exception as error:
-    #             frappe.throw("Error while sending", error)
-    #     return result

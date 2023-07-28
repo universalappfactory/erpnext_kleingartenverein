@@ -9,7 +9,8 @@ from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter_s
 class SingleMemberLetter(Document):
 
 	def on_submit(self):
-		pass
+		if self.error_message and self.error_message != '':
+			frappe.throw(_('cannot submit letter has an error'))
 
 	def before_submit(self):
 		if self.docstatus == STATUS_SUBMITTED:
