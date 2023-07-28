@@ -1,0 +1,133 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{description}-{MM}-{YYYY}",
+ "creation": "2023-07-28 12:15:39.979545",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "description",
+  "member_letter_template",
+  "shipment_type",
+  "content",
+  "print_format",
+  "target_customergroup",
+  "customer_table",
+  "company",
+  "target_folder",
+  "image_1",
+  "image_2",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Description",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Markdown Editor",
+   "in_list_view": 1,
+   "label": "Content",
+   "reqd": 1
+  },
+  {
+   "fieldname": "print_format",
+   "fieldtype": "Link",
+   "label": "Print Format",
+   "options": "Print Format",
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_customergroup",
+   "fieldtype": "Link",
+   "label": "Target Customergroup",
+   "options": "Customer Group"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Firma",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_folder",
+   "fieldtype": "Link",
+   "label": "Target Folder",
+   "options": "File"
+  },
+  {
+   "fieldname": "image_1",
+   "fieldtype": "Text",
+   "label": "Image 1"
+  },
+  {
+   "fieldname": "image_2",
+   "fieldtype": "Text",
+   "label": "Image 2"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Member Letter Shipment",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "member_letter_template",
+   "fieldtype": "Link",
+   "label": "Template",
+   "options": "Member Letter Template"
+  },
+  {
+   "fieldname": "customer_table",
+   "fieldtype": "Table",
+   "label": "Customer",
+   "options": "Customer Link"
+  },
+  {
+   "default": "Create Drafts",
+   "fieldname": "shipment_type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "Create Drafts\nCreate"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-07-28 12:25:28.468413",
+ "modified_by": "Administrator",
+ "module": "Erpnext Kleingartenverein",
+ "name": "Member Letter Shipment",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
