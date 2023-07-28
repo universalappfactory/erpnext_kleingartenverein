@@ -12,7 +12,13 @@
   "content",
   "customer",
   "amended_from",
-  "member_letter_shipment"
+  "member_letter_shipment",
+  "error_message",
+  "success",
+  "target_folder",
+  "attachment",
+  "print_format",
+  "member_letter_template"
  ],
  "fields": [
   {
@@ -52,12 +58,48 @@
    "fieldtype": "Link",
    "label": "Shipment",
    "options": "Member Letter Shipment"
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Data",
+   "label": "Error"
+  },
+  {
+   "default": "0",
+   "fieldname": "success",
+   "fieldtype": "Check",
+   "label": "Success"
+  },
+  {
+   "fieldname": "target_folder",
+   "fieldtype": "Link",
+   "label": "Target Folder",
+   "options": "File",
+   "reqd": 1
+  },
+  {
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "label": "Attachment"
+  },
+  {
+   "fieldname": "print_format",
+   "fieldtype": "Link",
+   "label": "Print Format",
+   "options": "Print Format",
+   "reqd": 1
+  },
+  {
+   "fieldname": "member_letter_template",
+   "fieldtype": "Link",
+   "label": "Template",
+   "options": "Member Letter Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-07-28 12:33:56.628702",
+ "modified": "2023-07-28 19:06:50.405663",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Single Member Letter",
