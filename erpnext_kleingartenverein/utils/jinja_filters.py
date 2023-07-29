@@ -1,6 +1,7 @@
 import base64
 import frappe
 from drive.api.files import list_folder_contents, get_file_content
+from frappe.utils.jinja import render_template
 
 
 def get_value(source, fieldname):
@@ -75,3 +76,23 @@ def get_folder_contents(folder_name):
         return result
     except Exception as e:
         frappe.log_error(e)
+
+def render(*args, **kwargs):
+    """
+    render variable content
+    call the render filter in the parent template as follows:
+
+    {% set cust = frappe.get_doc('Customer', doc.customer) %}
+
+    {{ doc.content | render(doc, customer=cust)  }}
+
+    to provide additional context variables just add customer=cust, custom_doc=...
+    """
+    try:
+        context = frappe._dict(**kwargs)
+        context['doc'] = args[1]
+        r = frappe.render_template(args[0], context, False, True)
+        return r
+    except Exception as e:
+        frappe.log_error(e)
+        return str(e)
