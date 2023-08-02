@@ -5,6 +5,12 @@ from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calcula
 from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter.letter_shipping import (
     LetterShipping,
 )
+# from erpnext_kleingartenverein.erpnext_kleingartenverein.tenant_search import (
+#     TenantSearch,
+# )
+from erpnext_kleingartenverein.utils.tenant_search import TenantSearch
+
+
 import frappe
 import json
 import random
@@ -487,5 +493,22 @@ def mark_as_read(*args, **kwargs):
         marker.mark_as_read(user)
         marker.save()
     except Exception as e:
+        frappe.log_error(e)
+        return []
+
+@frappe.whitelist(allow_guest=False)
+def search_tenants(*args, **kwargs):
+    try:
+        ts = TenantSearch(index_name="tenants")
+        # ts.build()
+        search_result = ts.search(kwargs["query"])
+
+        customers = frappe.get_list("Customer",filters={
+                    "name": ["IN", search_result],
+                }, fields="*")
+
+        return customers    
+    except Exception as e:
+        print(e)
         frappe.log_error(e)
         return []

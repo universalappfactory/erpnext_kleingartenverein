@@ -11,6 +11,12 @@
             </template>
          </Dialog>
 
+         <Button @click="executeSearch">Search</Button>
+
+         <input type="text" v-model="searchText" id="table-search-users"
+                    class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Search for users" />
+
          {{ bodyDialog }}
 
       <div class="m-8 p-4 mb-4 text-lg text-yellow-800 rounded-lg bg-yellow-50" role="alert">
@@ -29,7 +35,8 @@
          </p>
       </div>
    
-      <GridTable @loadMore="loadMoreData" :items="tenants.data" :checkable="false" :hasNext="tenants.hasNextPage"
+      <GridTable @loadMore="tenant.loadMore" :items="tenant.tenants" :checkable="false" 
+         :hasNext="tenant.pageInfo.hasNext"
          :columns="tableColumns" />
 
    </div>
@@ -44,8 +51,10 @@ import GridTable from "../components/GridTable.vue";
 import TenantEditor from "../components/TenantEditor.vue";
 
 import { Dropdown, Dialog } from 'frappe-ui'
-import { Alert, Button, createListResource } from 'frappe-ui'
+import { Alert, Button, createListResource, createResource } from 'frappe-ui'
 import { ColumnMode, TableColumn } from '../ts/table';
+import { useTenants } from '../ts/tenants.ts';
+
 
 export default defineComponent({
    name: "paechter",
@@ -61,28 +70,16 @@ export default defineComponent({
    },
 
    methods: {
-      loadMoreData() {
-         console.log('LoadMore')
-         this.tenants.next();
+      executeSearch() {
+         console.log("searchText", this.searchText)
+         this.tenant.search(this.searchText)
       }
    },
    setup() {
-      console.log('SETUP')
 
-      let tenants = createListResource({
-         doctype: 'Customer',
-         fields: ['*'],
-         orderBy: 'plot_link asc',
-         filters:{
-            customer_group: 'Tenant'
-         },
-         start: 0,
-         pageLength: 20,
-      })
-
-      tenants.fetch()
+      const tenant = useTenants()
       return {
-         tenants
+         tenant,
       }
 
    },
@@ -107,14 +104,17 @@ export default defineComponent({
       ]
 
       const bodyDialog = false
-
+      
+      const searchText = ""
       return {
          tableColumns,
-         bodyDialog
+         bodyDialog,
+         searchText
       }
    },
    mounted() {
       initFlowbite();
+      this.tenant.fetch()
    }
 });
 </script>
