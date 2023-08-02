@@ -16,11 +16,17 @@ export interface CalendarEvent
 
 export function formattedDate(input: CalendarEvent) {
     const dt = new Date(input.start)
-    return dt.toLocaleDateString("de-DE", {
-      "day": "2-digit",
-      "month": "2-digit",
-      "year": "numeric"
-    })
+    return dateToString(dt)
+}
+
+export function dateToString(input: Date) {
+  console.log(input)
+
+  return input.toLocaleDateString("de-DE", {
+    "day": "2-digit",
+    "month": "2-digit",
+    "year": "numeric"
+  })
 }
 
 export function getDurationString(input: CalendarEvent) {

@@ -1,6 +1,14 @@
 <template>
-	<button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar"
-		data-drawer-backdrop="false" type="button" class="inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 
+	<button data-drawer-target="default-sidebar" 
+		data-drawer-toggle="default-sidebar" 
+		aria-controls="default-sidebar"
+		data-drawer-backdrop="false" type="button" 
+		class="inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg 
+		sm:hidden 
+		hover:bg-gray-100 
+		focus:outline-none 
+		focus:ring-2 
+		focus:ring-gray-200 
 		">
 		<span class="sr-only">Open sidebar</span>
 		<svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -11,15 +19,20 @@
 	</button>
 
 	<aside id="default-sidebar"
-		class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" 
-		tabindex="-1"
+		class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" tabindex="-1"
 		aria-labelledby="drawer-backdrop-label">
 
 		<div class="h-full px-3 py-4 overflow-y-auto bg-gray-50">
-			<h5 id="drawer-disabled-backdrop-label"
-				class="text-base font-semibold text-gray-500 uppercase ml-5 mb-4">Menu</h5>
+			<h5 id="drawer-disabled-backdrop-label" class="text-base font-semibold text-gray-500 uppercase ml-5 mb-4">Menu
+			</h5>
 			<button type="button" data-drawer-hide="default-sidebar" aria-controls="default-sidebar"
-				class="block md:hidden text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center">
+				class="block 
+				md:hidden 
+				text-gray-400 
+				bg-transparent 
+				hover:bg-gray-200 
+				hover:text-gray-900 
+				rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center">
 				<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
 					xmlns="http://www.w3.org/2000/svg">
 					<path fill-rule="evenodd"
@@ -28,12 +41,13 @@
 				</svg>
 				<span class="sr-only">Close menu</span>
 			</button>
+			{{ route.path }}
 			<ul class="space-y-2 font-medium">
-				<li v-for="item in dashboard.navigation.data" :key="item.displayTitle">
+				<li v-for="item in dashboard.navigation" :class="item.href === route.path ? 'bg-red-100' : '' "  :key="item.displayTitle">
 					<template v-if="isRouter(item)">
 						<a @click="navigateTo(item)"
 							class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
-							<i class=" text-gray-500 text-6xl" fa :class="item.icon"></i>
+							<i class="fa text-gray-500 text-6xl" :class="item.icon"></i>
 							<div class="ml-3 cursor-pointer">{{ item.displayTitle }}
 								<template v-if="item.openCount > 0">
 									<div class="text-sm
@@ -51,11 +65,10 @@
 										border-white 
 										rounded-full 
 										-top-2
-										-right-30 
-										dark:border-gray-900">20</div>	
+										-right-30">{{ item.openCount }}</div>
 								</template>
 							</div>
-							
+
 						</a>
 					</template>
 					<template v-else>
@@ -73,14 +86,17 @@
 import { defineComponent, ref } from 'vue';
 import { NavigationItem, NavigationMode } from '../ts/navigation';
 import { useSharedDashboard } from '../ts/dashboard.ts'
+import { useRoute } from 'vue-router';
 export default defineComponent({
 	name: "navbar",
 	components: {
 	},
 	setup() {
 		const dashboard = useSharedDashboard();
+		const route=useRoute();
 		return {
-			dashboard
+			dashboard,
+			route
 		}
 	},
 	methods: {
@@ -101,7 +117,7 @@ export default defineComponent({
 	},
 	data() {
 
-		
+
 	},
 
 	mounted() {

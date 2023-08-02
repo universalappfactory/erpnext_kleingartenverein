@@ -4,10 +4,7 @@
     <div class="p-4 sm:ml-64">
 
         <div class="m-8 p-4 mb-4 text-lg text-yellow-800 rounded-lg bg-yellow-50" role="alert">
-            <span class="font-semibold">Info</span>
-            <p>
-                Mein Kleingartenverein
-            </p>
+            <span class="font-semibold">Mein Kleingartenverein</span>
             <p>
                 Leider gibt es hier noch nicht sonderlich viel zu sehen :)
             </p>

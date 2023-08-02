@@ -9,4 +9,12 @@ export interface NavigationItem
     href: string
     icon: string
     mode: NavigationMode
+    openCount: number | undefined,
+    read_marker_doctype: string | undefined
+}
+
+export interface ReadMarker
+{
+    doctype: string
+    count: number
 }

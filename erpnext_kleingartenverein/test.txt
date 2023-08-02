@@ -1,0 +1,2 @@
+/usr/bin/rsync -avP  /home/crocus/bin/frappe_live/erpnext/apps/erpnext_kleingartenverein/erpnext_kleingartenverein/public/ /var/www/virtual/crocus/kgv-alt-bickendorf.de/assets/erpnext_kleingartenverein/
+

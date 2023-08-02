@@ -209,9 +209,17 @@ def get_public_events():
 
             all_events = all_events + next_events
 
-        return sorted(map(
-            lambda x: {"subject": x.subject, "starts_on": x.starts_on, "ends_on": x.ends_on}, all_events
-        ), key=lambda x: x["starts_on"])
+        return sorted(
+            map(
+                lambda x: {
+                    "subject": x.subject,
+                    "starts_on": x.starts_on,
+                    "ends_on": x.ends_on,
+                },
+                all_events,
+            ),
+            key=lambda x: x["starts_on"],
+        )
     except Exception as e:
         frappe.log_error(e)
         return []
@@ -296,12 +304,6 @@ def get_dashboard_navigation():
     try:
         basic_navigation = [
             {
-                "displayTitle": _("Dashboard"),
-                "href": "/",
-                "icon": "fa-home",
-                "mode": "NavigationMode.Router",
-            },
-            {
                 "displayTitle": _("My Club"),
                 "href": "/myclub",
                 "icon": "fa-home",
@@ -320,19 +322,20 @@ def get_dashboard_navigation():
 
         basic_navigation.append(
             {
-                "displayTitle": _("Meeting Minutes"),
-                "href": "/meetingminutes",
+                "displayTitle": _("Zum Desk"),
+                "href": "/app/",
                 "icon": "fa-desktop",
-                "mode": "NavigationMode.Router",
+                "mode": "NavigationMode.External",
             }
         )
 
         basic_navigation.append(
             {
-                "displayTitle": _("Zum Desk"),
-                "href": "/app/",
-                "icon": "fa-desktop",
-                "mode": "NavigationMode.External",
+                "displayTitle": _("Meeting Minutes"),
+                "href": "/meetingminutes",
+                "icon": "fa-meetup",
+                "mode": "NavigationMode.Router",
+                "read_marker_doctype": "Meeting Minutes",
             }
         )
 
@@ -345,29 +348,29 @@ def get_dashboard_navigation():
             }
         )
 
-        basic_navigation.append(
-            {
-                "displayTitle": _("Kalender"),
-                "href": "/calendar/",
-                "icon": "fa-list",
-                "mode": "NavigationMode.Router",
-            }
-        )
+        # basic_navigation.append(
+        #     {
+        #         "displayTitle": _("Kalender"),
+        #         "href": "/calendar/",
+        #         "icon": "fa-list",
+        #         "mode": "NavigationMode.Router",
+        #     }
+        # )
 
-        basic_navigation.append(
-            {
-                "displayTitle": _("Drive"),
-                "href": "/drive/",
-                "icon": "fa-list",
-                "mode": "NavigationMode.External",
-            }
-        )
+        # basic_navigation.append(
+        #     {
+        #         "displayTitle": _("Drive"),
+        #         "href": "/drive/",
+        #         "icon": "fa-list",
+        #         "mode": "NavigationMode.External",
+        #     }
+        # )
 
         basic_navigation.append(
             {
                 "displayTitle": _("Logout"),
                 "href": "/logout/",
-                "icon": "fa-sign",
+                "icon": "fa fa-sign-out",
                 "mode": "NavigationMode.External",
             }
         )
@@ -384,25 +387,52 @@ def get_unread_document_count():
         frappe.throw(_("Not permitted"), frappe.PermissionError)
 
     roles = frappe.get_roles(user)
-
     try:
-        values = {
-            "user": user,
-            "roles": ",".join(roles), # ToDo this does not build the correct query
-        }
         data = frappe.db.sql(
             """
-        SELECT DISTINCT(mapping.document_type), COUNT(mapping.document_type) FROM `tabRead Marker Mapping` mapping
+        SELECT DISTINCT(mapping.document_type) AS doctype, marker.document_link AS document, COUNT(mapping.document_type) AS count FROM `tabRead Marker Mapping` mapping
             JOIN `tabRead Marker` marker
             ON marker.document_type = mapping.document_type
             LEFT JOIN `tabRead Marker Entry`  entry
-            ON entry.user_link = %(user)s
-            WHERE  entry.user_link IS NULL AND mapping.role_link IN (roles)
-            GROUP BY mapping.document_type
-        """,
-            values=values,
-            as_dict=0,
+            ON entry.user_link = %s
+            WHERE  entry.user_link IS NULL AND mapping.role_link IN (%s)
+            GROUP BY mapping.document_type, marker.document_link
+        """
+            % ("%s", ", ".join(["%s"] * len(roles))),
+            tuple([user] + roles),
+            as_dict=1,
         )
+
+        return data
+    except Exception as e:
+        frappe.log_error(e)
+        return []
+
+
+@frappe.whitelist()
+def get_read_info(*args, **kwargs):
+    if not "document_type_name" in kwargs:
+        return []
+
+    if not "documents" in kwargs:
+        return []
+
+    user = frappe.session.user
+    if not user or user == "Guest":
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    try:
+        data = frappe.db.sql(
+            """
+        SELECT * FROM `tabRead Marker` rm 
+            JOIN `tabRead Marker Entry` entry ON entry.parent = rm.name AND entry.user_link = %s
+            WHERE document_type=%s AND document_link IN (%s)
+        """
+            % ("%s", "%s", ", ".join(["%s"] * len(kwargs['documents']))),
+            tuple([user, kwargs['document_type_name']] + kwargs['documents']),
+            as_dict=1,
+        )
+
         return data
     except Exception as e:
         frappe.log_error(e)
@@ -423,9 +453,18 @@ def get_user_info():
         user = frappe.get_doc("User", frappe.session.user)
         print(user)
 
-        return {
-            "user": frappe.session.user,
-            "email": user.email
-        }
+        return {"user": frappe.session.user, "email": user.email}
     except Exception as e:
         frappe.log_error(e)
+
+
+@frappe.whitelist(allow_guest=False)
+def get_all(*args, **kwargs):
+    try:
+        r = frappe.get_all(
+            kwargs["doctype"], fields=kwargs["fields"], filters=kwargs["filters"]
+        )
+        return r
+    except Exception as e:
+        frappe.log_error(e)
+        return []
