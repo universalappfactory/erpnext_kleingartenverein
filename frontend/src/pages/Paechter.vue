@@ -3,6 +3,16 @@
    
    <div class="p-4 sm:ml-64">
 
+      <Button @click="bodyDialog = true">Show Dialog</Button>
+         <Dialog v-model="bodyDialog">
+            <template #body>
+               <!-- Modal content -->
+               <TenantEditor />
+            </template>
+         </Dialog>
+
+         {{ bodyDialog }}
+
       <div class="m-8 p-4 mb-4 text-lg text-yellow-800 rounded-lg bg-yellow-50" role="alert">
          <span class="font-semibold">Info</span>
          <p>
@@ -21,6 +31,7 @@
    
       <GridTable @loadMore="loadMoreData" :items="tenants.data" :checkable="false" :hasNext="tenants.hasNextPage"
          :columns="tableColumns" />
+
    </div>
 </template>
 <script lang="ts">
@@ -30,7 +41,9 @@ import { initFlowbite } from 'flowbite'
 import NavbarComponent from "../components/Navbar.vue";
 import FooterComponent from "../components/Footer.vue";
 import GridTable from "../components/GridTable.vue";
-import { Dropdown } from 'frappe-ui'
+import TenantEditor from "../components/TenantEditor.vue";
+
+import { Dropdown, Dialog } from 'frappe-ui'
 import { Alert, Button, createListResource } from 'frappe-ui'
 import { ColumnMode, TableColumn } from '../ts/table';
 
@@ -42,7 +55,9 @@ export default defineComponent({
       Dropdown,
       Alert,
       Button,
-      GridTable
+      GridTable,
+      Dialog,
+      TenantEditor
    },
 
    methods: {
@@ -91,8 +106,11 @@ export default defineComponent({
          }
       ]
 
+      const bodyDialog = false
+
       return {
-         tableColumns
+         tableColumns,
+         bodyDialog
       }
    },
    mounted() {
