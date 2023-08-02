@@ -41,7 +41,6 @@
 				</svg>
 				<span class="sr-only">Close menu</span>
 			</button>
-			{{ route.path }}
 			<ul class="space-y-2 font-medium">
 				<li v-for="item in dashboard.navigation" :class="item.href === route.path ? 'bg-red-100' : '' "  :key="item.displayTitle">
 					<template v-if="isRouter(item)">

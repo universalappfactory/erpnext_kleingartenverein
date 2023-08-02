@@ -37,10 +37,11 @@ export function useDashboard() {
             return
         }
         
+        dashboardStore.appendItems(markers)
         for (const rm of markers) {
             const matching = navigation.find(n => n.read_marker_doctype && n.read_marker_doctype === rm.doctype)
             if (matching) {
-                matching.openCount = rm.count
+                matching.openCount += rm.count
             }
         }
     }
@@ -72,7 +73,6 @@ export function useDashboard() {
     })
 
     onUnmounted(() => {
-        console.log('onUnmounted')
     })
 
     // expose managed state as return value

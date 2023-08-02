@@ -16,5 +16,6 @@ export interface NavigationItem
 export interface ReadMarker
 {
     doctype: string
+    document: string
     count: number
 }

@@ -7,12 +7,19 @@
          :headerList="['Protokolle']" :hasNext="meetingMinutes.hasNextPage">
 
          <template #item="{ name, description, date }">
-            <div class="grid grid-cols-2 md:grid-cols-2 px-4 py-4 content-center" :class="is_new(name)">
+            <div class="grid grid-cols-2 md:grid-cols-2 px-4 py-4 content-center">
                <div>
-                  <div class="font-semibold">{{ description }}</div>
+                  <div class="font-semibold">{{ description }}
+                     <template v-if="is_new(name)">
+                        <span
+                           class="inline-flex items-center px-2  mr-4 text-sm font-medium text-blue-800 bg-green-100 rounded">
+                           Neu
+                        </span>
+                     </template>
+                  </div>
                   <div>{{ dateAsString(new Date(date)) }}</div>
                </div>
-               <div >
+               <div>
                   <a :href="getAttachment(name)" target="_blank" class="flex content-end">
                      <svg aria-hidden="true" class="w-4 h-4 mr-2 fill-current" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
@@ -40,6 +47,7 @@ import { Dropdown } from 'frappe-ui'
 import { Alert, Button, createListResource, createResource } from 'frappe-ui'
 import { dateToString } from '../ts/calendar';
 import { useSharedDashboard } from '../ts/dashboard';
+import { useDashboardStore } from '../ts/dashboardstore';
 
 export default defineComponent({
    name: "Meeting Minutes",
@@ -55,6 +63,7 @@ export default defineComponent({
 
    setup() {
       const dashboard = useSharedDashboard();
+      const store = useDashboardStore()
       const meetingMinutes = createListResource({
          doctype: 'Meeting Minutes',
          fields: ['*'],
@@ -107,7 +116,6 @@ export default defineComponent({
       })
 
       watch(readInfo, (val) => {
-         console.log("XXXXXX", val)
          if (val && val.data) {
             for (const readInfo of val.data) {
                allReadInfos.value.push(readInfo)
@@ -119,7 +127,8 @@ export default defineComponent({
          meetingMinutes: meetingMinutes,
          attachments,
          allAttachments,
-         dashboard
+         dashboard,
+         store
       }
 
    },
@@ -135,7 +144,7 @@ export default defineComponent({
          }
       },
       is_new(name) {
-         return ""
+         return this.store.isUnread(name)
       }
    },
 
