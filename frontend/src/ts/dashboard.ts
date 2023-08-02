@@ -1,12 +1,12 @@
 import { ref, onMounted, onUnmounted, watch, reactive } from 'vue'
 import { useDashboardStore } from './dashboardstore'
 import { createListResource, createResource } from 'frappe-ui'
-import { createSharedComposable, useMouse } from '@vueuse/core'
+import { createSharedComposable } from '@vueuse/core'
 import { NavigationItem, ReadMarker } from './navigation'
+import { storeToRefs } from 'pinia'
 
 export function useDashboard() {
     let dashboardStore = undefined
-    const navigation: NavigationItem[] = reactive([])
 
     const navigationResource = createListResource({
         doctype: 'Event',
@@ -25,25 +25,28 @@ export function useDashboard() {
     const readMarker = createResource({
         url: '/api/method/erpnext_kleingartenverein.api.get_unread_document_count'
     })
-    readMarker.fetch()
+    // readMarker.fetch()
 
     const userInfo = createResource({
         url: '/api/method/erpnext_kleingartenverein.api.get_user_info'
     })
     userInfo.fetch()
 
+    const markAsReadCall = createResource({
+        url: '/api/method/erpnext_kleingartenverein.api.mark_as_read'
+    })
+
     const mapMarker = function (markers: ReadMarker[] | undefined) {
         if (!markers) {
             return
         }
-        
-        dashboardStore.appendItems(markers)
-        for (const rm of markers) {
-            const matching = navigation.find(n => n.read_marker_doctype && n.read_marker_doctype === rm.doctype)
-            if (matching) {
-                matching.openCount += rm.count
-            }
+
+        if (markers.length > 0) {
+            dashboardStore.appendItems(markers)
+        } else {
+            dashboardStore.clearReadMarkers()
         }
+        dashboardStore.calculateOpenCount()
     }
 
     watch(readMarker, () => {
@@ -52,7 +55,7 @@ export function useDashboard() {
 
     watch(navigationResource, () => {
         for (const itm of navigationResource.data) {
-            navigation.push({
+            dashboardStore.append({
                 displayTitle: itm.displayTitle,
                 href: itm.href,
                 icon: itm.icon,
@@ -61,22 +64,28 @@ export function useDashboard() {
                 read_marker_doctype: itm.read_marker_doctype
             })
         }
-        mapMarker(readMarker.data)
+        readMarker.fetch()
     })
 
 
-    // a composable can also hook into its owner component's
-    // lifecycle to setup and teardown side effects.
     onMounted(() => {
         dashboardStore = useDashboardStore()
-
+        dashboardStore.clearNavigation()
+        dashboardStore.clearReadMarkers()
     })
 
     onUnmounted(() => {
     })
 
-    // expose managed state as return value
-    return { navigation, readMarker, userInfo }
+
+    const markAsRead = function (doctype: string, name: string) {
+        dashboardStore.clearReadMarkers()
+        markAsReadCall.submit({ doctype: doctype, name: name })
+        readMarker.reset()
+        readMarker.fetch()
+    }
+
+    return { readMarker, userInfo, markAsRead }
 }
 
 export const useSharedDashboard = createSharedComposable(useDashboard)

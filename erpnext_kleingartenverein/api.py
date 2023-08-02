@@ -389,12 +389,12 @@ def get_unread_document_count():
     roles = frappe.get_roles(user)
     try:
         data = frappe.db.sql(
-            """
+        """
         SELECT DISTINCT(mapping.document_type) AS doctype, marker.document_link AS document, COUNT(mapping.document_type) AS count FROM `tabRead Marker Mapping` mapping
             JOIN `tabRead Marker` marker
             ON marker.document_type = mapping.document_type
             LEFT JOIN `tabRead Marker Entry`  entry
-            ON entry.user_link = %s
+            ON entry.user_link = %s AND entry.parent = marker.name
             WHERE  entry.user_link IS NULL AND mapping.role_link IN (%s)
             GROUP BY mapping.document_type, marker.document_link
         """
@@ -428,8 +428,8 @@ def get_read_info(*args, **kwargs):
             JOIN `tabRead Marker Entry` entry ON entry.parent = rm.name AND entry.user_link = %s
             WHERE document_type=%s AND document_link IN (%s)
         """
-            % ("%s", "%s", ", ".join(["%s"] * len(kwargs['documents']))),
-            tuple([user, kwargs['document_type_name']] + kwargs['documents']),
+            % ("%s", "%s", ", ".join(["%s"] * len(kwargs["documents"]))),
+            tuple([user, kwargs["document_type_name"]] + kwargs["documents"]),
             as_dict=1,
         )
 
@@ -465,6 +465,27 @@ def get_all(*args, **kwargs):
             kwargs["doctype"], fields=kwargs["fields"], filters=kwargs["filters"]
         )
         return r
+    except Exception as e:
+        frappe.log_error(e)
+        return []
+
+
+@frappe.whitelist(allow_guest=False)
+def mark_as_read(*args, **kwargs):
+    try:
+        user = frappe.session.user
+        if not user or user == "Guest":
+            frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+        marker = frappe.get_last_doc(
+            "Read Marker",
+            filters={
+                "document_type": kwargs["doctype"],
+                "document_link": kwargs["name"],
+            },
+        )
+        marker.mark_as_read(user)
+        marker.save()
     except Exception as e:
         frappe.log_error(e)
         return []

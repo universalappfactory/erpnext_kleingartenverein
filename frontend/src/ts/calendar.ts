@@ -20,8 +20,6 @@ export function formattedDate(input: CalendarEvent) {
 }
 
 export function dateToString(input: Date) {
-  console.log(input)
-
   return input.toLocaleDateString("de-DE", {
     "day": "2-digit",
     "month": "2-digit",

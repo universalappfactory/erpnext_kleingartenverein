@@ -12,15 +12,15 @@
                   <div class="font-semibold">{{ description }}
                      <template v-if="is_new(name)">
                         <span
-                           class="inline-flex items-center px-2  mr-4 text-sm font-medium text-blue-800 bg-green-100 rounded">
-                           Neu
+                           class="font-semibold inline-flex items-center  px-2  ml-2 text-sm font-medium text-blue-800 bg-green-300 rounded">
+                           Ungelesen
                         </span>
                      </template>
                   </div>
                   <div>{{ dateAsString(new Date(date)) }}</div>
                </div>
                <div>
-                  <a :href="getAttachment(name)" target="_blank" class="flex content-end">
+                  <a :href="getAttachment(name)" @click="markAsRead(name)" target="_blank" class="flex content-end">
                      <svg aria-hidden="true" class="w-4 h-4 mr-2 fill-current" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd"
@@ -145,6 +145,10 @@ export default defineComponent({
       },
       is_new(name) {
          return this.store.isUnread(name)
+      },
+      markAsRead(name) {
+         console.log('YYYY')
+         this.dashboard.markAsRead("Meeting Minutes", name)
       }
    },
 

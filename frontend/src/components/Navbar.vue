@@ -42,7 +42,7 @@
 				<span class="sr-only">Close menu</span>
 			</button>
 			<ul class="space-y-2 font-medium">
-				<li v-for="item in dashboard.navigation" :class="item.href === route.path ? 'bg-red-100' : '' "  :key="item.displayTitle">
+				<li v-for="item in store.navigation" :class="item.href === route.path ? 'bg-red-100' : '' "  :key="item.displayTitle">
 					<template v-if="isRouter(item)">
 						<a @click="navigateTo(item)"
 							class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
@@ -86,16 +86,19 @@ import { defineComponent, ref } from 'vue';
 import { NavigationItem, NavigationMode } from '../ts/navigation';
 import { useSharedDashboard } from '../ts/dashboard.ts'
 import { useRoute } from 'vue-router';
+import { useDashboardStore } from '../ts/dashboardstore';
 export default defineComponent({
 	name: "navbar",
 	components: {
 	},
 	setup() {
 		const dashboard = useSharedDashboard();
-		const route=useRoute();
+		const route = useRoute();
+		const store = useDashboardStore()
 		return {
 			dashboard,
-			route
+			route,
+			store
 		}
 	},
 	methods: {
