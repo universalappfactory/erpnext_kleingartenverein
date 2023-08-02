@@ -1,9 +1,21 @@
 import { defineStore } from 'pinia'
 import { NavigationItem, ReadMarker } from './navigation'
 
+export interface UserInfo
+{
+    user: string,
+    email: string
+}
+
+const emptyUser: UserInfo = {
+    user: '',
+    email: ''
+}
+
 interface State {
     navigationItems: NavigationItem[]
     readMarkerItems: ReadMarker[]
+    user: UserInfo
 }
 
 function isNavigationItem(obj: any): obj is NavigationItem {
@@ -16,11 +28,13 @@ function isReadMarker(obj: any): obj is ReadMarker {
 export const useDashboardStore = defineStore('dashboardStore', {
     state: (): State => ({
         navigationItems: [],
-        readMarkerItems: []
+        readMarkerItems: [],
+        user: emptyUser
     }),
     getters: {
         navigation: (state) => state.navigationItems,
         readMarkers: (state) => state.readMarkerItems,
+        currentUser: (state) => state.user,
         isUnread: (state) => {
             return (documentName: string) => {
                 return state.readMarkerItems.find((marker) => marker.document === documentName) !== undefined

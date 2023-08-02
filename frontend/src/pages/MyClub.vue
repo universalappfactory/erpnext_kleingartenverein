@@ -12,9 +12,9 @@
 
         <div>
             <div class="m-8 p-4 mb-4 text-lg text-yellow-800 rounded-lg bg-green-50" role="alert">
-            <span class="font-semibold"><p>Hallo, {{ dashboard.userInfo.data.user }}</p></span>
+            <span class="font-semibold"><p>Hallo, {{ dashboard.userInfo.data?.user }}</p></span>
             <p>
-                {{ dashboard.userInfo.data.email }}
+                {{ dashboard.userInfo.data?.email }}
             </p>
         </div>
         </div>
@@ -31,6 +31,7 @@ import GridTable from "../components/GridTable.vue";
 import { Dropdown } from 'frappe-ui'
 import { Alert, Button, createListResource } from 'frappe-ui'
 import { useSharedDashboard } from '../ts/dashboard';
+import { useDashboardStore } from '../ts/dashboardstore';
 
 export default defineComponent({
     name: "MyClub",
@@ -50,8 +51,10 @@ export default defineComponent({
         }
     },
     setup() {
-        const dashboard = useSharedDashboard();
+        const dashboard = useSharedDashboard()
+        const store = useDashboardStore();
         return {
+            store,
             dashboard
         }
     },
