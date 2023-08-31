@@ -1,0 +1,20 @@
+{
+    "en": {
+        "myclub": {
+            "myclub": "My Club",
+            "welcome": "Welcome"
+        },
+        "profile": {
+            "mysignature": "My Signature"
+        }
+    },
+    "de": {
+        "myclub": {
+            "myclub": "Mein Kleingartenverein",
+            "welcome": "Hallo"
+        },
+        "profile": {
+            "mysignature": "Meine Unterschrift"
+        }
+    }
+}

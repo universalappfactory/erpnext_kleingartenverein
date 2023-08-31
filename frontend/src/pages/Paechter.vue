@@ -147,7 +147,7 @@ export default defineComponent({
       }
    },
    mounted() {
-      initFlowbite();
+      // initFlowbite();
       this.tenant.fetch()
    }
 });

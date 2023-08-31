@@ -17,7 +17,7 @@
 
         <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
             <div class="grid  grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div v-for="item in dashboard.navigation.data" :key="item.displayTitle">
+                <div v-for="item in store.navigation" :key="item.displayTitle">
                     <template v-if="item.href == '/app/'">
                         <div
                             class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -223,7 +223,7 @@ import NavbarComponent from "../components/Navbar.vue";
 import FooterComponent from "../components/Footer.vue";
 import { Dropdown } from 'frappe-ui'
 import { Alert, Button } from 'frappe-ui'
-import { useSharedDashboard } from '../ts/dashboard.ts'
+import { useDashboardStore } from '../ts/dashboardstore.ts'
 
 export default defineComponent({
     name: "dashboard",
@@ -235,9 +235,9 @@ export default defineComponent({
         Button
     },
     setup() {
-        const dashboard = useSharedDashboard();
+        const store = useDashboardStore();
         return {
-            dashboard
+            store
         }
     },
     methods: {
@@ -246,7 +246,7 @@ export default defineComponent({
         },
     },
     mounted() {
-        initFlowbite();
+        // initFlowbite();
     }
 });
 </script>

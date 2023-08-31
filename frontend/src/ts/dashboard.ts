@@ -42,11 +42,11 @@ export function useDashboard() {
         }
 
         if (markers.length > 0) {
-            dashboardStore.appendItems(markers)
+            dashboardStore?.appendItems(markers)
         } else {
-            dashboardStore.clearReadMarkers()
+            dashboardStore?.clearReadMarkers()
         }
-        dashboardStore.calculateOpenCount()
+        dashboardStore?.calculateOpenCount()
     }
 
     watch(readMarker, () => {
@@ -55,7 +55,7 @@ export function useDashboard() {
 
     watch(navigationResource, () => {
         for (const itm of navigationResource.data) {
-            dashboardStore.append({
+            dashboardStore?.append({
                 displayTitle: itm.displayTitle,
                 href: itm.href,
                 icon: itm.icon,

@@ -8,6 +8,7 @@
   import { defineComponent, ref } from 'vue';
   import './tailwind.css'
   import { useDashboardStore } from './ts/dashboardstore.ts'
+  import { initFlowbite } from 'flowbite'
 
   export default defineComponent({
   name: 'App',
@@ -21,6 +22,7 @@
     },
     mounted() {
       console.log('MOUNTED')
+      initFlowbite()
     },
   });
 </script>

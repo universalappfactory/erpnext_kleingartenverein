@@ -153,7 +153,7 @@ export default defineComponent({
    },
 
    mounted() {
-      initFlowbite();
+      // initFlowbite();
    }
 });
 </script>

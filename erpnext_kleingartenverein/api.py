@@ -311,7 +311,7 @@ def get_dashboard_navigation():
         basic_navigation = [
             {
                 "displayTitle": _("My Club"),
-                "href": "/myclub",
+                "href": "/",
                 "icon": "fa-home",
                 "mode": "NavigationMode.Router",
             },
@@ -350,6 +350,15 @@ def get_dashboard_navigation():
                 "displayTitle": _("Pächter"),
                 "href": "/paechter/",
                 "icon": "fa-list",
+                "mode": "NavigationMode.Router",
+            }
+        )
+
+        basic_navigation.append(
+            {
+                "displayTitle": _("Meine Einstellungen"),
+                "href": "/profile/",
+                "icon": "fa-user",
                 "mode": "NavigationMode.Router",
             }
         )
@@ -508,6 +517,16 @@ def search_tenants(*args, **kwargs):
                 }, fields="*")
 
         return customers    
+    except Exception as e:
+        print(e)
+        frappe.log_error(e)
+        return []
+    
+@frappe.whitelist(allow_guest=False)
+def submit_by_name(*args, **kwargs):
+    try:
+        doc = frappe.get_doc(kwargs['doctype'], kwargs['name'])
+        doc.submit()
     except Exception as e:
         print(e)
         frappe.log_error(e)

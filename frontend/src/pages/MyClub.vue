@@ -4,7 +4,7 @@
     <div class="p-4 sm:ml-64">
 
         <div class="m-8 p-4 mb-4 text-lg text-yellow-800 rounded-lg bg-yellow-50" role="alert">
-            <span class="font-semibold">Mein Kleingartenverein</span>
+            <span class="font-semibold">{{ $t("myclub.myclub") }}</span>
             <p>
                 Leider gibt es hier noch nicht sonderlich viel zu sehen :)
             </p>
@@ -12,24 +12,20 @@
 
         <div>
             <div class="m-8 p-4 mb-4 text-lg text-yellow-800 rounded-lg bg-green-50" role="alert">
-            <span class="font-semibold"><p>Hallo, {{ dashboard.userInfo.data?.user }}</p></span>
-            <p>
-                {{ dashboard.userInfo.data?.email }}
-            </p>
+                <span class="font-semibold">
+                    <p>{{ $t("myclub.welcome") }}, {{ dashboard.userInfo.data?.user }}</p>
+                </span>
+                <p>
+                    {{ dashboard.userInfo.data?.email }}
+                </p>
+            </div>
         </div>
-        </div>
-        
+
     </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { initFlowbite } from 'flowbite'
-
 import NavbarComponent from "../components/Navbar.vue";
-import FooterComponent from "../components/Footer.vue";
-import GridTable from "../components/GridTable.vue";
-import { Dropdown } from 'frappe-ui'
-import { Alert, Button, createListResource } from 'frappe-ui'
 import { useSharedDashboard } from '../ts/dashboard';
 import { useDashboardStore } from '../ts/dashboardstore';
 
@@ -37,19 +33,8 @@ export default defineComponent({
     name: "MyClub",
     components: {
         NavbarComponent,
-        FooterComponent,
-        Dropdown,
-        Alert,
-        Button,
-        GridTable
     },
 
-    methods: {
-        loadMoreData() {
-            console.log('LoadMore')
-            this.tenants.next();
-        }
-    },
     setup() {
         const dashboard = useSharedDashboard()
         const store = useDashboardStore();
@@ -57,9 +42,6 @@ export default defineComponent({
             store,
             dashboard
         }
-    },
-    mounted() {
-        initFlowbite();
     }
 });
 </script>

@@ -4,7 +4,7 @@ const routes = [
   {
     path: '/',
     name: 'Dashboard',
-    component: () => import('@/pages/Dashboard.vue'),
+    component: () => import('@/pages/MyClub.vue'),
   },
   {
     path: '/paechter',
@@ -25,6 +25,11 @@ const routes = [
     path: '/meetingminutes',
     name: 'Bulletins',
     component: () => import('@/pages/MeetingMinutes.vue'),
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('@/pages/ProfilePage.vue'),
   },
 ]
 
