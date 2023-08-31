@@ -6,6 +6,12 @@
         },
         "profile": {
             "mysignature": "My Signature"
+        },
+        "list": {
+            "load_more": "Load more"
+        },
+        "tenant_editor": {
+            "base_data": "Base data"
         }
     },
     "de": {
@@ -15,6 +21,9 @@
         },
         "profile": {
             "mysignature": "Meine Unterschrift"
+        },
+        "list": {
+            "load_more": "Weitere laden"
         }
     }
 }
