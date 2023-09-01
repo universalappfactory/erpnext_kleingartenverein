@@ -11,7 +11,7 @@
 
       <TenantSearchBar @search="executeSearch" :filters="tenant.filters" class="mb-4" />
       <ListComponent @loadMore="tenant.loadMore" :items="tenant.tenants" :checkable="false" :headerList="['Pächter']"
-         :hasNext="tenant.pageInfo.hasNext" @show-details="showDialog">
+         :hasNext="tenant.pageInfo.hasNext" @show-details="(x: any) => showDialog(x.name)">
 
          <template #item="{ name, plot_link, email_id, mobile_no, customer_group }">
             <div class="flex p-4">

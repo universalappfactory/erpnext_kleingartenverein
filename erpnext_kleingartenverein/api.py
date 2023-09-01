@@ -588,6 +588,30 @@ def get_tenant_data(*args, **kwargs):
 
         result['attachments'] = attachments
 
+        if tenant.plot_link:
+            plot_files = frappe.get_all(
+                    "File",
+                    filters={
+                        "attached_to_name": tenant.plot_link,
+                    },
+                    order_by="modified desc",
+                    fields=["file_url", "file_name"],
+                )
+            
+            result['plot_files'] = plot_files
+
+            plot_attachments = frappe.get_all(
+                    "Attachment table",
+                    filters={
+                        "parenttype": 'Plot',
+                        "parent": tenant.plot_link,
+                    },
+                    order_by="modified desc",
+                    fields=["attachment", "attachment_description"],
+                )
+
+            result['plot_attachments'] = plot_attachments
+
         return [result]
     except Exception as e:
         print(e)

@@ -1,7 +1,13 @@
 <template>
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 h-[90vh] " :class="isLoading ? 'opacity-25' : ''">
         <div class="bg-blue-200 flex p-4">
-            {{ editor.first?.item?.tenant?.name }}
+            <div>
+                <p>{{ editor.first?.item?.tenant?.name }}</p>
+                <template v-if="editor.first?.item?.plot">
+                    <p class="text-gray-600">{{ $t('tenant_editor.plot') }} {{ editor.first?.item?.plot?.plot_number }}</p>
+                </template>
+            </div>
+
             <button @click="this.$emit('close')" type="button"
                 class="absolute right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 data-modal-hide="authentication-modal">
@@ -22,6 +28,14 @@
         </template>
         <template v-if="selectedTab === 'attachments'">
             <AttachmentList :data="editor.first?.attachments" />
+        </template>
+        <template v-if="selectedTab === 'plot'">
+            <div class="pl-4 pr-4 rounded-lg overflow-scroll h-[80%]" role="tabpanel" aria-labelledby="profile-tab">
+                <TenantPlotData :data="editor.first?.item?.plot" />
+            </div>
+        </template>
+        <template v-if="selectedTab === 'plot_attachments'">
+            <AttachmentList :data="editor.first?.plot_attachments" />
         </template>
 
         <div class="flex flex-row-reverse mr-4">
@@ -49,6 +63,7 @@ import { PropType, defineComponent, ref } from 'vue';
 import TabComponent, { TabItem } from './TabComponent.vue'
 import TenantBaseData from './TenantBaseData.vue'
 import AttachmentList from './AttachmentList.vue'
+import TenantPlotData from './TenantPlotData.vue'
 import Button from './Button.vue'
 import { TenantData, useTenantEditor } from '../ts/tenanteditor';
 
@@ -58,7 +73,8 @@ export default defineComponent({
         TabComponent,
         TenantBaseData,
         Button,
-        AttachmentList
+        AttachmentList,
+        TenantPlotData
     },
     setup() {
         const editor = useTenantEditor()
@@ -92,7 +108,18 @@ export default defineComponent({
             name: "attachments",
             description: "tenant_editor.attachments",
             selected: false
-        }]
+        },
+        {
+            name: "plot",
+            description: "tenant_editor.plot",
+            selected: false
+        },
+        {
+            name: "plot_attachments",
+            description: "tenant_editor.plot_attachments",
+            selected: false
+        },
+        ]
         const selectedTab = "base"
         return {
             items,

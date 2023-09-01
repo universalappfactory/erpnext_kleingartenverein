@@ -24,7 +24,11 @@
             "mobile_no": "Mobil",
             "phone": "Telefon",
             "close": "Close",
-            "attachments": "Attachments"
+            "attachments": "Attachments",
+            "plot": "Plot",
+            "plot_number": "Plotnumber",
+            "plot_size_sqm": "Plot size (sqm)",
+            "plot_attachments": "Plot Attachments"
         },
         "search_bar": {
             "status_under_lease": "Under Lease",
@@ -72,7 +76,11 @@
             "mobile_no": "Mobil",
             "phone": "Telefon",
             "close": "Schließen",
-            "attachments": "Anhänge"
+            "attachments": "Anhänge",
+            "plot": "Garten",
+            "plot_number": "Gartennummer",
+            "plot_size_sqm": "Größe (qm)",
+            "plot_attachments": "Garten Anhänge"
         }
     }
 }
