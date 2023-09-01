@@ -11,7 +11,30 @@
             "load_more": "Load more"
         },
         "tenant_editor": {
-            "base_data": "Base data"
+            "base_data": "Base data",
+            "first_name": "First name",
+            "last_name": "Last name",
+            "contact_data": "Contact data",
+            "address_data": "Address data",
+            "email": "EMail",
+            "zip": "Zip",
+            "city": "City",
+            "street": "Street",
+            "address_line_2": "Address line 2",
+            "mobile_no": "Mobil",
+            "phone": "Telefon",
+            "close": "Close",
+            "attachments": "Attachments"
+        },
+        "search_bar": {
+            "status_under_lease": "Under Lease",
+            "status_not_under_lease": "Not under lease",
+            "status_under_supervision": "Under supervision",
+            "status_canceled_by_lessee": "Canceled by lessee",
+            "status_canceled_by_club": "Canceled by club",
+            "search_for" : "First Name, Name, Plot, EMail...",
+            "filter": "Filter",
+            "search": "Search"
         }
     },
     "de": {
@@ -24,6 +47,32 @@
         },
         "list": {
             "load_more": "Weitere laden"
+        },
+        "search_bar": {
+            "status_under_lease": "Verpachtet",
+            "status_not_under_lease": "Nicht verpachtet",
+            "status_under_supervision": "Unter Beobachtung",
+            "status_canceled_by_lessee": "Gekündigt durch Pächter",
+            "status_canceled_by_club": "Gekündigkt durch den Verein",
+            "search_for" : "Vorname, Name, Gartennummer, EMail...",
+            "filter": "Filter",
+            "search": "Suchen"
+        },
+        "tenant_editor": {
+            "base_data": "Basis Daten",
+            "first_name": "Vorname",
+            "last_name": "Nachname",
+            "contact_data": "Kontaktdaten",
+            "address_data": "Adresse",
+            "email": "EMail",
+            "zip": "PLZ",
+            "city": "Ort",
+            "street": "Straße",
+            "address_line_2": "Zusatz",
+            "mobile_no": "Mobil",
+            "phone": "Telefon",
+            "close": "Schließen",
+            "attachments": "Anhänge"
         }
     }
 }

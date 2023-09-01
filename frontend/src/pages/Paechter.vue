@@ -3,24 +3,15 @@
 
    <div class="p-4 sm:ml-64">
 
-      <Button @click="bodyDialog = true">Show Dialog</Button>
       <Dialog v-model="bodyDialog" style="z-index: 300;">
          <template #body>
-            <!-- Modal content -->
-            <TenantEditor :item="selectedCustomer" />
+            <TenantEditor :item="selectedCustomer" @close="closeEditor" />
          </template>
       </Dialog>
 
-      <Button @click="executeSearch">Search</Button>
-
-      <input type="text" v-model="searchText" id="table-search-users"
-         class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-         placeholder="Search for users" />
-
+      <TenantSearchBar @search="executeSearch" :filters="tenant.filters" class="mb-4" />
       <ListComponent @loadMore="tenant.loadMore" :items="tenant.tenants" :checkable="false" :headerList="['Pächter']"
-         :hasNext="tenant.pageInfo.hasNext"
-         @show-details="showDialog"
-         >
+         :hasNext="tenant.pageInfo.hasNext" @show-details="showDialog">
 
          <template #item="{ name, plot_link, email_id, mobile_no, customer_group }">
             <div class="flex p-4">
@@ -35,21 +26,33 @@
 
                <div class="grow p-2">
                   <div class="font-semibold">{{ name }}</div>
-                  <div class="font-semibold"> {{ plot_link  }}</div>
+                  <div class="font-semibold"> {{ plot_link }}</div>
                   <div>{{ email_id }}</div>
                   <div>{{ mobile_no }}</div>
                </div>
-               
-               <div class="grow bg-red-100">
-                  
+
+               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 content-center">
+                  <a :href="getMobileHref(mobile_no)" type="button"
+                     :class="mobile_no ? 'text-blue-700 hover:bg-blue-700 border border-blue-700  hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 ' : 'border border-gray-300  bg-gray-100'"                     
+                     class="disabled:opacity-75   font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center">
+                     <i class="fa fa-phone" aria-hidden="true"></i>
+                     <span class="sr-only">Phonecall</span>
+                  </a>
+                  <a :href="getMailHref(email_id)" type="button"
+                  :class="mobile_no ? 'text-blue-700 hover:bg-blue-700 border border-blue-700  hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 ' : 'border border-gray-300  bg-gray-100'"                     
+                     class="disabled:opacity-75   font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center">
+                     <i class="fa fa-envelope" aria-hidden="true"></i>
+                     <span class="sr-only">EMail</span>
+                  </a>
+
+                  <button type="button" @click="showDialog(name)"
+                     class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500">
+                     <i class="fa fa-edit" aria-hidden="true"></i>
+                     <span class="sr-only">Edit</span>
+                  </button>
+
                </div>
 
-               <div class="flex grow-0 justify-end pl-4">
-                  <button @click="showDialog" type="button">
-                     <i class="fa fa-edit" aria-hidden="true"></i>
-                     <span class="sr-only">Icon description</span>
-                  </button>
-               </div>
             </div>
 
          </template>
@@ -65,11 +68,13 @@ import NavbarComponent from "../components/Navbar.vue";
 import FooterComponent from "../components/Footer.vue";
 import ListComponent from "../components/ListComponent.vue";
 import TenantEditor from "../components/TenantEditor.vue";
+import TenantSearchBar from "../components/TenantSearchBar.vue";
 
 import { Dropdown, Dialog } from 'frappe-ui'
 import { Alert, Button, createListResource, createResource } from 'frappe-ui'
 import { ColumnMode, TableColumn } from '../ts/table';
 import { useTenants } from '../ts/tenants.ts';
+import { useTenantEditor } from '../ts/tenanteditor';
 
 
 export default defineComponent({
@@ -82,26 +87,37 @@ export default defineComponent({
       Button,
       ListComponent,
       Dialog,
-      TenantEditor
+      TenantEditor,
+      TenantSearchBar
    },
 
    methods: {
-      executeSearch() {
-         this.tenant.search(this.searchText)
+      executeSearch(searchText: any) {
+         this.tenant.search(searchText)
       },
       showDialog(item) {
-         console.log(item)
          this.selectedCustomer = item
          this.bodyDialog = true
       },
+      getMobileHref(mobile_no) {
+         return `tel:${mobile_no}`
+      },
+      getMailHref(email_id) {
+         return `mailto:${email_id}`
+      },
+      closeEditor() {
+         this.bodyDialog = false
+      }
    },
    setup() {
 
       const tenant = useTenants()
+      const editor = useTenantEditor()
       const selectedCustomer = ref({})
       return {
          tenant,
-         selectedCustomer
+         selectedCustomer,
+         editor
       }
 
    },
@@ -135,7 +151,7 @@ export default defineComponent({
       }
    },
    mounted() {
-      // initFlowbite();
+      initFlowbite();
       this.tenant.fetch()
    }
 });

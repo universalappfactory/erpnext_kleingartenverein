@@ -1,6 +1,10 @@
 import { createListResource, createResource } from 'frappe-ui'
-import { reactive, watch } from 'vue'
+import { reactive, unref, watch } from 'vue'
 
+export interface FilterItem {
+    text: string,
+    selected: boolean
+}
 
 export function useTenants() {
 
@@ -42,11 +46,6 @@ export function useTenants() {
     })
 
     watch(teantsResource, () => {
-        console.log(teantsResource)
-
-        console.log(teantsResource)
-        console.log(teantsResource.start)
-
         pageInfo.hasNext = teantsResource.hasNextPage
 
         if (teantsResource.data) {
@@ -63,21 +62,36 @@ export function useTenants() {
 
     const search = (query: string) => {
         if (!query || query.trim() === '') {
+            clear()
+            fetch()
             return;
         }
 
         clear()
         searchResource.reset()
-        searchResource.fetch({ "query": query })
+        searchResource.fetch({ "query": query, "filter": filters.filter(f => f.selected).map(f => unref(f)) })
     }
 
     const loadMore = () => teantsResource.next()
 
     const fetch = () => teantsResource.fetch()
 
-    const clear = () =>  {
+    const clear = () => {
         tenants.splice(0, tenants.length)
     }
 
-    return { tenants, loadMore, search, pageInfo, fetch, clear }
+    const filters = reactive<FilterItem[]>(
+        [
+            {
+                selected: false,
+                text: 'search_bar.status_under_supervision'
+            }
+        ]
+    )
+
+    const byName= (name: string) => {
+        return tenants.find(t => t.name === name)
+    }
+
+    return { tenants, loadMore, search, pageInfo, fetch, clear, filters, byName }
 }

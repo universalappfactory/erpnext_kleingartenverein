@@ -5,6 +5,7 @@ from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calcula
 from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter.letter_shipping import (
     LetterShipping,
 )
+
 # from erpnext_kleingartenverein.erpnext_kleingartenverein.tenant_search import (
 #     TenantSearch,
 # )
@@ -15,6 +16,7 @@ import frappe
 import json
 import random
 from datetime import datetime
+from time import sleep
 from frappe import _
 from frappe.permissions import get_user_permissions
 
@@ -404,7 +406,7 @@ def get_unread_document_count():
     roles = frappe.get_roles(user)
     try:
         data = frappe.db.sql(
-        """
+            """
         SELECT DISTINCT(mapping.document_type) AS doctype, marker.document_link AS document, COUNT(mapping.document_type) AS count FROM `tabRead Marker Mapping` mapping
             JOIN `tabRead Marker` marker
             ON marker.document_type = mapping.document_type
@@ -505,28 +507,88 @@ def mark_as_read(*args, **kwargs):
         frappe.log_error(e)
         return []
 
+
 @frappe.whitelist(allow_guest=False)
 def search_tenants(*args, **kwargs):
     try:
         ts = TenantSearch(index_name="tenants")
         # ts.build()
-        search_result = ts.search(kwargs["query"])
+        query = kwargs["query"]
+        if len(query) > 0 and query[-1] != "*":
+            query = query + "*"
 
-        customers = frappe.get_list("Customer",filters={
-                    "name": ["IN", search_result],
-                }, fields="*")
+        search_result = ts.search(query, limit=500)
 
-        return customers    
+        customers = frappe.get_list(
+            "Customer",
+            filters={
+                "name": ["IN", search_result],
+            },
+            fields="*",
+        )
+
+        return customers
     except Exception as e:
         print(e)
         frappe.log_error(e)
         return []
-    
+
+
 @frappe.whitelist(allow_guest=False)
 def submit_by_name(*args, **kwargs):
     try:
-        doc = frappe.get_doc(kwargs['doctype'], kwargs['name'])
+        doc = frappe.get_doc(kwargs["doctype"], kwargs["name"])
         doc.submit()
+    except Exception as e:
+        print(e)
+        frappe.log_error(e)
+        return []
+
+
+@frappe.whitelist(allow_guest=False)
+def get_tenant_data(*args, **kwargs):
+    try:
+        result = {}
+
+        tenant = frappe.get_doc("Customer", kwargs["name"])
+        result["tenant"] = tenant.as_dict()
+
+        if tenant.plot_link:
+            plot = frappe.get_doc("Plot", tenant.plot_link)
+            result["plot"] = plot.as_dict()
+
+        if tenant.customer_primary_address:
+            plot = frappe.get_doc("Address", tenant.customer_primary_address)
+            result["address"] = plot.as_dict()
+
+        if tenant.customer_primary_contact:
+            plot = frappe.get_doc("Contact", tenant.customer_primary_contact)
+            result["contact"] = plot.as_dict()
+
+        files = frappe.get_all(
+                "File",
+                filters={
+                    "attached_to_name": kwargs["name"],
+                },
+                order_by="modified desc",
+                fields=["file_url", "file_name"],
+            )
+        
+        result['files'] = files
+
+        attachments = frappe.get_all(
+                "Attachment table",
+                filters={
+                    "parenttype": 'Customer',
+                    "parent": kwargs["name"],
+                },
+                order_by="modified desc",
+                fields=["attachment", "attachment_description"],
+            )
+
+        result['attachments'] = attachments
+
+        return [result]
     except Exception as e:
         print(e)
         frappe.log_error(e)

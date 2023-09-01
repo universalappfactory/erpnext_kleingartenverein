@@ -4,7 +4,7 @@
 
             <li class="mr-2" v-for="(item, index) in items">
                 <button class="inline-block p-4 rounded-t-lg" 
-                    :class="item.selected ? 'border-b-2' : ''" type="button"
+                    :class="item.selected ? 'border-b-2 border-blue-400' : ''" type="button"
                     role="tab" 
                     @click="selectItem(item)"
                     >{{ $t(item.description) }}</button>

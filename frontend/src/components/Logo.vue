@@ -1,12 +1,11 @@
 <template>
-    <div class="hidden sm:block">
-        <img src="/assets/erpnext_kleingartenverein/assets/001-KGV_Farben_RZ_quer-kurz.svg" 
-				class="h-24"
-				alt="FlowBite Logo" />
+    <div class="sm:block">
+        <img src="/assets/erpnext_kleingartenverein/assets/001-KGV_Farben_RZ_quer-kurz.svg" class="h-24"
+            alt="FlowBite Logo" />
     </div>
 </template>
 <script lang="ts">
-import {  defineComponent, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: "Logo",
@@ -16,10 +15,10 @@ export default defineComponent({
 
     },
     props: {
-        
+
     },
     data() {
-        
+
     }
 });
 </script>

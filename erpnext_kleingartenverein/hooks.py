@@ -142,23 +142,23 @@ base_template = "erpnext_kleingartenverein/templates/base.html"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
 #	"all": [
 #		"erpnext_kleingartenverein.tasks.all"
 #	],
 #	"daily": [
 #		"erpnext_kleingartenverein.tasks.daily"
 #	],
-#	"hourly": [
-#		"erpnext_kleingartenverein.tasks.hourly"
-#	],
+	"hourly": [
+		"erpnext_kleingartenverein.tasks.hourly"
+	]
 #	"weekly": [
 #		"erpnext_kleingartenverein.tasks.weekly"
 #	],
 #	"monthly": [
 #		"erpnext_kleingartenverein.tasks.monthly"
 #	],
-# }
+}
 
 # Testing
 # -------

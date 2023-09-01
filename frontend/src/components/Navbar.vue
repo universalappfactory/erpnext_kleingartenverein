@@ -1,5 +1,5 @@
 <template>
-	<div class="flex items-center justify-start">
+	<div class="sm:hidden flex items-center justify-start">
 		<button 
 			data-drawer-target="default-sidebar" 
 			data-drawer-toggle="default-sidebar" 
@@ -22,10 +22,9 @@
 			</svg>
 
 		</button>
-		<a class="md:hidden flex ml-2 md:mr-24">
-			<img src="/assets/erpnext_kleingartenverein/assets/001-KGV_Farben_RZ_quer-kurz.svg" 
-				class="h-20"
-				alt="FlowBite Logo" />
+		
+		<a class="md:hidden flex ml-2 md:mr-24 items-center w-full justify-center">
+			<LogoComponent />
 		</a>
 	</div>
 
@@ -96,9 +95,9 @@
 		</div>
 	</aside>
 
-	<div class="ml-64">
+	<div class="hidden sm:block ml-64">
 		<div class="flex justify-center">
-			<Logo />
+			<LogoComponent></LogoComponent>
 		</div>
 	</div>
 </template>
@@ -108,12 +107,13 @@ import { NavigationItem, NavigationMode } from '../ts/navigation';
 import { useSharedDashboard } from '../ts/dashboard.ts'
 import { useRoute } from 'vue-router';
 import { useDashboardStore } from '../ts/dashboardstore';
-import Logo from "./Logo.vue";
+import LogoComponent from "./Logo.vue";
+import TenantEditor from "./Logo.vue";
 
 export default defineComponent({
 	name: "navbar",
 	components: {
-		Logo
+		LogoComponent
 	},
 	setup() {
 		const dashboard = useSharedDashboard();
