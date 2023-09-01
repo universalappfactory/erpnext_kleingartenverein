@@ -25,7 +25,6 @@ export function useDashboard() {
     const readMarker = createResource({
         url: '/api/method/erpnext_kleingartenverein.api.get_unread_document_count'
     })
-    // readMarker.fetch()
 
     const userInfo = createResource({
         url: '/api/method/erpnext_kleingartenverein.api.get_user_info'

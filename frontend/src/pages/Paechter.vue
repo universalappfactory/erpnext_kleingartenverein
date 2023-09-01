@@ -73,7 +73,7 @@ import TenantSearchBar from "../components/TenantSearchBar.vue";
 import { Dropdown, Dialog } from 'frappe-ui'
 import { Alert, Button, createListResource, createResource } from 'frappe-ui'
 import { ColumnMode, TableColumn } from '../ts/table';
-import { useTenants } from '../ts/tenants.ts';
+import { useTenants } from '../ts/tenants';
 import { useTenantEditor } from '../ts/tenanteditor';
 
 

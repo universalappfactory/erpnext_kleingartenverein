@@ -1,4 +1,3 @@
-import traceback
 from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calculation.invoice_calculator import (
     InvoiceCalculator,
 )
@@ -6,9 +5,6 @@ from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter.l
     LetterShipping,
 )
 
-# from erpnext_kleingartenverein.erpnext_kleingartenverein.tenant_search import (
-#     TenantSearch,
-# )
 from erpnext_kleingartenverein.utils.tenant_search import TenantSearch
 
 
@@ -16,9 +12,7 @@ import frappe
 import json
 import random
 from datetime import datetime
-from time import sleep
 from frappe import _
-from frappe.permissions import get_user_permissions
 
 
 @frappe.whitelist()
@@ -469,9 +463,14 @@ def get_user_info():
     try:
         user = frappe.get_doc("User", frappe.session.user)
 
-        club_settings = frappe.get_last_doc('Club Settings')
+        club_settings = frappe.get_last_doc("Club Settings")
 
-        return {"user": frappe.session.user, "email": user.email, "dashboard_message": club_settings.dashboard_message}
+        return {
+            "user": frappe.session.user,
+            "email": user.email,
+            "dashboard_message": club_settings.dashboard_message,
+            "default_logo": club_settings.default_logo,
+        }
     except Exception as e:
         frappe.log_error(e)
 
@@ -567,51 +566,51 @@ def get_tenant_data(*args, **kwargs):
             result["contact"] = plot.as_dict()
 
         files = frappe.get_all(
+            "File",
+            filters={
+                "attached_to_name": kwargs["name"],
+            },
+            order_by="modified desc",
+            fields=["file_url", "file_name"],
+        )
+
+        result["files"] = files
+
+        attachments = frappe.get_all(
+            "Attachment table",
+            filters={
+                "parenttype": "Customer",
+                "parent": kwargs["name"],
+            },
+            order_by="modified desc",
+            fields=["attachment", "attachment_description"],
+        )
+
+        result["attachments"] = attachments
+
+        if tenant.plot_link:
+            plot_files = frappe.get_all(
                 "File",
                 filters={
-                    "attached_to_name": kwargs["name"],
+                    "attached_to_name": tenant.plot_link,
                 },
                 order_by="modified desc",
                 fields=["file_url", "file_name"],
             )
-        
-        result['files'] = files
 
-        attachments = frappe.get_all(
+            result["plot_files"] = plot_files
+
+            plot_attachments = frappe.get_all(
                 "Attachment table",
                 filters={
-                    "parenttype": 'Customer',
-                    "parent": kwargs["name"],
+                    "parenttype": "Plot",
+                    "parent": tenant.plot_link,
                 },
                 order_by="modified desc",
                 fields=["attachment", "attachment_description"],
             )
 
-        result['attachments'] = attachments
-
-        if tenant.plot_link:
-            plot_files = frappe.get_all(
-                    "File",
-                    filters={
-                        "attached_to_name": tenant.plot_link,
-                    },
-                    order_by="modified desc",
-                    fields=["file_url", "file_name"],
-                )
-            
-            result['plot_files'] = plot_files
-
-            plot_attachments = frappe.get_all(
-                    "Attachment table",
-                    filters={
-                        "parenttype": 'Plot',
-                        "parent": tenant.plot_link,
-                    },
-                    order_by="modified desc",
-                    fields=["attachment", "attachment_description"],
-                )
-
-            result['plot_attachments'] = plot_attachments
+            result["plot_attachments"] = plot_attachments
 
         return [result]
     except Exception as e:

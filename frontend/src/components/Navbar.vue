@@ -97,23 +97,23 @@
 
 	<div class="hidden sm:block ml-64">
 		<div class="flex justify-center">
-			<LogoComponent></LogoComponent>
+			<Logo />
 		</div>
 	</div>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { NavigationItem, NavigationMode } from '../ts/navigation';
-import { useSharedDashboard } from '../ts/dashboard.ts'
+import { useSharedDashboard } from '../ts/dashboard'
 import { useRoute } from 'vue-router';
 import { useDashboardStore } from '../ts/dashboardstore';
-import LogoComponent from "./Logo.vue";
+import Logo from "./Logo.vue";
 import TenantEditor from "./Logo.vue";
 
 export default defineComponent({
 	name: "navbar",
 	components: {
-		LogoComponent
+		Logo
 	},
 	setup() {
 		const dashboard = useSharedDashboard();
