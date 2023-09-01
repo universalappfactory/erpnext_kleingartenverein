@@ -79,9 +79,11 @@ export function useDashboard() {
 
     const markAsRead = function (doctype: string, name: string) {
         dashboardStore.clearReadMarkers()
-        markAsReadCall.submit({ doctype: doctype, name: name })
-        readMarker.reset()
-        readMarker.fetch()
+        markAsReadCall.submit({ doctype: doctype, name: name }).then(() => {
+            readMarker.reset()
+            readMarker.fetch()
+        })
+        
     }
 
     return { readMarker, userInfo, markAsRead }
