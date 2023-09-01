@@ -24,7 +24,8 @@
   "public_date_tags",
   "stripped_date_tags",
   "dashboard_column",
-  "read_marker_mappings"
+  "read_marker_mappings",
+  "dashboard_message"
  ],
  "fields": [
   {
@@ -125,11 +126,16 @@
    "fieldname": "stripped_date_tags",
    "fieldtype": "Data",
    "label": "Stripped Date Tags"
+  },
+  {
+   "fieldname": "dashboard_message",
+   "fieldtype": "Text",
+   "label": "Dashboard Message"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-07 09:24:21.935601",
+ "modified": "2023-09-01 14:25:47.885981",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Club Settings",

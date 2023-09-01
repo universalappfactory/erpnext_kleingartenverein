@@ -356,14 +356,14 @@ def get_dashboard_navigation():
             }
         )
 
-        basic_navigation.append(
-            {
-                "displayTitle": _("Meine Einstellungen"),
-                "href": "/profile/",
-                "icon": "fa-user",
-                "mode": "NavigationMode.Router",
-            }
-        )
+        # basic_navigation.append(
+        #     {
+        #         "displayTitle": _("Meine Einstellungen"),
+        #         "href": "/profile/",
+        #         "icon": "fa-user",
+        #         "mode": "NavigationMode.Router",
+        #     }
+        # )
 
         # basic_navigation.append(
         #     {
@@ -468,9 +468,10 @@ def get_user_info():
 
     try:
         user = frappe.get_doc("User", frappe.session.user)
-        print(user)
 
-        return {"user": frappe.session.user, "email": user.email}
+        club_settings = frappe.get_last_doc('Club Settings')
+
+        return {"user": frappe.session.user, "email": user.email, "dashboard_message": club_settings.dashboard_message}
     except Exception as e:
         frappe.log_error(e)
 

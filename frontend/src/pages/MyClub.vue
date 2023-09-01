@@ -1,14 +1,18 @@
 <template>
     <NavbarComponent />
 
-    <div class="p-4 sm:ml-64">
+    <div class="p-4 sm:ml-64 ">
 
         <div class="m-8 p-4 mb-4 text-lg text-yellow-800 rounded-lg bg-yellow-50" role="alert">
             <span class="font-semibold">{{ $t("myclub.myclub") }}</span>
-            <p>
-                Leider gibt es hier noch nicht sonderlich viel zu sehen :)
-            </p>
         </div>
+
+        <template v-if="dashboard.userInfo.data?.email !== ''">
+            <div class="m-8 text-lg text-yellow-800 rounded-lg bg-orange-50" role="alert">
+                <p class="p-0 m-0" v-html="dashboard.userInfo.data?.dashboard_message">
+                </p>
+            </div>
+        </template>
 
         <div>
             <div class="m-8 p-4 mb-4 text-lg text-yellow-800 rounded-lg bg-green-50" role="alert">
