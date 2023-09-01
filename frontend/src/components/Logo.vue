@@ -1,6 +1,6 @@
 <template>
     <div class="sm:block">
-        <img :src="dashboard.userInfo.default_logo" class="h-24" alt="Logo" />
+        <img :src="dashboard.userInfo.data.default_logo" class="h-24" alt="Logo" />
     </div>
 </template>
 <script lang="ts">

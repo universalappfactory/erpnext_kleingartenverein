@@ -24,7 +24,7 @@
 		</button>
 		
 		<a class="md:hidden flex ml-2 md:mr-24 items-center w-full justify-center">
-			<LogoComponent />
+			<Logo />
 		</a>
 	</div>
 
@@ -108,7 +108,6 @@ import { useSharedDashboard } from '../ts/dashboard'
 import { useRoute } from 'vue-router';
 import { useDashboardStore } from '../ts/dashboardstore';
 import Logo from "./Logo.vue";
-import TenantEditor from "./Logo.vue";
 
 export default defineComponent({
 	name: "navbar",
