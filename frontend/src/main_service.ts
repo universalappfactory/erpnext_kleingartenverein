@@ -2,7 +2,7 @@ import './index.css'
 
 import { createApp } from 'vue'
 import router from './router_service'
-import App from './App.vue'
+import App from './AppService.vue'
 import 'flowbite'
 import { createPinia } from 'pinia'
 
