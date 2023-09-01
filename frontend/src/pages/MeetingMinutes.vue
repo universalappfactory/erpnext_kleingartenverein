@@ -1,6 +1,4 @@
 <template>
-   <NavbarComponent />
-
    <div class="p-4 sm:ml-64">
 
       <ListComponent @loadMore="meetingMinutes.next" :items="meetingMinutes.data" :checkable="false"
@@ -38,9 +36,6 @@
 <script lang="ts">
 import ListComponent from '../components/ListComponent.vue';
 import { defineComponent, ref, watch } from 'vue';
-import { initFlowbite } from 'flowbite'
-
-import NavbarComponent from "../components/Navbar.vue";
 import FooterComponent from "../components/Footer.vue";
 import GridTable from "../components/GridTable.vue";
 import { Dropdown } from 'frappe-ui'
@@ -52,7 +47,6 @@ import { useDashboardStore } from '../ts/dashboardstore';
 export default defineComponent({
    name: "Meeting Minutes",
    components: {
-      NavbarComponent,
       FooterComponent,
       Dropdown,
       Alert,
@@ -150,10 +144,7 @@ export default defineComponent({
          console.log('YYYY')
          this.dashboard.markAsRead("Meeting Minutes", name)
       }
-   },
-
-   mounted() {
-      // initFlowbite();
    }
+
 });
 </script>

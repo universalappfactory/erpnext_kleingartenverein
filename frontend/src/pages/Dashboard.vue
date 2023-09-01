@@ -217,13 +217,12 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { initFlowbite } from 'flowbite'
 
 import NavbarComponent from "../components/Navbar.vue";
 import FooterComponent from "../components/Footer.vue";
 import { Dropdown } from 'frappe-ui'
 import { Alert, Button } from 'frappe-ui'
-import { useDashboardStore } from '../ts/dashboardstore.ts'
+import { useDashboardStore } from '../ts/dashboardstore'
 
 export default defineComponent({
     name: "dashboard",
@@ -245,8 +244,5 @@ export default defineComponent({
             this.$router.push(href)
         },
     },
-    mounted() {
-        // initFlowbite();
-    }
 });
 </script>

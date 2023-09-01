@@ -1,5 +1,4 @@
 <template>
-  <NavbarComponent />
   <div class="p-4 sm:ml-64">
     <div class="hiddenx md:block">
       <CalendarComponent :events="calendar.calendarEvents" @event-focused="calendar.eventFocused" />
@@ -18,12 +17,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import NavbarComponent from "../components/Navbar.vue";
 import CalendarComponent from "../components/CalendarComponent.vue";
 import EventListComponent from "../components/EventListComponent.vue";
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
-import { useSharedCalendar } from '../ts/calendar.ts'
+import { useSharedCalendar } from '../ts/calendar'
 
 
 export default defineComponent({
@@ -42,7 +40,6 @@ export default defineComponent({
   },
   components: {
     VueCal,
-    NavbarComponent,
     CalendarComponent,
     EventListComponent
   },

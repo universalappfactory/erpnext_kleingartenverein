@@ -1,6 +1,4 @@
 <template>
-   <NavbarComponent />
-
    <div class="p-4 sm:ml-64">
 
       <Dialog v-model="bodyDialog" style="z-index: 300;">
@@ -61,15 +59,11 @@
    </div>
 </template>
 <script lang="ts">
-import { PropType, defineComponent, ref } from 'vue';
-import { initFlowbite } from 'flowbite'
-
-import NavbarComponent from "../components/Navbar.vue";
+import {  defineComponent, ref } from 'vue';
 import FooterComponent from "../components/Footer.vue";
 import ListComponent from "../components/ListComponent.vue";
 import TenantEditor from "../components/TenantEditor.vue";
 import TenantSearchBar from "../components/TenantSearchBar.vue";
-
 import { Dropdown, Dialog } from 'frappe-ui'
 import { Alert, Button, createListResource, createResource } from 'frappe-ui'
 import { ColumnMode, TableColumn } from '../ts/table';
@@ -80,7 +74,6 @@ import { useTenantEditor } from '../ts/tenanteditor';
 export default defineComponent({
    name: "paechter",
    components: {
-      NavbarComponent,
       FooterComponent,
       Dropdown,
       Alert,
@@ -151,7 +144,6 @@ export default defineComponent({
       }
    },
    mounted() {
-      initFlowbite();
       this.tenant.fetch()
    }
 });

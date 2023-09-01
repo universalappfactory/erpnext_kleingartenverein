@@ -1,12 +1,7 @@
 <template>
 	<div class="sm:hidden flex items-center justify-start">
-		<button 
-			data-drawer-target="default-sidebar" 
-			data-drawer-toggle="default-sidebar" 
-			aria-controls="default-sidebar"
-			data-drawer-backdrop="true" 
-			type="button" 
-			class="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg 
+		<button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar"
+			data-drawer-backdrop="true" type="button" class="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg 
 		sm:hidden 
 		hover:bg-gray-100 
 		focus:outline-none 
@@ -22,18 +17,15 @@
 			</svg>
 
 		</button>
-		
+
 		<a class="md:hidden flex ml-2 md:mr-24 items-center w-full justify-center">
 			<Logo />
 		</a>
 	</div>
 
 	<aside id="default-sidebar"
-		class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" 
-		tabindex="-1"
+		class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" tabindex="-1"
 		aria-labelledby="drawer-backdrop-label">
-
-		
 
 		<div class="h-full px-3 py-4 overflow-y-auto bg-gray-50">
 			<h5 id="drawer-disabled-backdrop-label" class="text-base font-semibold text-gray-500 uppercase ml-5 mb-4">
@@ -55,8 +47,8 @@
 				<span class="sr-only">Close menu</span>
 			</button>
 			<ul class="space-y-2 font-medium">
-				<li v-for="item in store.navigation" :class="isRouter(item) && item.href === route.path ? 'bg-green-100' : ''"
-					:key="item.displayTitle">
+				<li v-for="item in store.navigation"
+					:class="isRouter(item) && item.href === route.path ? 'bg-green-100' : ''" :key="item.displayTitle">
 					<template v-if="isRouter(item)">
 						<a @click="navigateTo(item)"
 							class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
@@ -137,12 +129,5 @@ export default defineComponent({
 			return item.mode === 'NavigationMode.Router'
 		}
 	},
-	data() {
-
-
-	},
-
-	mounted() {
-	}
 });
 </script>
