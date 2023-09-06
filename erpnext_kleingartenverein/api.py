@@ -359,6 +359,15 @@ def get_dashboard_navigation():
         #     }
         # )
 
+        basic_navigation.append(
+            {
+                "displayTitle": _("Brief schreiben"),
+                "href": "/letter/",
+                "icon": "fa-user",
+                "mode": "NavigationMode.Router",
+            }
+        )
+
         # basic_navigation.append(
         #     {
         #         "displayTitle": _("Kalender"),

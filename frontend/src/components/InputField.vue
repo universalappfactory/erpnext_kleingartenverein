@@ -45,7 +45,7 @@ export default defineComponent({
 
     props: {
         value: {
-            type: Object as PropType<any>,
+            type: String,
             default: () => "",
         },
         disabled: {
@@ -74,9 +74,6 @@ export default defineComponent({
         isMail() {
             return this.type === InputType.EMail
         }
-    },
-    data() {
-
     }
 });
 </script>

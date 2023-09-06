@@ -1,18 +1,56 @@
 import { createListResource, createResource } from 'frappe-ui'
-import { reactive, unref, watch } from 'vue'
+import { UnwrapNestedRefs, reactive, unref, watch } from 'vue'
 
 export interface FilterItem {
     text: string,
     selected: boolean
 }
 
-export function useTenants() {
+export interface ContactData {
+    first_name: string
+    last_name: string
+    email_id: string
+    mobile_no: string
+    phone: string
+}
 
-    const tenants = reactive([])
+export interface AddressData {
+    address_line1: string
+    address_line2: string
+    city: string
+    county: string
+    state: string
+    pincode: string
+}
+
+export interface TenantData {
+    contact: ContactData | undefined
+    address: AddressData | undefined
+    selected: boolean | undefined
+    name: string | undefined
+}
+
+export interface PlotData {
+    plot_number: string
+    plot_size_sqm: string
+}
+
+export interface AttachmentData {
+    description: string,
+    url: string
+}
+
+export type TenantFunctions = { tenants: { contact: { first_name: string; last_name: string; email_id: string; mobile_no: string; phone: string }; address: { address_line1: string; address_line2: string; city: string; county: string; state: string; pincode: string }; selected: boolean; name: string }[]; loadMore: () => any; search: (query: string) => void; pageInfo: { hasNext: boolean }; fetch: () => any; clear: () => void; filters: { text: string; selected: boolean }[]; byName: (name: string) => { contact: { first_name: string; last_name: string; email_id: string; mobile_no: string; phone: string }; address: { address_line1: string; address_line2: string; city: string; county: string; state: string; pincode: string }; selected: boolean; name: string }; selection: any[]; select: (name: string) => void; unselect: (name: string) => void }
+
+
+export function useTenants(): TenantFunctions {
+
+    const tenants = reactive<TenantData[]>([]) //ToDo this is not TenantData!
     const page = {
         hasNext: false
     }
     const pageInfo = reactive(page)
+    const selection = reactive([])
 
     const teantsResource = createListResource({
         doctype: 'Customer',
@@ -29,21 +67,15 @@ export function useTenants() {
         url: '/api/method/erpnext_kleingartenverein.api.search_tenants'
     })
 
-    watch(searchResource, () => {
-        console.log(searchResource)
-        console.log(searchResource.start)
+    function createData(input: any): TenantData {
+        let result = input as TenantData;
+        result.selected = selection.findIndex(x => x.name === result.name) > -1 ? true : false
+        return result
+    }
 
-        pageInfo.hasNext = searchResource.hasNextPage
-        if (searchResource.data) {
-            if (searchResource.start === 0) {
-                tenants.splice(0, tenants.length)
-            }
-
-            tenants.push(...searchResource.data)
-        } else {
-            tenants.splice(0, tenants.length)
-        }
-    })
+    function mapData(input: Array<any>): TenantData[] {
+        return input.map(createData)
+    }
 
     watch(teantsResource, () => {
         pageInfo.hasNext = teantsResource.hasNextPage
@@ -51,14 +83,31 @@ export function useTenants() {
         if (teantsResource.data) {
             if (teantsResource.start === 0) {
                 clear()
-                tenants.push(...teantsResource.data)
+                let data = mapData(teantsResource.data);
+                tenants.push(...data)
             } else {
-                tenants.push(...teantsResource.data.slice(teantsResource.start, teantsResource.start + teantsResource.pageLength))
+                tenants.push(...mapData(teantsResource.data.slice(teantsResource.start, teantsResource.start + teantsResource.pageLength)))
             }
         } else {
             clear()
         }
     })
+
+    // const updateResult = () => {
+    //     pageInfo.hasNext = teantsResource.hasNextPage
+
+    //     if (teantsResource.data) {
+    //         if (teantsResource.start === 0) {
+    //             clear()
+    //             let data = mapData(teantsResource.data);
+    //             tenants.push(...data)
+    //         } else {
+    //             tenants.push(...mapData(teantsResource.data.slice(teantsResource.start, teantsResource.start + teantsResource.pageLength)))
+    //         }
+    //     } else {
+    //         clear()
+    //     }
+    // }
 
     const search = (query: string) => {
         if (!query || query.trim() === '') {
@@ -69,10 +118,24 @@ export function useTenants() {
 
         clear()
         searchResource.reset()
-        searchResource.fetch({ "query": query, "filter": filters.filter(f => f.selected).map(f => unref(f)) })
+        searchResource
+            .fetch({ "query": query, "filter": filters.filter(f => f.selected).map(f => unref(f)) })
+            .then(() => {
+                pageInfo.hasNext = searchResource.hasNextPage
+                if (searchResource.data) {
+                    if (searchResource.start === 0) {
+                        tenants.splice(0, tenants.length)
+                    }
+
+                    let data = mapData(searchResource.data)
+                    tenants.push(...data)
+                } else {
+                    tenants.splice(0, tenants.length)
+                }
+            })
     }
 
-    const loadMore = () => teantsResource.next()
+    const loadMore = async () => teantsResource.next()
 
     const fetch = () => teantsResource.fetch()
 
@@ -89,9 +152,33 @@ export function useTenants() {
         ]
     )
 
-    const byName= (name: string) => {
+    const byName = (name: string) => {
         return tenants.find(t => t.name === name)
     }
 
-    return { tenants, loadMore, search, pageInfo, fetch, clear, filters, byName }
+    const select = (name: string) => {
+        const tenant = byName(name)
+        if (tenant) {
+            tenant.selected = true
+            const idx = selection.findIndex(x => x.name === name)
+            if (idx === -1) {
+                console.log("PUSH", unref(tenant))
+                selection.push(tenant)
+            }
+        }
+    }
+
+    const unselect = (name: string) => {
+        const tenant = byName(name)
+        if (tenant) {
+            tenant.selected = false
+            const idx = selection.findIndex(t => t.name === name)
+            if (idx > -1) {
+                selection.splice(idx, 1)
+            }
+        }
+    }
+
+
+    return { tenants, loadMore, search, pageInfo, fetch, clear, filters, byName, selection, select, unselect }
 }

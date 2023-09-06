@@ -1,5 +1,6 @@
-import { createListResource, createResource } from 'frappe-ui'
+import { createResource } from 'frappe-ui'
 import { reactive, unref, watch } from 'vue'
+import { AttachmentData } from './tenants'
 
 interface Selected
 {
@@ -8,42 +9,7 @@ interface Selected
     plot_attachments: AttachmentData[] | undefined
 }
 
-export interface ContactData
-{
-    first_name: string
-    last_name: string
-    email_id: string
-    mobile_no: string
-    phone: string
-}
 
-export interface AddressData
-{
-    address_line1: string
-    address_line2: string
-    city: string
-    county: string
-    state: string
-    pincode: string
-}
-
-export interface TenantData
-{
-    contact: ContactData | undefined
-    address: AddressData | undefined
-}
-
-export interface PlotData
-{
-    plot_number: string
-    plot_size_sqm: string   
-}
-
-export interface AttachmentData
-{
-    description: string,
-    url: string
-}
 
 export function useTenantEditor() {
 

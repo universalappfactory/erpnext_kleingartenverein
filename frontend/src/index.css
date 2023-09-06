@@ -90,3 +90,21 @@
 {
     @apply pb-4
 }
+
+
+@media (max-width: 640px) {
+    #tenant-dialog .px-4 .py-4 {
+        padding: 0 !important;
+    }
+    
+    #tenant-dialog .my-8 {
+        margin: 0 !important;
+    }
+    
+    #tenant-dialog  div.max-w-lg {
+        width: 100vw !important;
+        height: 95vh !important;
+        padding: 0;
+        margin: 0;
+    }
+  }

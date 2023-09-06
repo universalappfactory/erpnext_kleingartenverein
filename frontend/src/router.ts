@@ -9,7 +9,7 @@ const routes = [
   {
     path: '/paechter',
     name: 'Pächter',
-    component: () => import('@/pages/Paechter.vue'),
+    component: () => import('@/pages/Tenants.vue'),
   },
   {
     path: '/calendar',
@@ -30,6 +30,11 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: () => import('@/pages/ProfilePage.vue'),
+  },
+  {
+    path: '/letter',
+    name: 'Letter',
+    component: () => import('@/pages/NewLetter.vue'),
   },
 ]
 

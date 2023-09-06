@@ -1,5 +1,11 @@
 {
     "en": {
+        "common": {
+            "no_data": "No Data"
+        },
+        "dashboad": {
+            "myclub": "My Club"
+        },
         "myclub": {
             "myclub": "My Club",
             "welcome": "Welcome"
@@ -39,9 +45,17 @@
             "search_for" : "First Name, Name, Plot, EMail...",
             "filter": "Filter",
             "search": "Search"
+        },
+        "new_letter": {
+            "recipients": "Recipients",
+            "template": "Template",
+            "no_recipients": "No recipients selected"
         }
     },
     "de": {
+        "common": {
+            "no_data": "Keine Daten vorhanden"
+        },
         "myclub": {
             "myclub": "Mein Kleingartenverein",
             "welcome": "Hallo"
@@ -81,6 +95,11 @@
             "plot_number": "Gartennummer",
             "plot_size_sqm": "Größe (qm)",
             "plot_attachments": "Garten Anhänge"
+        },
+        "new_letter": {
+            "recipients": "Empfänger",
+            "template": "Vorlage",
+            "no_recipients": "Keine Empfänger gewählt"
         }
     }
 }

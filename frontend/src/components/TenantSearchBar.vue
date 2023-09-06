@@ -77,8 +77,6 @@ export default defineComponent({
             required: true,
         },
     },
-    data() {
 
-    }
 });
 </script>

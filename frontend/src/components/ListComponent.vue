@@ -1,5 +1,5 @@
 <template>
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="relative shadow-md sm:rounded-lg">
         <template v-if="hasActionDropDown || hasSearch">
             <div class="flex items-center justify-between py-4 bg-white">
                 <template v-if="hasActionDropDown">
@@ -113,8 +113,7 @@
 <script lang="ts">
 import { PropType, defineComponent, ref } from 'vue';
 import TableHead from "../components/TableHead.vue";
-
-import { ColumnMode, TableColumn } from '../ts/table'
+import { TenantData } from '../ts/tenants';
 export default defineComponent({
     name: "ListComponent",
     components: {
@@ -131,7 +130,7 @@ export default defineComponent({
     },
     props: {
         items: {
-            type: Object as PropType<Array<Record<string, string>>>,
+            type: Object as PropType<Array<Record<string,any>>>,
             required: true,
         },
         headerList: {
