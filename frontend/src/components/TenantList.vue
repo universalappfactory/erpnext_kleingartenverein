@@ -99,15 +99,6 @@ export default defineComponent({
             return true;
         },
     },
-    setup() {
-
-        // const tenant = useTenants()
-        // const selectedCustomer = ref({})
-        return {
-            // tenant,
-            // selectedCustomer,
-        }
-    },
     async mounted() {
         await this.tenant.fetch()
     },

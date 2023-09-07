@@ -6,7 +6,9 @@
         <!-- Dropdown menu -->
         <div ref="dropDown" :class="dropDownVisible ? 'relative' : 'hidden'" style=""
             class="z-10 bg-red-100 rounded-lg dark:bg-gray-700">
-            <slot></slot>
+            <div class="absolute border-2">
+                <slot></slot>
+            </div>
         </div>
     </div>
 </template>

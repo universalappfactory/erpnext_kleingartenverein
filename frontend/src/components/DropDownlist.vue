@@ -1,13 +1,28 @@
 <template>
-    <Dropdown
-        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        :options="items">{{ label }}</Dropdown>
+    <Button @click="toggleDropdown" :label="label">{{ label }}</Button>
+
+    <!-- Dropdown menu -->
+    <div id="dropdown" style="z-index: 1000; position: relative; " :class="dropDownOpen ? 'block' : 'hidden'"
+        class="bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+        <ul style="position: absolute;" class="bg-white border-2 rounded-md py-2 text-sm text-gray-700 dark:text-gray-200"
+            aria-labelledby="dropdownDefaultButton">
+            <li v-for="(item, index) of items">
+                <a @click="itemSelected(item)"
+                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                    {{ item.label }}
+                </a>
+            </li>
+
+        </ul>
+    </div>
 </template>
 <script lang="ts">
 import { PropType, defineComponent, ref } from 'vue';
 import Button from "./Button.vue";
+// import Dropdown from 'frappe-ui'
 import { DropdownItem } from '../ts/dropdown';
 import { Dropdown } from 'frappe-ui'
+
 
 export default defineComponent({
     name: "DropDownSearch",

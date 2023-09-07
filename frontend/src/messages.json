@@ -49,7 +49,9 @@
         "new_letter": {
             "recipients": "Recipients",
             "template": "Template",
-            "no_recipients": "No recipients selected"
+            "no_recipients": "No recipients selected",
+            "add_recipients": "Add recipients",
+            "select_template": "Select a template"
         }
     },
     "de": {
@@ -99,7 +101,9 @@
         "new_letter": {
             "recipients": "Empfänger",
             "template": "Vorlage",
-            "no_recipients": "Keine Empfänger gewählt"
+            "no_recipients": "Keine Empfänger gewählt",
+            "add_recipients": "Empfänger hinzufügen",
+            "select_template": "Vorlage auswählen"
         }
     }
 }

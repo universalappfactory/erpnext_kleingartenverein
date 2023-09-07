@@ -1,21 +1,14 @@
 <template>
     <div class="p-4 sm:ml-64">
         <div class="grid grid-cols-1">
-            
-            <div class="flex">
-                <DropdownButton :label="$t('new_letter.recipients')">
-                    <div class="bg-gray-100 w-full max-h-[60vh] min-w-[30rem] pt-4 overflow-scroll">
-                        <TenantList :selectable="true" :tenant="tenant" />
-                    </div>
-                </DropdownButton>
-                
-            </div>
 
-            <div class="border-b-2 mt-4 pb-2">
+            <p class="text-2xl border-b-4 border-blue-400 pb-2">Neuen Brief verfassen</p>
+
+            <div class="border-b-2 pt-2 mt-6 pb-2">
+                <p class="mb-2 font-semibold">Empfänger:</p>
                 <div class="flex flex-wrap gap-2">
-
                     <div v-for="(item, index) of tenant.selection" class="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded 
-                         border border-blue-400 inline-flex items-center justify-center">
+                            border border-blue-400 inline-flex items-center justify-center">
                         {{ item.name }}
                         <button type="button" @click="removeRecipient(item.name)"
                             class="inline-flex items-center p-1 ml-2 text-sm text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300"
@@ -28,33 +21,51 @@
                             <span class="sr-only">Remove badge</span>
                         </button>
                     </div>
+
                     <template v-if="tenant.selection.length === 0">
                         {{ $t('new_letter.no_recipients') }}
                     </template>
                 </div>
+
+            </div>
+
+            <div class="flex">
+                <DropdownButton class="mt-4" :label="$t('new_letter.add_recipients')">
+                    <div class="bg-gray-100 w-full max-h-[60vh] min-w-[30rem] pt-4 overflow-scroll">
+                        <TenantList :selectable="true" :tenant="tenant" />
+                    </div>
+                </DropdownButton>
             </div>
 
             <div class="mt-4">
-                <DropDownlist @selected="templateSelected" :label="$t('new_letter.template')" :items="letter.templates" />
+                <EditorComponent @contentChanged="contentChanged" :content="content" @template-selected="templateSelected"
+                    :templates="letter.templates"></EditorComponent>
             </div>
-
-            <div class="bg-red-100 mt-4">
-                asd
+            <div class="flex gap-4 items-center">
+                <Button label="Vorschau anzeigen" @clicked="createPreview" />
+                <LoadingIndicator :isLoading="letter.isLoading.value" :centerPlacement="false" />
             </div>
         </div>
+
     </div>
 </template>
   
-<script lang="ts">resizeBy
+<script lang="ts">
+resizeBy
 import { Dialog } from 'frappe-ui'
 import { defineComponent, ref } from 'vue';
 import TenantSelector from "../components/TenantSelector.vue";
 import DropdownButton from "../components/DropdownButton.vue";
 import TenantList from "../components/TenantList.vue";
 import DropDownlist from "../components/DropDownlist.vue";
+import EditorComponent from "../components/EditorComponent.vue";
+import Button from "../components/Button.vue";
+import LoadingIndicator from "../components/indicators/LoadingIndicator.vue";
+
 import { useTenants } from '../ts/tenants';
 import { useMemberLetter } from '../ts/member_letter';
-import { DropdownItem } from '../ts/dropdown';
+import { SelectItem } from '../ts/buttons/select';
+
 
 export default defineComponent({
     name: 'Home',
@@ -66,9 +77,11 @@ export default defineComponent({
     setup() {
         const letter = useMemberLetter()
         const tenant = useTenants()
+        const content = ref('')
         return {
             tenant,
-            letter
+            letter,
+            content,
         }
 
     },
@@ -79,8 +92,15 @@ export default defineComponent({
         removeRecipient(name: string) {
             this.tenant.unselect(name)
         },
-        templateSelected(item: DropdownItem) {
-            console.log('templateSelected', item)
+        templateSelected(item: SelectItem) {
+            this.content = item.content
+        },
+        contentChanged(val: string) {
+            this.letter.contentChanged(val)
+        },
+        async createPreview() {
+            console.log('create preview')
+            await this.letter.createPreview()
         }
     },
     components: {
@@ -88,7 +108,10 @@ export default defineComponent({
         TenantSelector,
         DropdownButton,
         TenantList,
-        DropDownlist
+        DropDownlist,
+        EditorComponent,
+        Button,
+        LoadingIndicator
     },
 });
 </script>

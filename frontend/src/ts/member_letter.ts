@@ -1,15 +1,29 @@
 import { createListResource, createResource } from 'frappe-ui'
-import { UnwrapNestedRefs, reactive, unref, watch } from 'vue'
-import { DropdownItem } from './dropdown'
-import { TenantData } from './tenants'
+import { reactive, ref, unref, watch } from 'vue'
+import { SelectItem } from './buttons/select'
+
+
+export interface PreviewData {
+    recipients: string[]
+    content: string
+}
 
 export function useMemberLetter() {
-    const templates = reactive<DropdownItem[]>([])
+    const templates = reactive<SelectItem[]>([])
+
+    const noTemplate: SelectItem = {
+        content: '',
+        description: 'Leer',
+        value: ''
+    }
 
     const page = {
         hasNext: false
     }
     const pageInfo = reactive(page)
+    const selectedTemplate = reactive<SelectItem | undefined>(undefined)
+    let letterContent = ''
+    const isLoading = ref(false)
 
     const templatesResource = createListResource({
         doctype: 'Member Letter Template',
@@ -23,10 +37,30 @@ export function useMemberLetter() {
         templates.splice(0, templates.length)
     }
 
+    const previewResource = createResource({
+        url: '/api/method/erpnext_kleingartenverein.letter_api.create_print_preview'
+    })
+
+    const createPreview = () => {
+        isLoading.value=true
+        const previewData: PreviewData = {
+            recipients: ['Dirk Lehmeier'],
+            content: '# Hallo Welt'
+        }
+        previewResource.reset()
+        previewResource.fetch({
+            data: previewData
+        }).then(x => {
+            console.log(x)
+        })
+    }
+
     const mapData = (input: Array<any>) => {
         return input.map(x => {
-            const result: DropdownItem = {
-                label: x.name
+            const result: SelectItem = {
+                value: x.name,
+                description: x.name,
+                content: x.content
             }
             return result
         })
@@ -39,8 +73,10 @@ export function useMemberLetter() {
             if (templatesResource.start === 0) {
                 clear()
                 let data = mapData(templatesResource.data);
+                templates.push(noTemplate)
                 templates.push(...data)
             } else {
+                templates.push(noTemplate)
                 templates.push(...mapData(templatesResource.data.slice(templatesResource.start, templatesResource.start + templatesResource.pageLength)))
             }
         } else {
@@ -52,5 +88,9 @@ export function useMemberLetter() {
         templatesResource.fetch()
     }
 
-    return { templatesResource, fetchData, templates }
+    function contentChanged(contents: string) {
+        letterContent = contents
+    }
+
+    return { templatesResource, fetchData, templates, selectedTemplate, contentChanged, createPreview, isLoading }
 }
