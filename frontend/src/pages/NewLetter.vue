@@ -42,7 +42,7 @@
                     :templates="letter.templates"></EditorComponent>
             </div>
             <div class="flex gap-4 items-center">
-                <Button label="Vorschau anzeigen" @clicked="createPreview" />
+                <LinkButton :disabled="previewDisabled" :href="href" label="Vorschau anzeigen" target="_blank" ></LinkButton>
                 <LoadingIndicator :isLoading="letter.isLoading.value" :centerPlacement="false" />
             </div>
         </div>
@@ -60,6 +60,8 @@ import TenantList from "../components/TenantList.vue";
 import DropDownlist from "../components/DropDownlist.vue";
 import EditorComponent from "../components/EditorComponent.vue";
 import Button from "../components/Button.vue";
+import LinkButton from "../components/buttons/LinkButton.vue";
+
 import LoadingIndicator from "../components/indicators/LoadingIndicator.vue";
 
 import { useTenants } from '../ts/tenants';
@@ -103,6 +105,20 @@ export default defineComponent({
             await this.letter.createPreview()
         }
     },
+    computed: {
+        href: function () {
+            const recipients = this.tenant.selection.map(x => x.name)
+            let data = JSON.stringify({
+                recipients: recipients,
+                content: this.content
+            })
+            data = encodeURIComponent(btoa(data))
+            return `/api/method/erpnext_kleingartenverein.letter_api.get_print_preview?data=${data}`
+        },
+        previewDisabled: function() {
+            return this.content === '' || this.tenant.selection.length === 0
+        }
+    },
     components: {
         Dialog,
         TenantSelector,
@@ -111,7 +127,8 @@ export default defineComponent({
         DropDownlist,
         EditorComponent,
         Button,
-        LoadingIndicator
+        LoadingIndicator,
+        LinkButton
     },
 });
 </script>

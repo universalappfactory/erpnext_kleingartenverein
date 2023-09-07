@@ -38,7 +38,7 @@ export function useMemberLetter() {
     }
 
     const previewResource = createResource({
-        url: '/api/method/erpnext_kleingartenverein.letter_api.create_print_preview'
+        url: '/api/method/erpnext_kleingartenverein.letter_api.get_print_preview'
     })
 
     const createPreview = () => {

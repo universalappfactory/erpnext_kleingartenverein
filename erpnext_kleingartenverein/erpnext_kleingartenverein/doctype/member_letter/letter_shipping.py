@@ -13,7 +13,7 @@ from frappe.utils.weasyprint import PrintFormatGenerator, download_pdf
 from frappe import _
 from frappe.utils.file_manager import add_attachments
 from frappe.desk.doctype.tag.tag import add_tags
-
+from datetime import datetime
 
 class ShippingError(Exception):
     pass
@@ -89,21 +89,18 @@ class LetterShipping:
         pdf = generator.render_pdf()
         return pdf
 
-    def attch_to_file(self, print_format, target_folder, sent_letter, filename):
-        pdf = self.create_pdf(
-            "Sent Member Letter", sent_letter.name, print_format, "Default Head"
-        )
+    def attch_to_file(self, attached_to_name, target_folder, filename, content):
         return frappe.get_doc(
             {
                 "doctype": "File",
                 "attached_to_doctype": "Sent Member Letter",
-                "attached_to_name": sent_letter.name,
+                "attached_to_name": attached_to_name,
                 "attached_to_field": "attachment",
                 "folder": target_folder,
                 "file_name": filename,
                 # "file_url": file_url,
                 "is_private": 1,
-                "content": pdf,
+                "content": content,
             }
         ).save()
 
@@ -127,16 +124,31 @@ class LetterShipping:
                     letter.target_folder if letter.target_folder else "Home/letters"
                 )
                 try:
-                    pdf = self.attch_to_file(
-                        letter.print_format,
-                        target_folder,
-                        sent_letter,
-                        f"{letter.description}.pdf",
+                    pdf = self.create_pdf(
+                        "Sent Member Letter", sent_letter.name, letter.print_format
                     )
-                    sent_letter.attachment = pdf.file_url
+
+                    # pdf = self.create_pdf(
+                    #     "Sent Member Letter", sent_letter.name, print_format, "Default Head"
+                    # )
+
+                    attached = self.attch_to_file(
+                        sent_letter.name,
+                        target_folder,
+                        f"{letter.description}.pdf",
+                        pdf,
+                    )
+
+                    # pdf = self.attch_to_file(
+                    #     letter.print_format,
+                    #     target_folder,
+                    #     sent_letter,
+                    #     f"{letter.description}.pdf",
+                    # )
+                    sent_letter.attachment = attached.file_url
                     sent_letter.success = True
 
-                    self.add_attchment_to_customer(customer.name, [pdf.name])
+                    self.add_attchment_to_customer(customer.name, [attached.name])
                     sent_letter.save()
 
                     if tags:
@@ -160,3 +172,31 @@ class LetterShipping:
         # letters = self.create_letters(letter, customers)
         # for letter in letters:
         #     self._shipment_adapter.ship_letter(letter)
+
+    def create_preview(self, customer_name, content, print_format, target_folder):
+        letter_name = ''
+        try:
+            now = datetime.now()
+
+            preview_letter = frappe.get_doc(
+                {
+                    "doctype": "Single Member Letter",
+                    "target_folder": target_folder,
+                    "print_format": print_format,
+                    "content": content,
+                    "customer": customer_name,
+                    "description": f"Preview Letter {now.strftime('YYYY-MM-dd-HH-mm-ss')}",
+                }
+            )
+            preview_letter.insert()
+            letter_name = preview_letter.name
+
+            return self.create_pdf(
+                "Single Member Letter", preview_letter.name, preview_letter.print_format
+            )
+        except Exception as error:
+            frappe.log_error(error)
+            if letter_name != '':
+                frappe.delete_doc('Single Member Letter', letter_name)
+            return None
+
