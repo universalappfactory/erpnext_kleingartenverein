@@ -5,7 +5,9 @@ from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calcula
 
 from erpnext_kleingartenverein.utils.tenant_search import TenantSearch
 from erpnext_kleingartenverein.file_api import ensure_folder_exists
-from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter_shipment.shipping import MemberLetterShipping
+from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter_shipment.shipping import (
+    MemberLetterShipping,
+)
 
 import frappe
 import json
@@ -49,14 +51,31 @@ def parse_input(args, kwargs):
         frappe.throw("no recipients provided")
 
     recipients = data["recipients"][0]
+    description = data["description"]
 
-    return (data["content"], recipients)
+    return (data["content"], recipients, description)
+
+
+def background_publish_letters(letter_names):
+    try:
+        for letter_name in letter_names:
+            letter = frappe.get_doc("Single Member Letter", letter_name)
+            if not letter:
+                frappe.throw(_("cannot find letter: {0}").format(letter_name))
+
+            letter.submit()
+
+        frappe.publish_realtime(
+            "background_create_letters_start", {"Done": len(letter_names)}
+        )
+    except Exception as error:
+        frappe.log_error(error)
 
 
 @frappe.whitelist(allow_guest=False)
 def create_print_preview(*args, **kwargs):
     try:
-        (content, recipients) = parse_input(args, kwargs)
+        (content, recipients, description) = parse_input(args, kwargs)
 
         target_folder = ensure_folder_exists("Preview")
 
@@ -92,8 +111,21 @@ def get_print_preview(*args, **kwargs):
 @frappe.whitelist(allow_guest=False)
 def print_letters(*args, **kwargs):
     try:
-        (content, recipients) = parse_input(args, kwargs)
+        # (content, recipients, description) = parse_input(args, kwargs)
+        content = kwargs['data']['content']
+        recipients = kwargs['data']['recipients']
+        description = kwargs['data']['description']
+        
 
+        letters_to_print = []
+        shipping = MemberLetterShipping(False)
+        for recipient in recipients:
+            letter = shipping.create_single_member_letter(
+                recipient, content, "Single Member Letter Default", description
+            )
+            letters_to_print.append(letter)
+
+        background_publish_letters(letters_to_print)
         # pdf = create_print_preview(args, kwargs)
         # if not pdf:
         #     return ""
@@ -101,7 +133,11 @@ def print_letters(*args, **kwargs):
         # response = Response(pdf, content_type="application/pdf")
         # response.headers["Content-Disposition"] = "inline; filename=my_document.pdf"
 
-        # return response
+        return {"success": True}
+    except frappe.UniqueValidationError:
+        frappe.msgprint(
+					_("cannot create letter")
+				)
     except Exception as error:
         frappe.log_error(error)
-        return ""
+        return {"success": False}

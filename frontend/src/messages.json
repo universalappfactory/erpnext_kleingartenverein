@@ -53,7 +53,8 @@
             "add_recipients": "Add recipients",
             "select_template": "Select a template",
             "show_preview": "Print preview",
-            "print_letters": "Create letters"
+            "print_letters": "Create letters",
+            "letter_description": "Internal description"
         }
     },
     "de": {
@@ -107,7 +108,8 @@
             "add_recipients": "Empfänger hinzufügen",
             "select_template": "Vorlage auswählen",
             "show_preview": "Vorschau anzeigen",
-            "print_letters": "Briefe erstellen"
+            "print_letters": "Briefe erstellen",
+            "letter_description": "Interne Beschreibung"
         }
     }
 }

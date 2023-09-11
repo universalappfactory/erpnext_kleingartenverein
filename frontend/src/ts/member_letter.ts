@@ -1,15 +1,18 @@
 import { createListResource, createResource } from 'frappe-ui'
-import { reactive, ref, unref, watch } from 'vue'
+import { onMounted, reactive, ref, unref, watch } from 'vue'
 import { SelectItem } from './buttons/select'
 
 
-export interface PreviewData {
+export interface LetterData {
     recipients: string[]
     content: string
+    description: string
 }
 
 export function useMemberLetter() {
     const templates = reactive<SelectItem[]>([])
+    const printTemplates = reactive<SelectItem[]>([])
+    const selectedPrintTemplate = ref('')
 
     const noTemplate: SelectItem = {
         content: '',
@@ -22,8 +25,10 @@ export function useMemberLetter() {
     }
     const pageInfo = reactive(page)
     const selectedTemplate = reactive<SelectItem | undefined>(undefined)
+
     let letterContent = ''
     const isLoading = ref(true)
+    const description = ref('')
 
     const templatesResource = createListResource({
         doctype: 'Member Letter Template',
@@ -41,19 +46,78 @@ export function useMemberLetter() {
         url: '/api/method/erpnext_kleingartenverein.letter_api.get_print_preview'
     })
 
-    const createPreview = () => {
-        isLoading.value=true
-        const previewData: PreviewData = {
-            recipients: ['Dirk Lehmeier'],
-            content: '# Hallo Welt'
+    const printResource = createResource({
+        url: '/api/method/erpnext_kleingartenverein.letter_api.print_letters'
+    })
+
+    const printFormatResource = createListResource({
+        doctype: 'Print Format',
+        fields: ['*'],
+        orderBy: 'name asc',
+        filters: {
+            doc_type: 'Single Member Letter'
+        },
+        start: 0,
+        pageLength: 20,
+    })
+
+    onMounted(() => {
+        printFormatResource.fetch()
+    })
+
+    // const createPreview = () => {
+    //     isLoading.value=true
+    //     const previewData: PreviewData = {templatesResource
+    //         recipients: ['Dirk Lehmeier'],
+    //         content: '# Hallo Welt'
+    //     }
+    //     previewResource.reset()
+    //     previewResource.fetch({
+    //         data: previewData
+    //     }).then(x => {
+    //         console.log(x)
+    //     })
+    // }
+
+    const printLetters = async (recipients) => {
+        isLoading.value = true
+        const previewData: LetterData = {
+            recipients: recipients,
+            content: letterContent,
+            description: description.value
         }
-        previewResource.reset()
-        previewResource.fetch({
-            data: previewData
-        }).then(x => {
-            console.log(x)
-        })
+        printResource.reset()
+        try {
+
+            await printResource.fetch({
+                data: previewData
+            })
+
+            console.log(printResource)
+            console.log('DONE')
+            
+        } catch(e) {
+            console.error(e)
+            alert(e)
+        }
+
     }
+
+    watch(printFormatResource, () => {
+        if (printFormatResource.data) {
+            printTemplates.splice(0,printTemplates.length)
+            printTemplates.push(...printFormatResource.data.map(x => {
+                return {
+                    content: x.name,
+                    value: x.name,
+                    description: x.name
+                }
+            }))
+            if (printTemplates.length > 0) {
+                selectedPrintTemplate.value = printTemplates[0].value
+            }
+        }
+    })
 
     const mapData = (input: Array<any>) => {
         return input.map(x => {
@@ -92,5 +156,5 @@ export function useMemberLetter() {
         letterContent = contents
     }
 
-    return { templatesResource, fetchData, templates, selectedTemplate, contentChanged, createPreview, isLoading }
+    return { templatesResource, fetchData, templates, selectedTemplate, contentChanged, isLoading, printLetters, description, printTemplates, selectedPrintTemplate }
 }

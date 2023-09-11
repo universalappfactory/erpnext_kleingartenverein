@@ -5,8 +5,7 @@
             <label class="block text-sm mr-2 align-middle font-medium text-gray-900 dark:text-white">{{ label
             }}</label>
         </template>
-
-        <select :disabled="disabled" v-model="selectedValue"
+        <select :disabled="disabled" v-model="currentValue"
             class="grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 
             <option v-if="placeholder !== ''" :disabled="true" selected>{{ placeholder }}</option>
@@ -45,14 +44,14 @@ export default defineComponent({
             required: true
         },
         selectedValue: {
-            type: String,
+            type: Object as PropType<String>,
             required: false
         },
     },
     setup(props) {
-        const selectedValue=ref(props.placeholder ? props.placeholder : '')
+        const currentValue=ref('')
         return {
-            selectedValue
+            currentValue
         }
     },
     emits: {
@@ -67,6 +66,11 @@ export default defineComponent({
     },
     watch: {
         selectedValue: function(val) {
+            if (this.currentValue !== val) {
+                this.currentValue = val
+            }
+        },
+        currentValue: function(val) {
             const item = this.items.find(itm => itm.value === val)
             this.$emit('itemSelected', item)
         }

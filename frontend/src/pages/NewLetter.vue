@@ -3,6 +3,13 @@
         <div class="grid grid-cols-1">
 
             <p class="text-2xl border-b-4 border-blue-400 pb-2">Neuen Brief verfassen</p>
+            
+            <div class="mt-6">
+                <InputField label="" :value="letter.description" :placeholder="$t('new_letter.letter_description')" />
+                
+                <Select label="" :selectedValue="letter.selectedPrintTemplate.value" class="mt-2" placeholder="" :items="letter.printTemplates" >
+                    </Select>
+            </div>
 
             <div class="border-b-2 pt-2 mt-6 pb-2">
                 <p class="mb-2 font-semibold">Empfänger:</p>
@@ -44,8 +51,7 @@
             <div class="flex gap-4 items-center">
                 <LinkButton :disabled="previewDisabled" :href="href" :label="$t('new_letter.show_preview')"
                     target="_blank"></LinkButton>
-                <LinkButton :disabled=" previewDisabled " :href=" href " :label=" $t('new_letter.print_letters') "
-                    target="_blank"></LinkButton>
+                <Button @clicked="printLetters" :disabled="previewDisabled" :href=" href " :label=" $t('new_letter.print_letters') "></Button>
 
                 <LoadingIndicator :isLoading="letter.isLoading.value" :centerPlacement=" false" />
             </div>
@@ -65,6 +71,8 @@ import DropDownlist from "../components/DropDownlist.vue";
 import EditorComponent from "../components/EditorComponent.vue";
 import Button from "../components/Button.vue";
 import LinkButton from "../components/buttons/LinkButton.vue";
+import InputField from "../components/InputField.vue";
+import Select from "../components/buttons/Select.vue";
 
 import LoadingIndicator from "../components/indicators/LoadingIndicator.vue";
 
@@ -107,6 +115,10 @@ export default defineComponent({
         async createPreview() {
             console.log('create preview')
             await this.letter.createPreview()
+        },
+        async printLetters() {
+            const recipients = this.tenant.selection.map(x => x.name)
+            await this.letter.printLetters(recipients)
         }
     },
     computed: {
@@ -114,7 +126,8 @@ export default defineComponent({
             const recipients = this.tenant.selection.map(x => x.name)
             let data = JSON.stringify({
                 recipients: recipients,
-                content: this.content
+                content: this.content,
+                description: ''
             })
             data = encodeURIComponent(btoa(data))
             return `/api/method/erpnext_kleingartenverein.letter_api.get_print_preview?data=${data}`
@@ -132,7 +145,9 @@ export default defineComponent({
         EditorComponent,
         Button,
         LoadingIndicator,
-        LinkButton
+        LinkButton,
+        InputField,
+        Select
     },
 });
 </script>

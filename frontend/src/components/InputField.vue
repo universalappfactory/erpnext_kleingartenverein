@@ -10,7 +10,7 @@
                     border-gray-300 
                     text-gray-900 text-sm 
                     rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                :placeholder="label" :value="value" required />
+                :placeholder="placeholder" v-model="actualContent" required />
 
             <template v-if="isPhone()">
                 <a :href="getMailHref(value)" type="button"
@@ -32,7 +32,7 @@
     </div>
 </template>
 <script lang="ts">
-import { PropType, defineComponent } from 'vue';
+import { PropType, ref, defineComponent } from 'vue';
 
 export enum InputType {
     Default = "Default",
@@ -45,7 +45,7 @@ export default defineComponent({
 
     props: {
         value: {
-            type: String,
+            type: Object as any,
             default: () => "",
         },
         disabled: {
@@ -56,10 +56,30 @@ export default defineComponent({
             type: String,
             default: () => "Label",
         },
+        placeholder: {
+            type: String,
+            default: () => "",
+        },
         type: {
             type: String,
             default: () => "Default",
         },
+    },
+    emits: {
+        valueChanged: () => { //ToDo remove ok, just use clicked
+            return true;
+        },
+    },
+    watch: {
+        actualContent: function (val) {
+            // this.$emit('valueChanged', val)
+        }
+    },
+    setup(props, ctx) {
+        const actualContent = ref(props.value)
+        return {
+            actualContent
+        }
     },
     methods: {
         getMobileHref(mobile_no) {

@@ -3,6 +3,7 @@ from datetime import datetime
 from frappe import _
 from frappe.utils.file_manager import add_attachments
 from frappe.utils.weasyprint import PrintFormatGenerator
+from erpnext_kleingartenverein.file_api import get_yearly_customer_folder
 
 
 class ShippingError(Exception):
@@ -69,6 +70,10 @@ def create_letters_and_submit(member_letter_shipping_name):
 
 
 class MemberLetterShipping:
+    """
+    generates a pdf for a single member letter
+    """
+
     def __init__(self, throw_on_error=False) -> None:
         self._throw_on_error = throw_on_error
 
@@ -212,3 +217,26 @@ class MemberLetterShipping:
                 frappe.delete_doc("Single Member Letter", letter_name)
 
             frappe.throw(error)
+
+    def create_single_member_letter(
+        self, customer_name, content, print_format, letter_description
+    ):
+        """
+        creates a single member letter document for the given customer
+        """
+        try:
+            yearly_folder = get_yearly_customer_folder(customer_name)
+            letter = frappe.get_doc(
+                {
+                    "doctype": "Single Member Letter",
+                    "target_folder": yearly_folder,
+                    "print_format": print_format,
+                    "content": content,
+                    "customer": customer_name,
+                    "description": letter_description,
+                }
+            )
+            letter.insert()
+            return letter.name
+        except Exception as error:
+            frappe.log_error(error)
