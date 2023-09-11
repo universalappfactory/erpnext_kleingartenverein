@@ -23,7 +23,7 @@ export function useMemberLetter() {
     const pageInfo = reactive(page)
     const selectedTemplate = reactive<SelectItem | undefined>(undefined)
     let letterContent = ''
-    const isLoading = ref(false)
+    const isLoading = ref(true)
 
     const templatesResource = createListResource({
         doctype: 'Member Letter Template',

@@ -4,20 +4,28 @@ from frappe import _
 from frappe.utils.file_manager import add_attachments
 from frappe.utils.weasyprint import PrintFormatGenerator
 
+
 class ShippingError(Exception):
     pass
+
 
 STATUS_SUBMITTED = 1
 
 
 def background_create_letters(member_letter_shipping_name):
     try:
-        if not member_letter_shipping_name or member_letter_shipping_name == '':
-            frappe.throw('you must provide a member_letter_shipping_name')
+        if not member_letter_shipping_name or member_letter_shipping_name == "":
+            frappe.throw("you must provide a member_letter_shipping_name")
 
-        letter_shipment = frappe.get_doc("Member Letter Shipment", member_letter_shipping_name)
+        letter_shipment = frappe.get_doc(
+            "Member Letter Shipment", member_letter_shipping_name
+        )
         if not letter_shipment:
-            frappe.throw(_("cannot find Member Letter Shipment: {0}").format(member_letter_shipping_name))
+            frappe.throw(
+                _("cannot find Member Letter Shipment: {0}").format(
+                    member_letter_shipping_name
+                )
+            )
 
         shipping = MemberLetterShipping()
         shipping.create_letters_and_submit(letter_shipment)
@@ -31,28 +39,34 @@ def background_create_letters(member_letter_shipping_name):
 
 @frappe.whitelist()
 def create_letters_and_submit(member_letter_shipping_name):
-
-    if not member_letter_shipping_name or member_letter_shipping_name == '':
-        frappe.throw('you must provide a member_letter_shipping_name')
+    if not member_letter_shipping_name or member_letter_shipping_name == "":
+        frappe.throw("you must provide a member_letter_shipping_name")
 
     try:
-        letter_shipment = frappe.get_doc("Member Letter Shipment", member_letter_shipping_name)
+        letter_shipment = frappe.get_doc(
+            "Member Letter Shipment", member_letter_shipping_name
+        )
         if not letter_shipment:
-            frappe.throw(_("cannot find Member Letter Shipment: {0}").format(member_letter_shipping_name))
+            frappe.throw(
+                _("cannot find Member Letter Shipment: {0}").format(
+                    member_letter_shipping_name
+                )
+            )
 
         if letter_shipment.customer_table and len(letter_shipment.customer_table) == 1:
             background_create_letters(member_letter_shipping_name)
         else:
             frappe.enqueue(
-                    background_create_letters,
-                    member_letter_shipping_name=member_letter_shipping_name,
-                    queue="long",
-                    job_name=f"create_letters_for_{member_letter_shipping_name}",
-                )
+                background_create_letters,
+                member_letter_shipping_name=member_letter_shipping_name,
+                queue="long",
+                job_name=f"create_letters_for_{member_letter_shipping_name}",
+            )
 
     except Exception as e:
         frappe.log_error(e)
         frappe.throw(str(e))
+
 
 class MemberLetterShipping:
     def __init__(self, throw_on_error=False) -> None:
@@ -61,8 +75,10 @@ class MemberLetterShipping:
     def get_matching_customers(self, letter):
         if letter.customer_table:
             customers = list(map(lambda x: x.customer, letter.customer_table))
-			# 'date': ['>', '2019-09-08']
-            return frappe.get_list("Customer", filters={"name": ["IN", customers]}, fields="*")
+            # 'date': ['>', '2019-09-08']
+            return frappe.get_list(
+                "Customer", filters={"name": ["IN", customers]}, fields="*"
+            )
 
         if letter.target_customergroup:
             return frappe.get_list(
@@ -72,9 +88,7 @@ class MemberLetterShipping:
             return []
 
     def default_head_exists(self):
-        d = frappe.db.get_value(
-				'Letter Head', 'Default Head', "*", as_dict=1
-			)
+        d = frappe.db.get_value("Letter Head", "Default Head", "*", as_dict=1)
         return d is not None
 
     def create_pdf(self, doctype, name, print_format, letterhead=None):
@@ -86,7 +100,10 @@ class MemberLetterShipping:
 
     def attch_to_file(self, print_format, target_folder, sent_letter, filename):
         pdf = self.create_pdf(
-            "Single Member Letter", sent_letter.name, print_format, "Default Head" if self.default_head_exists() else None
+            "Single Member Letter",
+            sent_letter.name,
+            print_format,
+            "Default Head" if self.default_head_exists() else None,
         )
         return frappe.get_doc(
             {
@@ -109,7 +126,7 @@ class MemberLetterShipping:
         customer_list = self.get_matching_customers(letter)
         now = datetime.now()
 
-        date = now.strftime('%Y-%m-%d-%H-%M')
+        date = now.strftime("%Y-%m-%d-%H-%M")
         idx = 0
         for customer in customer_list:
             try:
@@ -137,12 +154,14 @@ class MemberLetterShipping:
         if not sent_letter:
             frappe.throw("you must provide sent_letter")
 
-        if sent_letter.doctype != 'Single Member Letter':
+        if sent_letter.doctype != "Single Member Letter":
             frappe.throw("sent_letter must be 'Single Member Letter'")
 
         try:
             target_folder = (
-                sent_letter.target_folder if sent_letter.target_folder else "Home/letters"
+                sent_letter.target_folder
+                if sent_letter.target_folder
+                else "Home/letters"
             )
             try:
                 pdf = self.attch_to_file(
@@ -165,3 +184,31 @@ class MemberLetterShipping:
         except Exception as error:
             frappe.log_error(error)
             frappe.throw("Error while sending", error)
+
+    def create_preview(self, customer_name, content, print_format, target_folder):
+        letter_name = ""
+        try:
+            now = datetime.now()
+
+            preview_letter = frappe.get_doc(
+                {
+                    "doctype": "Single Member Letter",
+                    "target_folder": target_folder,
+                    "print_format": print_format,
+                    "content": content,
+                    "customer": customer_name,
+                    "description": f"Preview Letter {now.strftime('YYYY-MM-dd-HH-mm-ss')}",
+                }
+            )
+            preview_letter.insert()
+            letter_name = preview_letter.name
+
+            return self.create_pdf(
+                "Single Member Letter", preview_letter.name, preview_letter.print_format
+            )
+        except Exception as error:
+            frappe.log_error(error)
+            if letter_name != "":
+                frappe.delete_doc("Single Member Letter", letter_name)
+
+            frappe.throw(error)

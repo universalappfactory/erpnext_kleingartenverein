@@ -42,8 +42,12 @@
                     :templates="letter.templates"></EditorComponent>
             </div>
             <div class="flex gap-4 items-center">
-                <LinkButton :disabled="previewDisabled" :href="href" label="Vorschau anzeigen" target="_blank" ></LinkButton>
-                <LoadingIndicator :isLoading="letter.isLoading.value" :centerPlacement="false" />
+                <LinkButton :disabled="previewDisabled" :href="href" :label="$t('new_letter.show_preview')"
+                    target="_blank"></LinkButton>
+                <LinkButton :disabled=" previewDisabled " :href=" href " :label=" $t('new_letter.print_letters') "
+                    target="_blank"></LinkButton>
+
+                <LoadingIndicator :isLoading="letter.isLoading.value" :centerPlacement=" false" />
             </div>
         </div>
 
@@ -115,7 +119,7 @@ export default defineComponent({
             data = encodeURIComponent(btoa(data))
             return `/api/method/erpnext_kleingartenverein.letter_api.get_print_preview?data=${data}`
         },
-        previewDisabled: function() {
+        previewDisabled: function () {
             return this.content === '' || this.tenant.selection.length === 0
         }
     },

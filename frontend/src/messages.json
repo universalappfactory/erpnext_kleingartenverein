@@ -51,7 +51,9 @@
             "template": "Template",
             "no_recipients": "No recipients selected",
             "add_recipients": "Add recipients",
-            "select_template": "Select a template"
+            "select_template": "Select a template",
+            "show_preview": "Print preview",
+            "print_letters": "Create letters"
         }
     },
     "de": {
@@ -103,7 +105,9 @@
             "template": "Vorlage",
             "no_recipients": "Keine Empfänger gewählt",
             "add_recipients": "Empfänger hinzufügen",
-            "select_template": "Vorlage auswählen"
+            "select_template": "Vorlage auswählen",
+            "show_preview": "Vorschau anzeigen",
+            "print_letters": "Briefe erstellen"
         }
     }
 }

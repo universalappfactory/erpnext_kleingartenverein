@@ -1,9 +1,6 @@
 from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calculation.invoice_calculator import (
     InvoiceCalculator,
 )
-from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter.letter_shipping import (
-    LetterShipping,
-)
 
 from erpnext_kleingartenverein.utils.tenant_search import TenantSearch
 
@@ -54,56 +51,56 @@ def execute_member_letter_shipping(names, status):
     #     frappe.throw(str(e))
 
 
-def background_create_letters(letter_name):
-    try:
-        letter = frappe.get_doc("Member Letter", letter_name)
-        if not letter:
-            frappe.throw(_("cannot find letter: {0}").format(letter_name))
+# def background_create_letters(letter_name):
+#     try:
+#         letter = frappe.get_doc("Member Letter", letter_name)
+#         if not letter:
+#             frappe.throw(_("cannot find letter: {0}").format(letter_name))
 
-        shipping = LetterShipping()
-        customers = shipping.get_matching_customers(letter)
+#         shipping = LetterShipping()
+#         customers = shipping.get_matching_customers(letter)
 
-        frappe.publish_realtime(
-            "background_create_letters_start",
-            {"background_create_letters": len(customers)},
-        )
+#         frappe.publish_realtime(
+#             "background_create_letters_start",
+#             {"background_create_letters": len(customers)},
+#         )
 
-        shipping.create_letters(letter, customers)
+#         shipping.create_letters(letter, customers)
 
-        frappe.publish_realtime(
-            "background_create_letters_start", {"Done": len(customers)}
-        )
-    except Exception as error:
-        frappe.log_error(error)
+#         frappe.publish_realtime(
+#             "background_create_letters_start", {"Done": len(customers)}
+#         )
+#     except Exception as error:
+#         frappe.log_error(error)
 
 
-@frappe.whitelist()
-def execute_create_letters(names, status):
-    try:
-        names = json.loads(names)
-        shipping = LetterShipping()
+# @frappe.whitelist()
+# def execute_create_letters(names, status):
+#     try:
+#         names = json.loads(names)
+#         shipping = LetterShipping()
 
-        if len(names) > 1:
-            frappe.throw(_("you can only select one letter at the moment."))
+#         if len(names) > 1:
+#             frappe.throw(_("you can only select one letter at the moment."))
 
-        name = names[0]
-        letter = frappe.get_doc("Member Letter", name)
-        if not letter:
-            frappe.throw(_("cannot find letter: {0}").format(name))
+#         name = names[0]
+#         letter = frappe.get_doc("Member Letter", name)
+#         if not letter:
+#             frappe.throw(_("cannot find letter: {0}").format(name))
 
-        customers = shipping.get_matching_customers(letter)
-        if len(customers) == 1:
-            shipping.create_letters(letter, customers)
-        else:
-            frappe.enqueue(
-                background_create_letters,
-                letter_name=name,
-                queue="long",
-                job_name=f"create_letters_for_{name}",
-            )
+#         customers = shipping.get_matching_customers(letter)
+#         if len(customers) == 1:
+#             shipping.create_letters(letter, customers)
+#         else:
+#             frappe.enqueue(
+#                 background_create_letters,
+#                 letter_name=name,
+#                 queue="long",
+#                 job_name=f"create_letters_for_{name}",
+#             )
 
-    except Exception as e:
-        frappe.throw(str(e))
+#     except Exception as e:
+#         frappe.throw(str(e))
 
 
 def get_customers(customer_names):
@@ -113,29 +110,29 @@ def get_customers(customer_names):
     return result
 
 
-@frappe.whitelist()
-def sent_customer_letter(names, letter, tags=None):
-    try:
-        names = json.loads(names)
-        shipping = LetterShipping(throw_on_error=True)
+# @frappe.whitelist()
+# def sent_customer_letter(names, letter, tags=None):
+#     try:
+#         names = json.loads(names)
+#         shipping = LetterShipping(throw_on_error=True)
 
-        letter = frappe.get_doc("Member Letter", letter)
-        if not letter:
-            frappe.throw(_("cannot find letter: {0}").format(letter))
+#         letter = frappe.get_doc("Member Letter", letter)
+#         if not letter:
+#             frappe.throw(_("cannot find letter: {0}").format(letter))
 
-        customers = get_customers(names)
-        if len(customers) == 1:
-            shipping.create_letters(letter, customers, tags)
-        else:
-            frappe.enqueue(
-                background_create_letters,
-                letter_name=letter,
-                queue="long",
-                job_name=f"create_letters_for_{letter}",
-            )
+#         customers = get_customers(names)
+#         if len(customers) == 1:
+#             shipping.create_letters(letter, customers, tags)
+#         else:
+#             frappe.enqueue(
+#                 background_create_letters,
+#                 letter_name=letter,
+#                 queue="long",
+#                 job_name=f"create_letters_for_{letter}",
+#             )
 
-    except Exception as e:
-        frappe.throw(str(e))
+#     except Exception as e:
+#         frappe.throw(str(e))
 
 
 def customer_before_insert(doc, method=None):

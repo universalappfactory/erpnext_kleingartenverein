@@ -67,136 +67,138 @@ class LetterxpressShipping:
         )
 
 
-class LetterShipping:
-    def __init__(self, throw_on_error=False) -> None:
-        self._throw_on_error = throw_on_error
+# class LetterShipping:
+#     def __init__(self, throw_on_error=False) -> None:
+#         self._throw_on_error = throw_on_error
 
-    def get_matching_customers(self, letter):
-        if letter.customer:
-            return frappe.get_list("Customer", filters={"name": letter.customer})
+#     def get_matching_customers(self, letter):
+#         if letter.customer:
+#             return frappe.get_list("Customer", filters={"name": letter.customer})
 
-        if letter.target_customergroup:
-            return frappe.get_list(
-                "Customer", filters={"customer_group": letter.target_customergroup}
-            )
-        else:
-            return []
+#         if letter.target_customergroup:
+#             return frappe.get_list(
+#                 "Customer", filters={"customer_group": letter.target_customergroup}
+#             )
+#         else:
+#             return []
 
-    def create_pdf(self, doctype, name, print_format, letterhead=None):
-        doc = frappe.get_doc(doctype, name)
-        doc.check_permission("print")
-        generator = PrintFormatGenerator(print_format, doc, letterhead)
-        pdf = generator.render_pdf()
-        return pdf
+#     def create_pdf(self, doctype, name, print_format, letterhead=None):
+#         doc = frappe.get_doc(doctype, name)
+#         doc.check_permission("print")
+#         generator = PrintFormatGenerator(print_format, doc, letterhead)
+#         pdf = generator.render_pdf()
+#         return pdf
 
-    def attch_to_file(self, attached_to_name, target_folder, filename, content):
-        return frappe.get_doc(
-            {
-                "doctype": "File",
-                "attached_to_doctype": "Sent Member Letter",
-                "attached_to_name": attached_to_name,
-                "attached_to_field": "attachment",
-                "folder": target_folder,
-                "file_name": filename,
-                # "file_url": file_url,
-                "is_private": 1,
-                "content": content,
-            }
-        ).save()
+#     def attch_to_file(self, attached_to_name, target_folder, filename, content):
+#         return frappe.get_doc(
+#             {
+#                 "doctype": "File",
+#                 "attached_to_doctype": "Sent Member Letter",
+#                 "attached_to_name": attached_to_name,
+#                 "attached_to_field": "attachment",
+#                 "folder": target_folder,
+#                 "file_name": filename,
+#                 # "file_url": file_url,
+#                 "is_private": 1,
+#                 "content": content,
+#             }
+#         ).save()
 
-    def add_attchment_to_customer(self, customer_name, file_url):
-        add_attachments("Customer", customer_name, file_url)
+#     def add_attchment_to_customer(self, customer_name, file_url):
+#         add_attachments("Customer", customer_name, file_url)
 
-    def create_letters(self, letter: MemberLetter, customer_list, tags=None):
-        result = []
-        for customer in customer_list:
-            try:
-                sent_letter = frappe.new_doc("Sent Member Letter")
-                sent_letter.sent_date = datetime.now().date()
-                sent_letter.success = False
-                sent_letter.member_letter = letter.name
-                sent_letter.customer = customer.name
-                sent_letter.save()
+#     def create_letters(self, letter: MemberLetter, customer_list, tags=None):
+#         result = []
+#         for customer in customer_list:
+#             try:
+#                 sent_letter = frappe.new_doc("Sent Member Letter")
+#                 sent_letter.sent_date = datetime.now().date()
+#                 sent_letter.success = False
+#                 sent_letter.member_letter = letter.name
+#                 sent_letter.customer = customer.name
+#                 sent_letter.save()
 
-                cst = frappe.get_doc("Customer", customer.name)
+#                 cst = frappe.get_doc("Customer", customer.name)
 
-                target_folder = (
-                    letter.target_folder if letter.target_folder else "Home/letters"
-                )
-                try:
-                    pdf = self.create_pdf(
-                        "Sent Member Letter", sent_letter.name, letter.print_format
-                    )
+#                 target_folder = (
+#                     letter.target_folder if letter.target_folder else "Home/letters"
+#                 )
+#                 try:
+#                     pdf = self.create_pdf(
+#                         "Sent Member Letter", sent_letter.name, letter.print_format
+#                     )
 
-                    # pdf = self.create_pdf(
-                    #     "Sent Member Letter", sent_letter.name, print_format, "Default Head"
-                    # )
+#                     # pdf = self.create_pdf(
+#                     #     "Sent Member Letter", sent_letter.name, print_format, "Default Head"
+#                     # )
 
-                    attached = self.attch_to_file(
-                        sent_letter.name,
-                        target_folder,
-                        f"{letter.description}.pdf",
-                        pdf,
-                    )
+#                     attached = self.attch_to_file(
+#                         sent_letter.name,
+#                         target_folder,
+#                         f"{letter.description}.pdf",
+#                         pdf,
+#                     )
 
-                    # pdf = self.attch_to_file(
-                    #     letter.print_format,
-                    #     target_folder,
-                    #     sent_letter,
-                    #     f"{letter.description}.pdf",
-                    # )
-                    sent_letter.attachment = attached.file_url
-                    sent_letter.success = True
+#                     # pdf = self.attch_to_file(
+#                     #     letter.print_format,
+#                     #     target_folder,
+#                     #     sent_letter,
+#                     #     f"{letter.description}.pdf",
+#                     # )
+#                     sent_letter.attachment = attached.file_url
+#                     sent_letter.success = True
 
-                    self.add_attchment_to_customer(customer.name, [attached.name])
-                    sent_letter.save()
+#                     self.add_attchment_to_customer(customer.name, [attached.name])
+#                     sent_letter.save()
 
-                    if tags:
-                        add_tags(tags, "Customer", [customer.name])
-                except Exception as error:
-                    if self._throw_on_error:
-                        raise error
-                    else:
-                        sent_letter.error_message = str(error)
-                        sent_letter.success = False
-                        sent_letter.save()
+#                     if tags:
+#                         add_tags(tags, "Customer", [customer.name])
+#                 except Exception as error:
+#                     if self._throw_on_error:
+#                         raise error
+#                     else:
+#                         sent_letter.error_message = str(error)
+#                         sent_letter.success = False
+#                         sent_letter.save()
 
-                result.append(sent_letter)
-            except Exception as error:
-                frappe.throw("Error while sending", error)
-        return result
+#                 result.append(sent_letter)
+#             except Exception as error:
+#                 frappe.throw("Error while sending", error)
+#         return result
 
-    def ship_letter(self, letter: MemberLetter):
-        raise NotImplementedError("ship_letter")
-        # customers  = self.get_matching_customers(letter)
-        # letters = self.create_letters(letter, customers)
-        # for letter in letters:
-        #     self._shipment_adapter.ship_letter(letter)
+#     def ship_letter(self, letter: MemberLetter):
+#         raise NotImplementedError("ship_letter")
+#         # customers  = self.get_matching_customers(letter)
+#         # letters = self.create_letters(letter, customers)
+#         # for letter in letters:
+#         #     self._shipment_adapter.ship_letter(letter)
 
-    def create_preview(self, customer_name, content, print_format, target_folder):
-        letter_name = ''
-        try:
-            now = datetime.now()
+#     def create_preview(self, customer_name, content, print_format, target_folder):
+#         letter_name = ''
+#         try:
+#             now = datetime.now()
 
-            preview_letter = frappe.get_doc(
-                {
-                    "doctype": "Single Member Letter",
-                    "target_folder": target_folder,
-                    "print_format": print_format,
-                    "content": content,
-                    "customer": customer_name,
-                    "description": f"Preview Letter {now.strftime('YYYY-MM-dd-HH-mm-ss')}",
-                }
-            )
-            preview_letter.insert()
-            letter_name = preview_letter.name
+#             preview_letter = frappe.get_doc(
+#                 {
+#                     "doctype": "Single Member Letter",
+#                     "target_folder": target_folder,
+#                     "print_format": print_format,
+#                     "content": content,
+#                     "customer": customer_name,
+#                     "description": f"Preview Letter {now.strftime('YYYY-MM-dd-HH-mm-ss')}",
+#                 }
+#             )
+#             preview_letter.insert()
+#             letter_name = preview_letter.name
 
-            return self.create_pdf(
-                "Single Member Letter", preview_letter.name, preview_letter.print_format
-            )
-        except Exception as error:
-            frappe.log_error(error)
-            if letter_name != '':
-                frappe.delete_doc('Single Member Letter', letter_name)
-            return None
+#             return self.create_pdf(
+#                 "Single Member Letter", preview_letter.name, preview_letter.print_format
+#             )
+#         except Exception as error:
+#             frappe.log_error(error)
+#             if letter_name != '':
+#                 frappe.delete_doc('Single Member Letter', letter_name)
+            
+#             frappe.throw(error)
+            
 
