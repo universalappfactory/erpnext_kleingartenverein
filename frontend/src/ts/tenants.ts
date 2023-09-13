@@ -1,5 +1,7 @@
 import { createListResource, createResource } from 'frappe-ui'
-import { UnwrapNestedRefs, reactive, unref, watch } from 'vue'
+import { Ref, UnwrapNestedRefs, reactive, ref, unref, watch } from 'vue'
+import { watchThrottled } from '@vueuse/core'
+
 
 export interface FilterItem {
     text: string,
@@ -40,7 +42,7 @@ export interface AttachmentData {
     url: string
 }
 
-export type TenantFunctions = { tenants: { contact: { first_name: string; last_name: string; email_id: string; mobile_no: string; phone: string }; address: { address_line1: string; address_line2: string; city: string; county: string; state: string; pincode: string }; selected: boolean; name: string }[]; loadMore: () => any; search: (query: string) => void; pageInfo: { hasNext: boolean }; fetch: () => any; clear: () => void; filters: { text: string; selected: boolean }[]; byName: (name: string) => { contact: { first_name: string; last_name: string; email_id: string; mobile_no: string; phone: string }; address: { address_line1: string; address_line2: string; city: string; county: string; state: string; pincode: string }; selected: boolean; name: string }; selection: any[]; select: (name: string) => void; unselect: (name: string) => void }
+export type TenantFunctions = { tenants: { contact: { first_name: string; last_name: string; email_id: string; mobile_no: string; phone: string }; address: { address_line1: string; address_line2: string; city: string; county: string; state: string; pincode: string }; selected: boolean; name: string }[]; loadMore: () => any; search: (query: string) => void; pageInfo: { hasNext: boolean }; fetch: () => any; clear: () => void; filters: { text: string; selected: boolean }[]; byName: (name: string) => { contact: { first_name: string; last_name: string; email_id: string; mobile_no: string; phone: string }; address: { address_line1: string; address_line2: string; city: string; county: string; state: string; pincode: string }; selected: boolean; name: string }; selection: any[]; select: (name: string) => void; unselect: (name: string) => void, searchText: Ref<string>, hasItems: Ref<Boolean>, selectAll: () => void }
 
 
 export function useTenants(): TenantFunctions {
@@ -51,6 +53,8 @@ export function useTenants(): TenantFunctions {
     }
     const pageInfo = reactive(page)
     const selection = reactive([])
+    const searchText = ref('')
+    const hasItems = ref(false)
 
     const teantsResource = createListResource({
         doctype: 'Customer',
@@ -88,9 +92,19 @@ export function useTenants(): TenantFunctions {
             } else {
                 tenants.push(...mapData(teantsResource.data.slice(teantsResource.start, teantsResource.start + teantsResource.pageLength)))
             }
+            hasItems.value = tenants.length > 0
         } else {
             clear()
+            hasItems.value = false
         }
+    })
+
+
+    watchThrottled(searchText, (val) => {
+        console.log('livesearch', val)
+        search(searchText.value)
+    }, {
+        throttle: 1000
     })
 
     // const updateResult = () => {
@@ -137,7 +151,10 @@ export function useTenants(): TenantFunctions {
 
     const loadMore = async () => teantsResource.next()
 
-    const fetch = () => teantsResource.fetch()
+    const fetch = () => {
+        console.log('FETCH')
+        teantsResource.fetch()
+    }
 
     const clear = () => {
         tenants.splice(0, tenants.length)
@@ -162,9 +179,15 @@ export function useTenants(): TenantFunctions {
             tenant.selected = true
             const idx = selection.findIndex(x => x.name === name)
             if (idx === -1) {
-                console.log("PUSH", unref(tenant))
                 selection.push(tenant)
             }
+        }
+    }
+
+    const selectAll = () => {
+        console.log('selectAll')
+        for (const tenant of tenants) {
+            select(tenant.name)
         }
     }
 
@@ -180,5 +203,5 @@ export function useTenants(): TenantFunctions {
     }
 
 
-    return { tenants, loadMore, search, pageInfo, fetch, clear, filters, byName, selection, select, unselect }
+    return { tenants, searchText, loadMore, search, pageInfo, fetch, clear, filters, byName, selection, select, unselect, hasItems, selectAll }
 }

@@ -19,6 +19,7 @@
     "@vueuse/core": "^10.2.1",
     "feather-icons": "^4.29.0",
     "flowbite": "^1.8.1",
+    "flowbite-vue": "^0.0.17-next.3",
     "frappe-ui": "^0.0.112",
     "marked": "^8.0.0",
     "pinia": "^2.1.4",

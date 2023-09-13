@@ -218,25 +218,37 @@ class MemberLetterShipping:
 
             frappe.throw(error)
 
+    
+    def get_letter_description(self, letter_description):
+        result = letter_description
+        try:
+            while True:
+                by_description = frappe.get_last_doc('Single Member Letter', filters={"description": result})
+                now = datetime.now().strftime('%Y-%m-%d-%H:%M')
+                result = f"{letter_description} - {now}"
+        except frappe.DoesNotExistError:
+            return result
+
     def create_single_member_letter(
         self, customer_name, content, print_format, letter_description
     ):
+        
+        letter_description = self.get_letter_description(letter_description)
+        
+
         """
         creates a single member letter document for the given customer
         """
-        try:
-            yearly_folder = get_yearly_customer_folder(customer_name)
-            letter = frappe.get_doc(
-                {
-                    "doctype": "Single Member Letter",
-                    "target_folder": yearly_folder,
-                    "print_format": print_format,
-                    "content": content,
-                    "customer": customer_name,
-                    "description": letter_description,
-                }
-            )
-            letter.insert()
-            return letter.name
-        except Exception as error:
-            frappe.log_error(error)
+        yearly_folder = get_yearly_customer_folder(customer_name)
+        letter = frappe.get_doc(
+            {
+                "doctype": "Single Member Letter",
+                "target_folder": yearly_folder,
+                "print_format": print_format,
+                "content": content,
+                "customer": customer_name,
+                "description": letter_description,
+            }
+        )
+        letter.insert()
+        return letter.name

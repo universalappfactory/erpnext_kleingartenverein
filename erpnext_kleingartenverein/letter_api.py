@@ -4,6 +4,7 @@ from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calcula
 
 
 from erpnext_kleingartenverein.utils.tenant_search import TenantSearch
+from erpnext_kleingartenverein.exceptions import BadRequestError
 from erpnext_kleingartenverein.file_api import ensure_folder_exists
 from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter_shipment.shipping import (
     MemberLetterShipping,
@@ -19,6 +20,7 @@ import base64
 import json
 from werkzeug.wrappers import Response
 from urllib.parse import unquote
+
 
 
 def decode(content) -> str:
@@ -56,7 +58,7 @@ def parse_input(args, kwargs):
     return (data["content"], recipients, description)
 
 
-def background_publish_letters(letter_names):
+def execute_publish(letter_names):
     try:
         for letter_name in letter_names:
             letter = frappe.get_doc("Single Member Letter", letter_name)
@@ -72,12 +74,30 @@ def background_publish_letters(letter_names):
         frappe.log_error(error)
 
 
+@frappe.whitelist()
+def background_publish_letters(letter_names):
+    try:
+        xx = frappe.enqueue(
+            execute_publish,
+            letter_names=letter_names,
+            queue="long",
+            job_name=f"background_publish_letters",
+        )
+
+        print('publish result')
+        print(xx)
+        print('-----------')
+    except Exception as e:
+        print(e)
+        frappe.throw(str(e))
+
+
 @frappe.whitelist(allow_guest=False)
 def create_print_preview(*args, **kwargs):
     try:
         (content, recipients, description) = parse_input(args, kwargs)
 
-        target_folder = ensure_folder_exists("Preview")
+        target_folder = ensure_folder_exists("/Home/Preview")
 
         shipping = MemberLetterShipping(True)
         pdf = shipping.create_preview(
@@ -112,10 +132,9 @@ def get_print_preview(*args, **kwargs):
 def print_letters(*args, **kwargs):
     try:
         # (content, recipients, description) = parse_input(args, kwargs)
-        content = kwargs['data']['content']
-        recipients = kwargs['data']['recipients']
-        description = kwargs['data']['description']
-        
+        content = kwargs["data"]["content"]
+        recipients = kwargs["data"]["recipients"]
+        description = kwargs["data"]["description"]
 
         letters_to_print = []
         shipping = MemberLetterShipping(False)
@@ -135,9 +154,8 @@ def print_letters(*args, **kwargs):
 
         return {"success": True}
     except frappe.UniqueValidationError:
-        frappe.msgprint(
-					_("cannot create letter")
-				)
+        frappe.msgprint(_("cannot create letter"))
+        raise BadRequestError()
     except Exception as error:
         frappe.log_error(error)
-        return {"success": False}
+        raise BadRequestError()
