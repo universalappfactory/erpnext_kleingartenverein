@@ -218,13 +218,14 @@ class MemberLetterShipping:
 
             frappe.throw(error)
 
-    
     def get_letter_description(self, letter_description):
         result = letter_description
         try:
             while True:
-                by_description = frappe.get_last_doc('Single Member Letter', filters={"description": result})
-                now = datetime.now().strftime('%Y-%m-%d-%H:%M')
+                by_description = frappe.get_last_doc(
+                    "Single Member Letter", filters={"description": result}
+                )
+                now = datetime.now().strftime("%Y-%m-%d-%H:%M")
                 result = f"{letter_description} - {now}"
         except frappe.DoesNotExistError:
             return result
@@ -232,13 +233,13 @@ class MemberLetterShipping:
     def create_single_member_letter(
         self, customer_name, content, print_format, letter_description
     ):
-        
-        letter_description = self.get_letter_description(letter_description)
-        
-
         """
         creates a single member letter document for the given customer
         """
+
+        description = f"{customer_name} - {letter_description}"
+        letter_description = self.get_letter_description(description)
+
         yearly_folder = get_yearly_customer_folder(customer_name)
         letter = frappe.get_doc(
             {

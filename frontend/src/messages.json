@@ -47,6 +47,7 @@
             "search": "Search"
         },
         "new_letter": {
+            "headline": "Create a new letter",
             "recipients": "Recipients",
             "template": "Template",
             "no_recipients": "No recipients selected",
@@ -54,7 +55,10 @@
             "select_template": "Select a template",
             "show_preview": "Print preview",
             "print_letters": "Create letters",
-            "letter_description": "Internal description"
+            "letter_description": "Internal description",
+            "search_hint": "Search for a recipient",
+            "error_while_shipping": "An error occured while shipping",
+            "open_all": "Open all"
         }
     },
     "de": {
@@ -102,6 +106,7 @@
             "plot_attachments": "Garten Anhänge"
         },
         "new_letter": {
+            "headline": "Neuen Brief verfassen",
             "recipients": "Empfänger",
             "template": "Vorlage",
             "no_recipients": "Keine Empfänger gewählt",
@@ -109,7 +114,10 @@
             "select_template": "Vorlage auswählen",
             "show_preview": "Vorschau anzeigen",
             "print_letters": "Briefe erstellen",
-            "letter_description": "Interne Beschreibung"
+            "letter_description": "Interne Beschreibung",
+            "search_hint": "Empfänger suchen (Name, Garten, ...)",
+            "error_while_shipping": "Es ist ein Fehler aufgetreten",
+            "open_all": "Alle öffnen"
         }
     }
 }

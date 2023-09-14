@@ -27,7 +27,7 @@ export default defineComponent({
         centerPlacement: {
             type: Boolean,
             default: () => true,
-            required: true
+            required: false
         },
     },
     computed: {

@@ -1,18 +1,21 @@
-import { createListResource, createResource } from 'frappe-ui'
+import { createListResource, initSocket, createResource } from 'frappe-ui'
 import { onMounted, reactive, ref, unref, watch } from 'vue'
 import { SelectItem } from './buttons/select'
-
+import { useTimeoutPoll } from '@vueuse/core'
 
 export interface LetterData {
     recipients: string[]
     content: string
     description: string
+    printFormat: string
 }
+
 
 export function useMemberLetter() {
     const templates = reactive<SelectItem[]>([])
     const printTemplates = reactive<SelectItem[]>([])
     const selectedPrintTemplate = ref('')
+    const processingFinished = ref(false)
 
     const noTemplate: SelectItem = {
         content: '',
@@ -27,8 +30,18 @@ export function useMemberLetter() {
     const selectedTemplate = reactive<SelectItem | undefined>(undefined)
 
     let letterContent = ''
-    const isLoading = ref(true)
+    const isLoading = ref(false)
     const description = ref('')
+    const submitError = ref(false)
+    const letterAttachments = ref([])
+    let letterNames = []
+    let currentRequestId = ''
+
+    const validationStatus = reactive({
+        "description": "",
+        "content": "",
+        "recepients": ""
+    })
 
     const templatesResource = createListResource({
         doctype: 'Member Letter Template',
@@ -50,6 +63,14 @@ export function useMemberLetter() {
         url: '/api/method/erpnext_kleingartenverein.letter_api.print_letters'
     })
 
+    const statusResource = createResource({
+        url: '/api/method/erpnext_kleingartenverein.letter_api.get_job_status'
+    })
+
+    const letterResource = createResource({
+        url: '/api/method/erpnext_kleingartenverein.letter_api.get_letters'
+    })
+
     const printFormatResource = createListResource({
         doctype: 'Print Format',
         fields: ['*'],
@@ -61,51 +82,102 @@ export function useMemberLetter() {
         pageLength: 20,
     })
 
-    onMounted(() => {
-        printFormatResource.fetch()
+    const checkStatus = async () => {
+        if (currentRequestId !== '') {
+            try {
+                const status = await statusResource.fetch({
+                    id: currentRequestId
+                })
+                if (status === 'finished') {
+                    pause()
+                    currentRequestId = ''
+                    isLoading.value = false;
+                    processingFinished.value = true;
+
+                    await getLetters()
+                } else if (status === 'failed') {
+                    pause()
+                    currentRequestId = ''
+                    isLoading.value = false;
+                    submitError.value = true
+                }
+            }
+            catch (e) {
+                console.error(e)
+                pause()
+            }
+        }
+    }
+
+    const getLetters = async () => {
+
+        try {
+            const letters = await letterResource.fetch({
+                letters: letterNames
+            })
+
+            letterAttachments.value.splice(0, letterAttachments.value.length)
+            if (letters && letters.length > 0) {
+
+                letterAttachments.value.push(...letters.map(x => unref(x)))
+            }
+        }
+        catch (e) {
+            console.error(e)
+        }
+    }
+
+    const { isActive, pause, resume } = useTimeoutPoll(checkStatus, 1000, {
+        immediate: false
     })
 
-    // const createPreview = () => {
-    //     isLoading.value=true
-    //     const previewData: PreviewData = {templatesResource
-    //         recipients: ['Dirk Lehmeier'],
-    //         content: '# Hallo Welt'
-    //     }
-    //     previewResource.reset()
-    //     previewResource.fetch({
-    //         data: previewData
-    //     }).then(x => {
-    //         console.log(x)
-    //     })
-    // }
+    onMounted(() => {
+        printFormatResource.fetch()
+        processingFinished.value = false
+    })
 
     const printLetters = async (recipients) => {
+
+        if (!isValid(recipients)) {
+            return;
+        }
+
+        if (isLoading.value || currentRequestId !== '') {
+            return;
+        }
+
+        processingFinished.value = false
+        submitError.value = false
+        letterAttachments.value.splice(0, letterAttachments.value.length)
+
         isLoading.value = true
         const previewData: LetterData = {
             recipients: recipients,
             content: letterContent,
-            description: description.value
+            description: description.value,
+            printFormat: selectedPrintTemplate.value
         }
         printResource.reset()
         try {
 
-            await printResource.fetch({
+            let printResult = await printResource.fetch({
                 data: previewData
             })
 
-            console.log(printResource)
-            console.log('DONE')
-            
-        } catch(e) {
+            currentRequestId = printResult.id
+            letterNames = printResult.letters
+            resume()
+        } catch (e) {
             console.error(e)
-            alert(e)
+            isLoading.value = false;
+            submitError.value = true
         }
 
     }
 
     watch(printFormatResource, () => {
         if (printFormatResource.data) {
-            printTemplates.splice(0,printTemplates.length)
+            printTemplates.splice(0, printTemplates.length)
             printTemplates.push(...printFormatResource.data.map(x => {
                 return {
                     content: x.name,
@@ -156,5 +228,35 @@ export function useMemberLetter() {
         letterContent = contents
     }
 
-    return { templatesResource, fetchData, templates, selectedTemplate, contentChanged, isLoading, printLetters, description, printTemplates, selectedPrintTemplate }
+    const setDescription = (value: string) => {
+        description.value = value
+    }
+
+    const isValid = (recipients) => {
+        let hasError = false;
+        if (description.value === '') {
+            validationStatus.description = "error"
+            hasError = true
+        } else {
+            validationStatus.description = "success"
+        }
+
+        if (letterContent === '') {
+            validationStatus.content = "error"
+            hasError = true
+        } else {
+            validationStatus.content = "success"
+        }
+
+        if (!recipients || recipients.length <= 0) {
+            validationStatus.recepients = "error"
+            hasError = true
+        } else {
+            validationStatus.recepients = "success"
+        }
+
+        return !hasError
+    }
+
+    return { isValid, letterAttachments, submitError, processingFinished, validationStatus, templatesResource, fetchData, templates, selectedTemplate, contentChanged, isLoading, printLetters, description, printTemplates, selectedPrintTemplate, setDescription }
 }

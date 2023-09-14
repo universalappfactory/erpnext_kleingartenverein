@@ -1,17 +1,22 @@
 <template>
   <div class="w-full">
-      <input
-        ref="inputText"
-        v-model="data"
-        v-on:keyup.enter="inputText.select();  $emit('enterPressed')"
-        class="w-full focus:outline-none border border-l-0 border-r-0 border-t-0 border-b-1"
-        type="text"
-      />
-      <div :class="dropdownVisible ? 'relative' : 'hidden'">
-        <div class="absolute">
-          <slot></slot>
-        </div>
+    <input
+      ref="inputText"
+      v-model="data"
+      v-on:keyup.enter="
+        inputText.select();
+        $emit('enterPressed');
+      "
+      class="w-full focus:outline-none border pb-1 border-l-0 border-r-0 border-t-0 border-b-2"
+      :class="hasError ? 'border-red-400' : ''"
+      :placeholder="placeholder"
+      type="text"
+    />
+    <div :class="dropdownVisible ? 'relative' : 'hidden'">
+      <div class="absolute bg-red-100 w-full">
+        <slot></slot>
       </div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -25,10 +30,13 @@ import { Badge, ListGroup, ListGroupItem } from 'flowbite-vue'
 const props = defineProps<{
   modelValue: string,
   dropdownVisible: Boolean,
+  hasError: Boolean
+  placeholder?: String
 }>()
 const emit = defineEmits(['update:modelValue', 'enterPressed'])
 const data = ref('')
 const inputText = ref(null)
+
 
 watchThrottled(
   data,

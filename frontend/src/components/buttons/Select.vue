@@ -44,7 +44,7 @@ export default defineComponent({
             required: true
         },
         selectedValue: {
-            type: Object as PropType<String>,
+            type: String,
             required: false
         },
     },

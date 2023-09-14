@@ -1,5 +1,5 @@
 <template>
-    <div class="overflow-scroll h-[100%]">
+    <div class="overflow-scroll h-[100%] p-2">
         <p class="border-b-2">{{ $t('tenant_editor.contact_data') }}</p>
         <div class="grid gap-6 mb-6 md:grid-cols-2 mt-3 ">
             <InputField :value="data?.contact?.first_name" :disabled="inputDisabled"
@@ -31,7 +31,8 @@
 <script lang="ts">
 import { PropType, defineComponent, ref } from 'vue';
 import { TenantData } from '../ts/tenanteditor';
-import InputField, { InputType } from './InputField.vue'
+import { InputType } from './InputField.vue'
+import InputField from './inputs/InputField.vue'
 
 export default defineComponent({
     name: "TenantBaseData",

@@ -1,12 +1,11 @@
 <template>
   <div>
-    <label
-      for="first_name"
-      class="block text-sm pb-1 pl-.5 font-medium text-gray-900"
-      >{{ label }}</label
-    >
+    <label for="first_name" class="block text-sm pb-1 pl-.5 font-medium text-gray-900">{{
+      label
+    }}</label>
 
     <div class="flex">
+    {{value}} {{actualContent}}
       <input
         type="text"
         :disabled="disabled"
@@ -64,7 +63,7 @@ export default defineComponent({
 
   props: {
     value: {
-      type: Object as any,
+      type: String,
       default: () => "",
     },
     disabled: {
@@ -73,7 +72,7 @@ export default defineComponent({
     },
     hasError: {
       type: Boolean,
-      default: () => true,
+      default: () => false,
     },
     label: {
       type: String,
@@ -94,12 +93,9 @@ export default defineComponent({
       return true;
     },
   },
-  watch: {
-    actualContent: function (val) {
-      // this.$emit('valueChanged', val)
-    },
-  },
+  
   setup(props, ctx) {
+    console.log('SETUP')
     const actualContent = ref(props.value);
     return {
       actualContent,
