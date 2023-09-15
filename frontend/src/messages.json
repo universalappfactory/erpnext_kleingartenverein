@@ -58,7 +58,8 @@
             "letter_description": "Internal description",
             "search_hint": "Search for a recipient",
             "error_while_shipping": "An error occured while shipping",
-            "open_all": "Open all"
+            "open_all": "Open all",
+            "edit_templates": "Edit templates"
         }
     },
     "de": {
@@ -117,7 +118,8 @@
             "letter_description": "Interne Beschreibung",
             "search_hint": "Empfänger suchen (Name, Garten, ...)",
             "error_while_shipping": "Es ist ein Fehler aufgetreten",
-            "open_all": "Alle öffnen"
+            "open_all": "Alle öffnen",
+            "edit_templates": "Vorlagen bearbeiten"
         }
     }
 }

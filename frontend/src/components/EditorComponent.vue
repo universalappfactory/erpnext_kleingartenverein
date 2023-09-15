@@ -24,6 +24,8 @@
             @itemSelected="(tpl) => this.$emit('templateSelected', tpl)"
             :placeholder="$t('new_letter.select_template')"
           ></Select>
+        
+          <a class="pl-4 font-medium text-blue-600 dark:text-blue-500 hover:underline" target="_blank" href="/app/member-letter-template">{{$t('new_letter.edit_templates')}}</a>
         </div>
       </div>
     </div>

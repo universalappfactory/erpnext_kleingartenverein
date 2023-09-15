@@ -3,8 +3,8 @@ from datetime import datetime
 from frappe import _
 from frappe.utils.file_manager import add_attachments
 from frappe.utils.weasyprint import PrintFormatGenerator
-from erpnext_kleingartenverein.file_api import get_yearly_customer_folder
-
+from erpnext_kleingartenverein.file_api import get_yearly_customer_folder, get_print_preview_folder
+from uuid import uuid4
 
 class ShippingError(Exception):
     pass
@@ -178,7 +178,8 @@ class MemberLetterShipping:
                 sent_letter.attachment = pdf.file_url
                 sent_letter.success = True
 
-                self.add_attchment_to_customer(sent_letter.customer, [pdf.name])
+                if not sent_letter.is_preview:
+                    self.add_attchment_to_customer(sent_letter.customer, [pdf.name])
             except Exception as error:
                 if self._throw_on_error:
                     raise error
@@ -190,33 +191,33 @@ class MemberLetterShipping:
             frappe.log_error(error)
             frappe.throw("Error while sending", error)
 
-    def create_preview(self, customer_name, content, print_format, target_folder):
-        letter_name = ""
-        try:
-            now = datetime.now()
+    # def create_preview(self, customer_name, content, print_format, target_folder):
+    #     letter_name = ""
+    #     try:
+    #         now = datetime.now()
 
-            preview_letter = frappe.get_doc(
-                {
-                    "doctype": "Single Member Letter",
-                    "target_folder": target_folder,
-                    "print_format": print_format,
-                    "content": content,
-                    "customer": customer_name,
-                    "description": f"Preview Letter {now.strftime('YYYY-MM-dd-HH-mm-ss')}",
-                }
-            )
-            preview_letter.insert()
-            letter_name = preview_letter.name
+    #         preview_letter = frappe.get_doc(
+    #             {
+    #                 "doctype": "Single Member Letter",
+    #                 "target_folder": target_folder,
+    #                 "print_format": print_format,
+    #                 "content": content,
+    #                 "customer": customer_name,
+    #                 "description": f"Preview Letter {now.strftime('YYYY-MM-dd-HH-mm')}",
+    #             }
+    #         )
+    #         preview_letter.insert()
+    #         letter_name = preview_letter.name
 
-            return self.create_pdf(
-                "Single Member Letter", preview_letter.name, preview_letter.print_format
-            )
-        except Exception as error:
-            frappe.log_error(error)
-            if letter_name != "":
-                frappe.delete_doc("Single Member Letter", letter_name)
+    #         return self.create_pdf(
+    #             "Single Member Letter", preview_letter.name, preview_letter.print_format
+    #         )
+    #     except Exception as error:
+    #         frappe.log_error(error)
+    #         if letter_name != "":
+    #             frappe.delete_doc("Single Member Letter", letter_name)
 
-            frappe.throw(error)
+    #         frappe.throw(error)
 
     def get_letter_description(self, letter_description):
         result = letter_description
@@ -225,13 +226,13 @@ class MemberLetterShipping:
                 by_description = frappe.get_last_doc(
                     "Single Member Letter", filters={"description": result}
                 )
-                now = datetime.now().strftime("%Y-%m-%d-%H:%M")
+                now = datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ")
                 result = f"{letter_description} - {now}"
         except frappe.DoesNotExistError:
             return result
 
     def create_single_member_letter(
-        self, customer_name, content, print_format, letter_description
+        self, customer_name, content, print_format, letter_description, is_preview=False
     ):
         """
         creates a single member letter document for the given customer
@@ -240,15 +241,19 @@ class MemberLetterShipping:
         description = f"{customer_name} - {letter_description}"
         letter_description = self.get_letter_description(description)
 
-        yearly_folder = get_yearly_customer_folder(customer_name)
+        if is_preview:
+            letter_description = f"Preview - {uuid4()}"
+
+        target_folder = get_print_preview_folder() if is_preview  else get_yearly_customer_folder(customer_name)
         letter = frappe.get_doc(
             {
                 "doctype": "Single Member Letter",
-                "target_folder": yearly_folder,
+                "target_folder": target_folder,
                 "print_format": print_format,
                 "content": content,
                 "customer": customer_name,
                 "description": letter_description,
+                "is_preview": is_preview
             }
         )
         letter.insert()

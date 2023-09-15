@@ -18,11 +18,13 @@ def ensure_root_folder_exists(folder_name):
     except Exception as error:
         frappe.log_error(error)
 
+
 def get_filename_and_folder(path_to_folder):
     (head, tail) = path.split(path_to_folder)
-    folder_name = tail if tail != '' else get_filename_and_folder(head)
+    folder_name = tail if tail != "" else get_filename_and_folder(head)
 
-    return (folder_name if folder_name != '' else None, head.strip(path.sep))
+    return (folder_name if folder_name != "" else None, head.strip(path.sep))
+
 
 def create_folder(path_to_folder):
     (filename, folder) = get_filename_and_folder(path_to_folder)
@@ -48,7 +50,7 @@ def ensure_folder_exists(path_to_folder):
         filters = {"file_name": filename, "is_folder": 1}
 
         if folder:
-            filters['folder'] = folder
+            filters["folder"] = folder
 
         print(filters)
         folders = frappe.get_all("File", filters=filters)
@@ -67,9 +69,13 @@ def ensure_folder_exists(path_to_folder):
 
 
 def get_customer_folder(customer_name):
-    customer_path = path.join("Home","Tenants", customer_name)
+    customer_path = path.join("Home", "Tenants", customer_name)
     customer_folder = ensure_folder_exists(customer_path)
     return customer_folder
+
+
+def get_temp_folder():
+    return ensure_folder_exists(path.join("Home", "Tmp"))
 
 
 def get_yearly_customer_folder(customer_name):
@@ -78,3 +84,8 @@ def get_yearly_customer_folder(customer_name):
     customer_folder = get_customer_folder(customer_name)
     yearly_folder = path.join(customer_folder, now)
     return ensure_folder_exists(yearly_folder)
+
+
+def get_print_preview_folder():
+    temp_folder = get_temp_folder()
+    return ensure_folder_exists(path.join(temp_folder, "Print Preview"))

@@ -32,21 +32,21 @@ def decode(content) -> str:
         return content
 
 
-def parse_input(args, kwargs):
-    data = args[1]
+# def parse_input(args, kwargs):
+#     data = args[1]
 
-    content = data["data"]
-    decoded = decode(base64.urlsafe_b64decode(content))
-    data = json.loads(decoded)
+#     content = data["data"]
+#     decoded = decode(base64.urlsafe_b64decode(content))
+#     data = json.loads(decoded)
 
-    if len(data["recipients"][0]) == 0:
-        frappe.throw("no recipients provided")
+#     if len(data["recipients"][0]) == 0:
+#         frappe.throw("no recipients provided")
 
-    recipients = data["recipients"][0]
-    description = data["description"]
-    print_format = data["printFormat"]
+#     recipients = data["recipients"][0]
+#     description = data["description"]
+#     print_format = data["printFormat"]
 
-    return (data["content"], recipients, description, print_format)
+#     return (data["content"], recipients, description, print_format)
 
 
 def execute_publish(letter_names):
@@ -69,34 +69,34 @@ def background_publish_letters(letter_names):
     return enqueue_result
 
 
-def create_print_preview(*args, **kwargs):
-    try:
-        (content, recipients, description, print_format) = parse_input(args, kwargs)
+# def create_print_preview(*args, **kwargs):
+#     try:
+#         (content, recipients, description, print_format) = parse_input(args, kwargs)
 
-        target_folder = ensure_folder_exists("/Home/Preview")
+#         target_folder = ensure_folder_exists("/Home/Preview")
 
-        shipping = MemberLetterShipping(True)
-        pdf = shipping.create_preview(
-            recipients, content, print_format, target_folder
-        )
+#         shipping = MemberLetterShipping(True)
+#         pdf = shipping.create_preview(
+#             recipients, content, print_format, target_folder
+#         )
 
-        return pdf
+#         return pdf
 
-    except Exception as e:
-        print(e)
-        frappe.log_error(e)
-        return []
+#     except Exception as e:
+#         print(e)
+#         frappe.log_error(e)
+#         return []
 
 
 @frappe.whitelist(allow_guest=False)
 def get_print_preview(*args, **kwargs):
     try:
-        pdf = create_print_preview(args, kwargs)
+        pdf = None  # create_print_preview(args, kwargs)
         if not pdf:
             return ""
 
         response = Response(pdf, content_type="application/pdf")
-        response.headers["Content-Disposition"] = "inline; filename=my_document.pdf"
+        response.headers["Content-Disposition"] = "inline; filename=preview.pdf"
 
         return response
     except Exception as error:
@@ -104,19 +104,35 @@ def get_print_preview(*args, **kwargs):
         raise BadRequestError()
 
 
+def parse_print_input(kwargs):
+    if not "data" in kwargs:
+        return None
+
+    data = kwargs["data"]
+
+    if all(
+        k not in data for k in ("content", "recipients", "description", "printFormat", "isPreview")
+    ):
+        raise BadRequestError()
+
+    return (
+        kwargs["data"]["content"],
+        kwargs["data"]["recipients"],
+        kwargs["data"]["description"],
+        kwargs["data"]["printFormat"],
+        kwargs["data"]["isPreview"],
+    )
+
+
 @frappe.whitelist(allow_guest=False)
 def print_letters(*args, **kwargs):
+    (content, recipients, description, printFormat, isPreview) = parse_print_input(kwargs)
     try:
-        content = kwargs["data"]["content"]
-        recipients = kwargs["data"]["recipients"]
-        description = kwargs["data"]["description"]
-        printFormat = kwargs["data"]["printFormat"]
-
         letters_to_print = []
         shipping = MemberLetterShipping(False)
         for recipient in recipients:
             letter = shipping.create_single_member_letter(
-                recipient, content, printFormat, description
+                recipient, content, printFormat, description, isPreview
             )
             letters_to_print.append(letter)
 
@@ -131,9 +147,11 @@ def print_letters(*args, **kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def get_job_status(*args, **kwargs):
+    if not "id" in kwargs:
+        raise BadRequestError()
+
     try:
         id = kwargs["id"]
-
         try:
             doc = frappe.get_doc("RQ Job", id)
             return doc.status
@@ -146,16 +164,15 @@ def get_job_status(*args, **kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def get_letters(*args, **kwargs):
+    if not "letters" in kwargs:
+        raise BadRequestError()
     try:
         letters = kwargs["letters"]
 
         result = []
         for letter in letters:
-            doc = frappe.get_doc('Single Member Letter', letter)
-            result.append({
-                "name": doc.name,
-                "attachment": doc.attachment
-            })
+            doc = frappe.get_doc("Single Member Letter", letter)
+            result.append({"name": doc.name, "attachment": doc.attachment})
         return result
     except Exception as error:
         frappe.log_error(error)

@@ -78,13 +78,12 @@
         ></EditorComponent>
       </div>
       <div class="flex gap-4 items-center content-center">
-        <a class="hidden" target="_blank" ref="previewLink" :href="href"></a>
+        <a class="hidden" target="_blank" ref="previewLink" ></a>
 
         <Button @clicked="showPreview" :label="$t('new_letter.show_preview')" />
 
         <Button
           @clicked="printLetters"
-          :href="href"
           :label="$t('new_letter.print_letters')"
         ></Button>
 
@@ -150,6 +149,15 @@ export default defineComponent({
     const previewLink = ref<HTMLAnchorElement>();
     const openHref = ref<HTMLAnchorElement>();
     const attachments = []
+
+    watch(letter.letterAttachments.value, (val) => {
+      if (val.length > 0) {
+        if (val[0].name.startsWith("Preview")) {
+          previewLink.value.href = val[0].attachment
+          previewLink.value.click()
+        }
+      }
+    })
     
     return {
       tenant,
@@ -188,28 +196,27 @@ export default defineComponent({
     contentChanged(val: string) {
       this.letter.contentChanged(val);
     },
-    showPreview() {
-      if (this.letter.isValid(this.tenant.selection)) {
-        this.previewLink.click();
-      }
+    async showPreview() {
+      const recipients = this.tenant.selection.map((x) => x.name).splice(0, 1);
+      await this.letter.printLetters(recipients, true);
     },
     async printLetters() {
       const recipients = this.tenant.selection.map((x) => x.name);
-      await this.letter.printLetters(recipients);
+      await this.letter.printLetters(recipients, false);
     },
   },
   computed: {
-    href: function () {
-      const recipients = this.tenant.selection.map((x) => x.name);
-      let data = JSON.stringify({
-        recipients: recipients,
-        content: this.content,
-        description: "",
-        printFormat: this.letter.selectedPrintTemplate.value
-      });
-      data = encodeURIComponent(btoa(data));
-      return `/api/method/erpnext_kleingartenverein.letter_api.get_print_preview?data=${data}`;
-    },
+    // href: function () {
+    //   const recipients = this.tenant.selection.map((x) => x.name);
+    //   let data = JSON.stringify({
+    //     recipients: recipients,
+    //     content: this.content,
+    //     description: "",
+    //     printFormat: this.letter.selectedPrintTemplate.value
+    //   });
+    //   data = encodeURIComponent(btoa(data));
+    //   return `/api/method/erpnext_kleingartenverein.letter_api.get_print_preview?data=${data}`;
+    // },
     previewDisabled: function () {
       return this.content === "" || this.tenant.selection.length === 0;
     },

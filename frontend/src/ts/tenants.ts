@@ -101,7 +101,6 @@ export function useTenants(): TenantFunctions {
 
 
     watchThrottled(searchText, (val) => {
-        console.log('livesearch', val)
         search(searchText.value)
     }, {
         throttle: 1000
@@ -152,7 +151,6 @@ export function useTenants(): TenantFunctions {
     const loadMore = async () => teantsResource.next()
 
     const fetch = () => {
-        console.log('FETCH')
         teantsResource.fetch()
     }
 
@@ -185,7 +183,6 @@ export function useTenants(): TenantFunctions {
     }
 
     const selectAll = () => {
-        console.log('selectAll')
         for (const tenant of tenants) {
             select(tenant.name)
         }

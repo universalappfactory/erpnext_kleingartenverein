@@ -18,7 +18,8 @@
   "target_folder",
   "attachment",
   "print_format",
-  "member_letter_template"
+  "member_letter_template",
+  "is_preview"
  ],
  "fields": [
   {
@@ -94,12 +95,17 @@
    "fieldtype": "Link",
    "label": "Template",
    "options": "Member Letter Template"
+  },
+  {
+   "fieldname": "is_preview",
+   "fieldtype": "Check",
+   "label": "Is Preview"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-07-28 19:06:50.405663",
+ "modified": "2023-09-15 13:51:24.128557",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Single Member Letter",

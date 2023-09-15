@@ -7,7 +7,8 @@ export interface LetterData {
     recipients: string[]
     content: string
     description: string
-    printFormat: string
+    printFormat: string,
+    isPreview: boolean
 }
 
 
@@ -55,9 +56,9 @@ export function useMemberLetter() {
         templates.splice(0, templates.length)
     }
 
-    const previewResource = createResource({
-        url: '/api/method/erpnext_kleingartenverein.letter_api.get_print_preview'
-    })
+    // const previewResource = createResource({
+    //     url: '/api/method/erpnext_kleingartenverein.letter_api.get_print_preview'
+    // })
 
     const printResource = createResource({
         url: '/api/method/erpnext_kleingartenverein.letter_api.print_letters'
@@ -136,7 +137,7 @@ export function useMemberLetter() {
         processingFinished.value = false
     })
 
-    const printLetters = async (recipients) => {
+    const printLetters = async (recipients, isPreview: boolean) => {
 
         if (!isValid(recipients)) {
             return;
@@ -151,17 +152,18 @@ export function useMemberLetter() {
         letterAttachments.value.splice(0, letterAttachments.value.length)
 
         isLoading.value = true
-        const previewData: LetterData = {
+        const letterData: LetterData = {
             recipients: recipients,
             content: letterContent,
             description: description.value,
-            printFormat: selectedPrintTemplate.value
+            printFormat: selectedPrintTemplate.value,
+            isPreview: isPreview
         }
         printResource.reset()
         try {
 
             let printResult = await printResource.fetch({
-                data: previewData
+                data: letterData
             })
 
             currentRequestId = printResult.id
