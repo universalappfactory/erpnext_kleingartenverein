@@ -12,7 +12,7 @@
       :placeholder="placeholder"
       type="text"
     />
-    <div :class="dropdownVisible ? 'relative' : 'hidden'">
+    <div :class="dropdownVisible ? 'relative' : 'hidden'" style="z-index:2000">
       <div class="absolute bg-red-100 w-full">
         <slot></slot>
       </div>

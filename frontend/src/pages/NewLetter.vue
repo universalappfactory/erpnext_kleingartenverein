@@ -76,14 +76,11 @@
         ></EditorComponent>
       </div>
       <div class="flex gap-4 items-center content-center">
-        <a class="hidden" target="_blank" ref="previewLink" ></a>
+        <a class="hidden" target="_blank" ref="previewLink"></a>
 
         <Button @clicked="showPreview" :label="$t('new_letter.show_preview')" />
 
-        <Button
-          @clicked="printLetters"
-          :label="$t('new_letter.print_letters')"
-        ></Button>
+        <Button @clicked="printLetters" :label="$t('new_letter.print_letters')"></Button>
 
         <LoadingIndicator :isLoading="letter.isLoading.value" :centerPlacement="false" />
 
@@ -99,8 +96,6 @@
               <DownloadButton :url="item.attachment" :label="item.name" />
             </li>
           </ul>
-          <!-- <a ref="openHref" target="_blank" class="hidden"></a>
-          <Button @click="openAll" :label="$t('new_letter.open_all')"></Button> -->
         </div>
       </template>
     </div>
@@ -148,17 +143,17 @@ export default defineComponent({
     const dropdownVisible = ref(false);
     const previewLink = ref<HTMLAnchorElement>();
     const openHref = ref<HTMLAnchorElement>();
-    const attachments = []
+    const attachments = [];
 
     watch(letter.letterAttachments.value, (val) => {
       if (val.length > 0) {
         if (val[0].name.startsWith("Preview")) {
-          previewLink.value.href = val[0].attachment
-          previewLink.value.click()
+          previewLink.value.href = val[0].attachment;
+          previewLink.value.click();
         }
       }
-    })
-    
+    });
+
     return {
       tenant,
       letter,
@@ -166,7 +161,7 @@ export default defineComponent({
       dropdownVisible,
       previewLink,
       openHref,
-      attachments
+      attachments,
     };
   },
   mounted() {
@@ -178,13 +173,13 @@ export default defineComponent({
       this.dropdownVisible = false;
     },
     selectAllTenants() {
-      this.tenant.selectAll()
+      this.tenant.selectAll();
       this.dropdownVisible = false;
     },
     tenantSearchTextChanged(value) {
       this.tenant.searchText.value = value;
       if (!this.dropdownVisible) {
-        this.dropdownVisible = true
+        this.dropdownVisible = true;
       }
     },
     removeRecipient(name: string) {
@@ -239,7 +234,7 @@ export default defineComponent({
     CloseButton,
     Alert,
     DownloadButton,
-    PageHeadline
+    PageHeadline,
   },
 });
 </script>

@@ -121,7 +121,7 @@
                 <a
                   class="pl-4 font-medium text-blue-600 dark:text-blue-500 hover:underline"
                   target="_blank"
-                  :href="`app/customer/${name}`"
+                  :href="`/app/customer/${name}`"
                 >
                 {{$t('tenant_list.open_in_desk')}}
                 </a>
