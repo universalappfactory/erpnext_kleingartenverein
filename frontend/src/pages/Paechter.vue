@@ -1,65 +1,18 @@
 <template>
    <div class="p-4 sm:ml-64">
 
-      <Dialog v-model="bodyDialog" style="z-index: 300;">
+      <Dialog id="tenant-dialog" v-model="bodyDialog" style="z-index: 300;">
          <template #body>
-            <TenantEditor :item="selectedCustomer" @close="closeEditor" />
+            <TenantEditor class="tenant-editor" :item="selectedCustomer" @close="closeEditor" />
          </template>
       </Dialog>
 
       <TenantSearchBar @search="executeSearch" :filters="tenant.filters" class="mb-4" />
-      <ListComponent @loadMore="tenant.loadMore" :items="tenant.tenants" :checkable="false" :headerList="['Pächter']"
-         :hasNext="tenant.pageInfo.hasNext" @show-details="(x: any) => showDialog(x.name)">
-
-         <template #item="{ name, plot_link, email_id, mobile_no, customer_group }">
-            <div class="flex p-4">
-               <div class="grid content-center">
-                  <svg class="w-10 h-10 text-gray-200" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                     xmlns="http://www.w3.org/2000/svg">
-                     <path fill-rule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
-                        clip-rule="evenodd"></path>
-                  </svg>
-               </div>
-
-               <div class="grow p-2">
-                  <div class="font-semibold">{{ name }}</div>
-                  <div class="font-semibold"> {{ plot_link }}</div>
-                  <div>{{ email_id }}</div>
-                  <div>{{ mobile_no }}</div>
-               </div>
-
-               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 content-center">
-                  <a :href="getMobileHref(mobile_no)" type="button"
-                     :class="mobile_no ? 'text-blue-700 hover:bg-blue-700 border border-blue-700  hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 ' : 'border border-gray-300  bg-gray-100'"                     
-                     class="disabled:opacity-75   font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center">
-                     <i class="fa fa-phone" aria-hidden="true"></i>
-                     <span class="sr-only">Phonecall</span>
-                  </a>
-                  <a :href="getMailHref(email_id)" type="button"
-                  :class="mobile_no ? 'text-blue-700 hover:bg-blue-700 border border-blue-700  hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 ' : 'border border-gray-300  bg-gray-100'"                     
-                     class="disabled:opacity-75   font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center">
-                     <i class="fa fa-envelope" aria-hidden="true"></i>
-                     <span class="sr-only">EMail</span>
-                  </a>
-
-                  <button type="button" @click="showDialog(name)"
-                     class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500">
-                     <i class="fa fa-edit" aria-hidden="true"></i>
-                     <span class="sr-only">Edit</span>
-                  </button>
-
-               </div>
-
-            </div>
-
-         </template>
-      </ListComponent>
-
+      
    </div>
 </template>
 <script lang="ts">
-import {  defineComponent, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import FooterComponent from "../components/Footer.vue";
 import ListComponent from "../components/ListComponent.vue";
 import TenantEditor from "../components/TenantEditor.vue";

@@ -1,13 +1,14 @@
 <template>
-    <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+    <div class="mb-4 border-b border-gray-400">
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" role="tablist">
-
             <li class="mr-2" v-for="(item, index) in items">
-                <button class="inline-block p-4 rounded-t-lg" 
-                    :class="item.selected ? 'border-b-2 border-blue-400' : ''" type="button"
-                    role="tab" 
-                    @click="selectItem(item)"
-                    >{{ $t(item.description) }}</button>
+                <button class="inline-block p-4 rounded-t-lg" :class="item.selected ? 'border-b-2 border-blue-400' : ''"
+                    type="button" role="tab" @click="selectItem(item)">
+                    <div class="flex items-center">
+                        <i class="fa" :class="item.icon" aria-hidden="true"></i>
+                        <div class="hidden sm:block pl-2">{{ $t(item.description) }}</div>
+                    </div>
+                </button>
             </li>
         </ul>
     </div>
@@ -18,7 +19,8 @@ import { PropType, defineComponent, ref } from 'vue';
 export interface TabItem {
     name: string,
     description: string,
-    selected: boolean
+    selected: boolean,
+    icon: string
 }
 
 export default defineComponent({
@@ -45,8 +47,5 @@ export default defineComponent({
             default: () => [],
         },
     },
-    data() {
-
-    }
 });
 </script>

@@ -90,3 +90,66 @@
 {
     @apply pb-4
 }
+
+
+@media (max-width: 640px) {
+    #tenant-dialog .px-4 .py-4 {
+        padding: 0 !important;
+    }
+    
+    #tenant-dialog .my-8 {
+        margin: 0 !important;
+    }
+    
+    #tenant-dialog  div.max-w-lg {
+        width: 100vw !important;
+        height: 95vh !important;
+        padding: 0;
+        margin: 0;
+    }
+  }
+
+
+
+.preview-markdown h1
+{
+    font-size: 1.875rem; /* 30px */
+    line-height: 2.25rem; /* 36px */
+} 
+
+.preview-markdown h2
+{
+    font-size: 1.5rem; /* 24px */
+    line-height: 2rem; /* 32px */
+}
+
+.preview-markdown h3
+{
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.75rem; /* 28px */
+}
+
+.preview-markdown h4 /* text-3xl */
+{
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.75rem; /* 28px */
+}
+
+.preview-markdown ul {
+    list-style: square;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 15px;
+}
+
+.preview-markdown p {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.preview-markdown ol {
+    list-style: decimal;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 15px;
+}

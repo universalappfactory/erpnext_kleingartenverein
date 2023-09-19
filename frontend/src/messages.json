@@ -1,5 +1,11 @@
 {
     "en": {
+        "common": {
+            "no_data": "No Data"
+        },
+        "dashboad": {
+            "myclub": "My Club"
+        },
         "myclub": {
             "myclub": "My Club",
             "welcome": "Welcome"
@@ -9,6 +15,14 @@
         },
         "list": {
             "load_more": "Load more"
+        },
+        "tenant_list": {
+            "select_placeholder": "Select a filter",
+            "group_tenant": "Tenant",
+            "group_member": "Member",
+            "group_former_tenant": "Former Tenant",
+            "select_tag": "Select a tag",
+            "open_in_desk": "Open in desk"
         },
         "tenant_editor": {
             "base_data": "Base data",
@@ -39,9 +53,30 @@
             "search_for" : "First Name, Name, Plot, EMail...",
             "filter": "Filter",
             "search": "Search"
+        },
+        "new_letter": {
+            "headline": "Create a new letter",
+            "recipients": "Recipients",
+            "template": "Template",
+            "no_recipients": "No recipients selected",
+            "add_recipients": "Add recipients",
+            "select_template": "Select a template",
+            "show_preview": "Print preview",
+            "print_letters": "Create letters",
+            "letter_description": "Internal description",
+            "search_hint": "Search for a recipient",
+            "error_while_shipping": "An error occured while shipping",
+            "open_all": "Open all",
+            "edit_templates": "Edit templates"
+        },
+        "reports": {
+            "headline": "Reports"
         }
     },
     "de": {
+        "common": {
+            "no_data": "Keine Daten vorhanden"
+        },
         "myclub": {
             "myclub": "Mein Kleingartenverein",
             "welcome": "Hallo"
@@ -81,6 +116,32 @@
             "plot_number": "Gartennummer",
             "plot_size_sqm": "Größe (qm)",
             "plot_attachments": "Garten Anhänge"
+        },
+        "new_letter": {
+            "headline": "Neuen Brief verfassen",
+            "recipients": "Empfänger",
+            "template": "Vorlage",
+            "no_recipients": "Keine Empfänger gewählt",
+            "add_recipients": "Empfänger hinzufügen",
+            "select_template": "Vorlage auswählen",
+            "show_preview": "Vorschau anzeigen",
+            "print_letters": "Briefe erstellen",
+            "letter_description": "Interne Beschreibung",
+            "search_hint": "Empfänger suchen (Name, Garten, ...)",
+            "error_while_shipping": "Es ist ein Fehler aufgetreten",
+            "open_all": "Alle öffnen",
+            "edit_templates": "Vorlagen bearbeiten"
+        },
+        "reports": {
+            "headline": "Berichte"
+        },
+        "tenant_list": {
+            "select_placeholder": "Filter wählen",
+            "group_tenant": "Pächter",
+            "group_member": "Mitglied",
+            "group_former_tenant": "Ehemaliger Pächter",
+            "select_tag": "Schlagwort auswählen",
+            "open_in_desk": "Im Desk öffnen"
         }
     }
 }

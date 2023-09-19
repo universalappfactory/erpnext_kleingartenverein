@@ -77,13 +77,15 @@
 						</a>
 					</template>
 					<template v-else>
-						<a :href="item.href" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+						<a :href="item.href" target="_blank" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
 							<i class="fa text-gray-500 text-6xl" :class="item.icon"></i>
 							<span class="ml-3">{{ item.displayTitle }}</span>
 						</a>
 					</template>
 				</li>
 			</ul>
+
+			<!-- <NavbarCta message="Test" headline="Welcome" /> -->
 		</div>
 	</aside>
 
@@ -100,11 +102,13 @@ import { useSharedDashboard } from '../ts/dashboard'
 import { useRoute } from 'vue-router';
 import { useDashboardStore } from '../ts/dashboardstore';
 import Logo from "./Logo.vue";
+import NavbarCta from "./NavbarCta.vue";
 
 export default defineComponent({
 	name: "navbar",
 	components: {
-		Logo
+		Logo,
+		NavbarCta
 	},
 	setup() {
 		const dashboard = useSharedDashboard();

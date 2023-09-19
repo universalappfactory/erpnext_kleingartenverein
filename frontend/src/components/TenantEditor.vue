@@ -1,5 +1,6 @@
 <template>
-    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 h-[90vh] " :class="isLoading ? 'opacity-25' : ''">
+    <div class="relative bg-white rounded-lg 
+     dark:bg-gray-700 h-[100vh] sm:h-[80vh]" :class="isLoading ? 'opacity-25' : ''">
         <div class="bg-blue-200 flex p-4">
             <div>
                 <p>{{ editor.first?.item?.tenant?.name }}</p>
@@ -22,7 +23,7 @@
         <TabComponent @item-selected="tabSelected" :items="items" />
 
         <template v-if="selectedTab === 'base'">
-            <div class="pl-4 pr-4 rounded-lg overflow-scroll h-[80%]" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="pl-4 pr-4 rounded-lg overflow-scroll h-[70%]" role="tabpanel" aria-labelledby="profile-tab">
                 <TenantBaseData :data="baseData" />
             </div>
         </template>
@@ -37,10 +38,6 @@
         <template v-if="selectedTab === 'plot_attachments'">
             <AttachmentList :data="editor.first?.plot_attachments" />
         </template>
-
-        <div class="flex flex-row-reverse mr-4">
-            <Button @ok="this.$emit('close')" :label="$t('tenant_editor.close')"></Button>
-        </div>
 
         <div role="status" :class="isLoading ? '' : 'hidden'"
             class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2">
@@ -65,7 +62,8 @@ import TenantBaseData from './TenantBaseData.vue'
 import AttachmentList from './AttachmentList.vue'
 import TenantPlotData from './TenantPlotData.vue'
 import Button from './Button.vue'
-import { TenantData, useTenantEditor } from '../ts/tenanteditor';
+import { useTenantEditor } from '../ts/tenanteditor';
+import { TenantData } from '../ts/tenants';
 
 export default defineComponent({
     name: "TenantEditor",
@@ -102,22 +100,26 @@ export default defineComponent({
         const items: TabItem[] = [{
             description: "tenant_editor.base_data",
             selected: true,
-            name: "base"
+            name: "base",
+            icon: "fa-info"
         },
         {
             name: "attachments",
             description: "tenant_editor.attachments",
-            selected: false
+            selected: false,
+            icon: "fa-file"
         },
         {
             name: "plot",
             description: "tenant_editor.plot",
-            selected: false
+            selected: false,
+            icon: "fa-tree"
         },
         {
             name: "plot_attachments",
             description: "tenant_editor.plot_attachments",
-            selected: false
+            selected: false,
+            icon: "fa-download"
         },
         ]
         const selectedTab = "base"
@@ -136,7 +138,7 @@ export default defineComponent({
     },
     props: {
         item: {
-            type: Object as PropType<any>,
+            type: String,
             required: true,
         },
     },

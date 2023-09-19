@@ -141,7 +141,6 @@ export default defineComponent({
          return this.store.isUnread(name)
       },
       markAsRead(name) {
-         console.log('YYYY')
          this.dashboard.markAsRead("Meeting Minutes", name)
       }
    }

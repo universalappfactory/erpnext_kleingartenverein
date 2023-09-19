@@ -63,6 +63,7 @@ website_route_rules = [
     {"from_route": "/service/calendar", "to_route": "service"},
     {"from_route": "/termine", "to_route": "service"},
     {"from_route": "/kalender", "to_route": "service"},
+    {"from_route": "/dashboard/<path:selection>", "to_route": "dashboard"},
 ]
 
 # home_page = "erpnext_kleingartenverein"

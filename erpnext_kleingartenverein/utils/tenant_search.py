@@ -1,8 +1,9 @@
 import frappe
 from frappe.search.full_text_search import FullTextSearch, FuzzyTermExtended
 from whoosh.fields import ID, TEXT, KEYWORD, NUMERIC, Schema
-from whoosh.qparser import FieldsPlugin, MultifieldParser, WildcardPlugin
-from whoosh.query import FuzzyTerm, Prefix
+from whoosh.qparser import FieldsPlugin, MultifieldParser
+from whoosh.query import FuzzyTerm, Prefix, Query, Term, Not, And
+
 
 class TenantSearch(FullTextSearch):
     DEFAULT_FIELDS = [
@@ -14,6 +15,10 @@ class TenantSearch(FullTextSearch):
         "plot_number_numeric",
         # "keywords",
     ]
+
+    def __init__(self, index_name):
+        super(TenantSearch, self).__init__(index_name)
+        self.current_filter = None
 
     def get_schema(self):
         return Schema(
@@ -27,9 +32,17 @@ class TenantSearch(FullTextSearch):
             plot_number=TEXT(stored=False),
             plot_number_numeric=NUMERIC(stored=False),
             plot_status=TEXT(stored=False),
+            tags=KEYWORD(stored=False, commas=True),
+            # plot_tags=KEYWORD(stored=False),
         )
 
     def get_fields_to_search(self):
+        if self.current_filter:
+            if self.current_filter == "with_tag":
+                return ["tags"]
+            if self.current_filter == "without_tag":
+                return ["tags"]
+
         return TenantSearch.DEFAULT_FIELDS
 
     def get_all_tenants(self):
@@ -55,6 +68,7 @@ class TenantSearch(FullTextSearch):
             "mobile_no": tenant.mobile_no,
             "email_id": tenant.email_id,
             "keywords": "",
+            "tags": self.get_tags(tenant),
         }
 
     def try_get_numeric_plot_number(self, plot_number):
@@ -73,7 +87,7 @@ class TenantSearch(FullTextSearch):
                 "plot_number_numeric": self.try_get_numeric_plot_number(
                     plot.plot_number
                 ),
-                "plot_status": plot.plot_status
+                "plot_status": plot.plot_status,
             }
 
         return {}
@@ -84,14 +98,36 @@ class TenantSearch(FullTextSearch):
             return None
 
         if tenant.plot_link:
-            plot = frappe.get_doc("Plot", tenant.plot_link)
+            # plot = frappe.get_doc("Plot", tenant.plot_link)
             result.append(tenant.plot_link.split("-")[1])
 
         return result
 
+    def apply_filter(self, filter):
+        if filter == "withTag":
+            self.current_filter = "with_tag"
+        elif filter == "withoutTag":
+            self.current_filter = "without_tag"
+        elif filter == "":
+            self.current_filter = None
+        else:
+            raise Exception("unkown filter")
+
+    def get_tags(self, tenant):
+        result = tenant.get_tags()
+
+        if tenant.plot_link:
+            plot = frappe.get_doc("Plot", tenant.plot_link)
+            plot_tags = plot.get_tags()
+
+            result = result + plot_tags
+
+        rr = ",".join(set(result))
+        return rr
+    
     def parse_result(self, result):
         return result["name"]
-    
+
     def search(self, text, scope=None, limit=20):
         """Search from the current index
 
@@ -117,11 +153,20 @@ class TenantSearch(FullTextSearch):
 
         with ix.searcher() as searcher:
             parser = MultifieldParser(
-                search_fields, ix.schema, termclass=FuzzyTermExtended, fieldboosts=fieldboosts
+                search_fields,
+                ix.schema,
+                termclass=FuzzyTermExtended,
+                fieldboosts=fieldboosts,
             )
             parser.remove_plugin_class(FieldsPlugin)
             # parser.remove_plugin_class(WildcardPlugin)
+
             query = parser.parse(text)
+            if self.current_filter and self.current_filter == "without_tag":
+                # text = f"NOT ({text})"
+                text = text.strip('*')
+                query = Not(Term("tags", text))
+                # query = And([not_plot_tags])
 
             filter_scoped = None
             if scope:

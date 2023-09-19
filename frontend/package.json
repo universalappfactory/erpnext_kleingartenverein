@@ -16,10 +16,14 @@
     "create-public-js-template": "cat ../erpnext_kleingartenverein/www/service_template.html | grep -E  \"module\" > ../erpnext_kleingartenverein/templates/public_js.html "
   },
   "dependencies": {
+    "@vavt/md-editor-extension": "^3.0.0",
     "@vueuse/core": "^10.2.1",
     "feather-icons": "^4.29.0",
     "flowbite": "^1.8.1",
+    "flowbite-vue": "^0.0.17-next.3",
     "frappe-ui": "^0.0.112",
+    "marked": "^8.0.0",
+    "md-editor-v3": "^4.6.2",
     "pinia": "^2.1.4",
     "vue": "^3.3.4",
     "vue-cal": "^4.8.1",

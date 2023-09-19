@@ -8,7 +8,6 @@ import 'flowbite'
 import { createPinia } from 'pinia'
 import { Button, setConfig, frappeRequest, resourcesPlugin } from 'frappe-ui'
 import { createI18n } from 'vue-i18n'
-
 import messages from './messages.json'
 
 const app = createApp(App)

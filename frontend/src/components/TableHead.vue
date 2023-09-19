@@ -4,8 +4,7 @@
     </th>
 </template>
 <script lang="ts">
-import { PropType, defineComponent, ref } from 'vue';
-import { TableColumn } from '../ts/table'
+import { defineComponent } from 'vue';
 export default defineComponent({
     name: "tablehead",
     components: {
@@ -15,7 +14,7 @@ export default defineComponent({
     },
     props: {
         name: {
-            type: Object as PropType<string>,
+            type: String,
             required: true,
         },
     },

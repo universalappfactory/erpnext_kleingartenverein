@@ -1,9 +1,6 @@
 from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calculation.invoice_calculator import (
     InvoiceCalculator,
 )
-from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.member_letter.letter_shipping import (
-    LetterShipping,
-)
 
 from erpnext_kleingartenverein.utils.tenant_search import TenantSearch
 
@@ -28,114 +25,11 @@ def execute_invoice_calculation(names, status):
         frappe.throw(str(e))
 
 
-@frappe.whitelist()
-def execute_member_letter_shipping(names, status):
-    frappe.throw(_("not supported at the moment"))
-    # try:
-    #     names = json.loads(names)
-    #     shipping = LetterShipping()
-
-    #     if (len(names) > 1):
-    #         frappe.throw('you can only select one letter at the moment.')
-
-    #     name = names[0]
-    #     letter = frappe.get_doc('Member Letter', name)
-    #     if not letter:
-    #         frappe.throw(_('cannot find letter: {0}'.format(name)))
-
-    #     customers = shipping.get_matching_customers()
-    #     frappe.publish_realtime(_(f'Creating {len(customers)} letters'))
-    #     shipping.ship_letter(letter)
-    #     for name in names:
-
-    #         if letter:
-
-    # except Exception as e:
-    #     frappe.throw(str(e))
-
-
-def background_create_letters(letter_name):
-    try:
-        letter = frappe.get_doc("Member Letter", letter_name)
-        if not letter:
-            frappe.throw(_("cannot find letter: {0}").format(letter_name))
-
-        shipping = LetterShipping()
-        customers = shipping.get_matching_customers(letter)
-
-        frappe.publish_realtime(
-            "background_create_letters_start",
-            {"background_create_letters": len(customers)},
-        )
-
-        shipping.create_letters(letter, customers)
-
-        frappe.publish_realtime(
-            "background_create_letters_start", {"Done": len(customers)}
-        )
-    except Exception as error:
-        frappe.log_error(error)
-
-
-@frappe.whitelist()
-def execute_create_letters(names, status):
-    try:
-        names = json.loads(names)
-        shipping = LetterShipping()
-
-        if len(names) > 1:
-            frappe.throw(_("you can only select one letter at the moment."))
-
-        name = names[0]
-        letter = frappe.get_doc("Member Letter", name)
-        if not letter:
-            frappe.throw(_("cannot find letter: {0}").format(name))
-
-        customers = shipping.get_matching_customers(letter)
-        if len(customers) == 1:
-            shipping.create_letters(letter, customers)
-        else:
-            frappe.enqueue(
-                background_create_letters,
-                letter_name=name,
-                queue="long",
-                job_name=f"create_letters_for_{name}",
-            )
-
-    except Exception as e:
-        frappe.throw(str(e))
-
-
 def get_customers(customer_names):
     result = []
     for customer in customer_names:
         result.append(frappe.get_doc("Customer", customer))
     return result
-
-
-@frappe.whitelist()
-def sent_customer_letter(names, letter, tags=None):
-    try:
-        names = json.loads(names)
-        shipping = LetterShipping(throw_on_error=True)
-
-        letter = frappe.get_doc("Member Letter", letter)
-        if not letter:
-            frappe.throw(_("cannot find letter: {0}").format(letter))
-
-        customers = get_customers(names)
-        if len(customers) == 1:
-            shipping.create_letters(letter, customers, tags)
-        else:
-            frappe.enqueue(
-                background_create_letters,
-                letter_name=letter,
-                queue="long",
-                job_name=f"create_letters_for_{letter}",
-            )
-
-    except Exception as e:
-        frappe.throw(str(e))
 
 
 def customer_before_insert(doc, method=None):
@@ -359,6 +253,32 @@ def get_dashboard_navigation():
         #     }
         # )
 
+        basic_navigation.append(
+            {
+                "displayTitle": _("Brief schreiben"),
+                "href": "/letter/",
+                "icon": "fa-user",
+                "mode": "NavigationMode.Router",
+            }
+        )
+
+        basic_navigation.append(
+            {
+                "displayTitle": _("Berichte"),
+                "href": "/reports/",
+                "icon": "fa-flag",
+                "mode": "NavigationMode.Router",
+            }
+        )
+        # basic_navigation.append(
+        #     {
+        #         "displayTitle": _("Berichte"),
+        #         "href": '/app/report?report_type=Query Report&_user_tags=["like"%2C"%25Dashboard%25"]',
+        #         "icon": "fa-flag",
+        #         "mode": "NavigationMode.External",
+        #     }
+        # )
+
         # basic_navigation.append(
         #     {
         #         "displayTitle": _("Kalender"),
@@ -514,6 +434,11 @@ def search_tenants(*args, **kwargs):
         ts = TenantSearch(index_name="tenants")
         # ts.build()
         query = kwargs["query"]
+
+        if "filter" in kwargs:
+            filter = kwargs["filter"]
+            ts.apply_filter(filter)
+
         if len(query) > 0 and query[-1] != "*":
             query = query + "*"
 
@@ -525,6 +450,7 @@ def search_tenants(*args, **kwargs):
                 "name": ["IN", search_result],
             },
             fields="*",
+            order_by="plot_link",
         )
 
         return customers
@@ -615,5 +541,60 @@ def get_tenant_data(*args, **kwargs):
         return [result]
     except Exception as e:
         print(e)
+        frappe.log_error(e)
+        return []
+
+
+def map_tag(input):
+    return {"value": input["name"], "description": input["name"], "name": input["name"]}
+
+
+@frappe.whitelist(allow_guest=False)
+def get_tenant_tags():
+    user = frappe.session.user
+    if not user or user == "Guest":
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    try:
+        tenant_tags = frappe.db.sql(
+            """
+            with recursive cte as (
+                select _user_tags as name, concat(_user_tags, ',') as names, 1 as lev
+                from `tabCustomer`
+                union all
+                select substring_index(names, ',', 1),
+                        substr(names, instr(names, ',') + 1), lev + 1
+                from cte
+                where names like '%,%'
+                )
+            select DISTINCT(name)
+            from cte
+            where lev > 1 AND name <> ''
+        """,
+            as_dict=1,
+        )
+
+        plot_tags = frappe.db.sql(
+            """
+            with recursive cte as (
+                select _user_tags as name, concat(_user_tags, ',') as names, 1 as lev
+                from `tabPlot`
+                union all
+                select substring_index(names, ',', 1),
+                        substr(names, instr(names, ',') + 1), lev + 1
+                from cte
+                where names like '%,%'
+                )
+            select DISTINCT(name)
+            from cte
+            where lev > 1 AND name <> ''
+        """,
+            as_dict=1,
+        )
+
+        return list(map(lambda x: map_tag(x), tenant_tags)) + list(
+            map(lambda x: map_tag(x), plot_tags)
+        )
+    except Exception as e:
         frappe.log_error(e)
         return []
