@@ -36,6 +36,11 @@ const routes = [
     name: 'Letter',
     component: () => import('@/pages/NewLetter.vue'),
   },
+  {
+    path: '/reports',
+    name: 'Reports',
+    component: () => import('@/pages/Reports.vue'),
+  },
 ]
 
 let router = createRouter({

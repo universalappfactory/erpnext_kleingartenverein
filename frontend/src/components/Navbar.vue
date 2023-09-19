@@ -77,7 +77,7 @@
 						</a>
 					</template>
 					<template v-else>
-						<a :href="item.href" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+						<a :href="item.href" target="_blank" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
 							<i class="fa text-gray-500 text-6xl" :class="item.icon"></i>
 							<span class="ml-3">{{ item.displayTitle }}</span>
 						</a>

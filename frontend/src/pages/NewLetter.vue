@@ -1,9 +1,7 @@
 <template>
   <div class="p-4 sm:ml-64">
     <div class="grid grid-cols-1">
-      <p class="text-2xl border-b-4 border-blue-400 pb-2">
-        {{ $t("new_letter.headline") }}
-      </p>
+      <PageHeadline messageId="new_letter.headline" />
 
       <template v-if="letter.submitError.value">
         <Alert type="warning" class="mb-2 mt-4">
@@ -121,6 +119,8 @@ import EditorComponent from "../components/EditorComponent.vue";
 import Button from "../components/Button.vue";
 import LinkButton from "../components/buttons/LinkButton.vue";
 import InputField from "../components/InputField.vue";
+import PageHeadline from "../components/PageHeadline.vue";
+
 import Select from "../components/buttons/Select.vue";
 import SearchInput from "../components/inputs/SearchInput.vue";
 import CloseButton from "../components/buttons/CloseButton.vue";
@@ -239,6 +239,7 @@ export default defineComponent({
     CloseButton,
     Alert,
     DownloadButton,
+    PageHeadline
   },
 });
 </script>

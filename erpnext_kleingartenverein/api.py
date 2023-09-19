@@ -365,6 +365,23 @@ def get_dashboard_navigation():
             }
         )
 
+        basic_navigation.append(
+            {
+                "displayTitle": _("Berichte"),
+                "href": "/reports/",
+                "icon": "fa-flag",
+                "mode": "NavigationMode.Router",
+            }
+        )
+        # basic_navigation.append(
+        #     {
+        #         "displayTitle": _("Berichte"),
+        #         "href": '/app/report?report_type=Query Report&_user_tags=["like"%2C"%25Dashboard%25"]',
+        #         "icon": "fa-flag",
+        #         "mode": "NavigationMode.External",
+        #     }
+        # )
+
         # basic_navigation.append(
         #     {
         #         "displayTitle": _("Kalender"),

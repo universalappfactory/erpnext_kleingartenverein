@@ -60,6 +60,9 @@
             "error_while_shipping": "An error occured while shipping",
             "open_all": "Open all",
             "edit_templates": "Edit templates"
+        },
+        "reports": {
+            "headline": "Reports"
         }
     },
     "de": {
@@ -120,6 +123,9 @@
             "error_while_shipping": "Es ist ein Fehler aufgetreten",
             "open_all": "Alle öffnen",
             "edit_templates": "Vorlagen bearbeiten"
+        },
+        "reports": {
+            "headline": "Berichte"
         }
     }
 }
