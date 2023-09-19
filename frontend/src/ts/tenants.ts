@@ -122,7 +122,7 @@ export function useTenants(): TenantFunctions {
     //     }
     // }
 
-    const search = (query: string) => {
+    const search = (query: string, filter: string="") => {
         if (!query || query.trim() === '') {
             clear()
             fetch()
@@ -132,7 +132,7 @@ export function useTenants(): TenantFunctions {
         clear()
         searchResource.reset()
         searchResource
-            .fetch({ "query": query, "filter": filters.filter(f => f.selected).map(f => unref(f)) })
+            .fetch({ "query": query, "filter": filter })
             .then(() => {
                 pageInfo.hasNext = searchResource.hasNextPage
                 if (searchResource.data) {

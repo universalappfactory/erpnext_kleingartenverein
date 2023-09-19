@@ -109,7 +109,7 @@
             </div>
         </template>
 
-        <template v-if="items.length === 0">
+        <template v-if="items && items.length === 0">
             <slot name="empty" />
         </template>
     </div>

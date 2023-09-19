@@ -5,7 +5,6 @@
     }}</label>
 
     <div class="flex">
-    {{value}} {{actualContent}}
       <input
         type="text"
         :disabled="disabled"

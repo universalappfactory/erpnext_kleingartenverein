@@ -1,3 +1,4 @@
+import traceback
 from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calculation.invoice_calculator import (
     InvoiceCalculator,
 )
@@ -537,6 +538,11 @@ def search_tenants(*args, **kwargs):
         ts = TenantSearch(index_name="tenants")
         # ts.build()
         query = kwargs["query"]
+
+        if "filter" in kwargs:
+            filter = kwargs["filter"]
+            ts.apply_filter(filter)
+
         if len(query) > 0 and query[-1] != "*":
             query = query + "*"
 
@@ -548,6 +554,7 @@ def search_tenants(*args, **kwargs):
                 "name": ["IN", search_result],
             },
             fields="*",
+            order_by="plot_link",
         )
 
         return customers
@@ -638,5 +645,61 @@ def get_tenant_data(*args, **kwargs):
         return [result]
     except Exception as e:
         print(e)
+        frappe.log_error(e)
+        return []
+
+
+def map_tag(input):
+    return {
+        "value": input['name'],
+        "description": input['name'],
+        "name": input['name']
+    }
+
+@frappe.whitelist(allow_guest=False)
+def get_tenant_tags():
+    user = frappe.session.user
+    if not user or user == "Guest":
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    try:
+        tenant_tags = frappe.db.sql(
+            """
+            with recursive cte as (
+                select _user_tags as name, concat(_user_tags, ',') as names, 1 as lev
+                from `tabCustomer`
+                union all
+                select substring_index(names, ',', 1),
+                        substr(names, instr(names, ',') + 1), lev + 1
+                from cte
+                where names like '%,%'
+                )
+            select DISTINCT(name)
+            from cte
+            where lev > 1 AND name <> ''
+        """,
+            as_dict=1,
+        )
+
+        plot_tags = frappe.db.sql(
+            """
+            with recursive cte as (
+                select _user_tags as name, concat(_user_tags, ',') as names, 1 as lev
+                from `tabPlot`
+                union all
+                select substring_index(names, ',', 1),
+                        substr(names, instr(names, ',') + 1), lev + 1
+                from cte
+                where names like '%,%'
+                )
+            select DISTINCT(name)
+            from cte
+            where lev > 1 AND name <> ''
+        """,
+            as_dict=1,
+        )
+
+        return list(map(lambda x: map_tag(x), tenant_tags)) + list(map(lambda x: map_tag(x), plot_tags))
+    except Exception as e:
         frappe.log_error(e)
         return []

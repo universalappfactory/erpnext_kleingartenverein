@@ -16,6 +16,14 @@
         "list": {
             "load_more": "Load more"
         },
+        "tenant_list": {
+            "select_placeholder": "Select a filter",
+            "group_tenant": "Tenant",
+            "group_member": "Member",
+            "group_former_tenant": "Former Tenant",
+            "select_tag": "Select a tag",
+            "open_in_desk": "Open in desk"
+        },
         "tenant_editor": {
             "base_data": "Base data",
             "first_name": "First name",
@@ -126,6 +134,14 @@
         },
         "reports": {
             "headline": "Berichte"
+        },
+        "tenant_list": {
+            "select_placeholder": "Filter wählen",
+            "group_tenant": "Pächter",
+            "group_member": "Mitglied",
+            "group_former_tenant": "Ehemaliger Pächter",
+            "select_tag": "Schlagwort auswählen",
+            "open_in_desk": "Im Desk öffnen"
         }
     }
 }

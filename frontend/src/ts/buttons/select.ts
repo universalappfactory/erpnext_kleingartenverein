@@ -1,6 +1,6 @@
 export interface SelectItem
 {
-    description: string,
+    description?: string,
     value: string,
-    content: string | undefined
+    name: string
 }
