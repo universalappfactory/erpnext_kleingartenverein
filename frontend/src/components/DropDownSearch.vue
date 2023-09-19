@@ -7,7 +7,7 @@
       ref="dropDown"
       :class="dropDownVisible ? 'relative' : 'hidden'"
       style=""
-      class="z-10 bg-white rounded-lg shadow w-60 dark:bg-gray-700"
+      class="z-10 bg-white rounded-lg shadow w-60"
     >
       <div class="p-3">
         <label for="input-group-search" class="sr-only">Search</label>
@@ -16,7 +16,7 @@
             class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
           >
             <svg
-              class="w-4 h-4 text-gray-500 dark:text-gray-400"
+              class="w-4 h-4 text-gray-500"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -35,29 +35,22 @@
             type="text"
             id="input-group-search"
             v-model="search.searchOptions.query"
-            class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Search user"
           />
         </div>
       </div>
       <ul
-        class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200"
+        class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700"
         aria-labelledby="dropdownSearchButton"
       >
         <li v-for="(item, index) of search.items">
           <div
-            class="flex items-center pl-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600"
-          >
-            <input
-              id="checkbox-item-11"
-              type="checkbox"
-              :value="item.selected"
-              :checked="item.selected"
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+            class="flex items-center pl-2 rounded hover:bg-gray-100"
             />
             <label
               for="checkbox-item-11"
-              class="w-full py-2 ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+              class="w-full py-2 ml-2 text-sm font-medium text-gray-900 rounded"
             >
               {{ item.displayText }}
             </label>

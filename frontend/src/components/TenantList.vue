@@ -92,7 +92,7 @@
                   <button
                     type="button"
                     @click="(x: any) => this.showDialog(name)"
-                    class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
+                    class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                   >
                     <i class="fa fa-edit" aria-hidden="true"></i>
                     <span class="sr-only">Edit</span>
@@ -119,7 +119,7 @@
 
               <div>
                 <a
-                  class="pl-4 font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  class="pl-4 font-medium text-blue-600 hover:underline"
                   target="_blank"
                   :href="`/app/customer/${name}`"
                 >

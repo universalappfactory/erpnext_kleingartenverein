@@ -1,6 +1,6 @@
 <template>
     <div class="relative bg-white rounded-lg 
-     dark:bg-gray-700 h-[100vh] sm:h-[80vh]" :class="isLoading ? 'opacity-25' : ''">
+      h-[100vh] sm:h-[80vh]" :class="isLoading ? 'opacity-25' : ''">
         <div class="bg-blue-200 flex p-4">
             <div>
                 <p>{{ editor.first?.item?.tenant?.name }}</p>
@@ -10,7 +10,7 @@
             </div>
 
             <button @click="this.$emit('close')" type="button"
-                class="absolute right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                class="absolute right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
                 data-modal-hide="authentication-modal">
                 <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -41,7 +41,7 @@
 
         <div role="status" :class="isLoading ? '' : 'hidden'"
             class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2">
-            <svg aria-hidden="true" class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+            <svg aria-hidden="true" class="w-8 h-8 mr-2 text-gray-200 animate-spin fill-blue-600"
                 viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"

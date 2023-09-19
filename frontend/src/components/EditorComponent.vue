@@ -27,7 +27,7 @@
           ></Select>
 
           <a
-            class="pl-4 font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            class="pl-4 font-medium text-blue-600 hover:underline"
             target="_blank"
             href="/app/member-letter-template"
             >{{ $t("new_letter.edit_templates") }}</a

@@ -1,36 +1,42 @@
 <template>
-    <div>
-        <button type="button" :disabled="disabled" @click="this.$emit('ok'); this.$emit('clicked')"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg 
-            text-sm px-5 py-2.5 mr-2
-             dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">{{
-                label }}</button>
-    </div>
+  <div>
+    <button
+      type="button"
+      :disabled="disabled"
+      @click="
+        this.$emit('ok');
+        this.$emit('clicked');
+      "
+      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none"
+    >
+      {{ label }}
+    </button>
+  </div>
 </template>
 <script lang="ts">
-import { PropType, defineComponent } from 'vue';
+import { PropType, defineComponent } from "vue";
 
 export default defineComponent({
-    name: "Button",
+  name: "Button",
 
-    props: {
-        disabled: {
-            type: Boolean,
-            default: () => false,
-        },
-        label: {
-            type: String,
-            default: () => "Label",
-        },
+  props: {
+    disabled: {
+      type: Boolean,
+      default: () => false,
     },
-    emits: {
-        ok: () => { //ToDo remove ok, just use clicked
-            return true;
-        },
-        clicked: () => {
-            return true;
-        },
+    label: {
+      type: String,
+      default: () => "Label",
     },
-
+  },
+  emits: {
+    ok: () => {
+      //ToDo remove ok, just use clicked
+      return true;
+    },
+    clicked: () => {
+      return true;
+    },
+  },
 });
 </script>

@@ -32,23 +32,6 @@ def decode(content) -> str:
         return content
 
 
-# def parse_input(args, kwargs):
-#     data = args[1]
-
-#     content = data["data"]
-#     decoded = decode(base64.urlsafe_b64decode(content))
-#     data = json.loads(decoded)
-
-#     if len(data["recipients"][0]) == 0:
-#         frappe.throw("no recipients provided")
-
-#     recipients = data["recipients"][0]
-#     description = data["description"]
-#     print_format = data["printFormat"]
-
-#     return (data["content"], recipients, description, print_format)
-
-
 def execute_publish(letter_names):
     for letter_name in letter_names:
         try:
@@ -67,25 +50,6 @@ def background_publish_letters(letter_names):
         job_name=f"background_publish_letters",
     )
     return enqueue_result
-
-
-# def create_print_preview(*args, **kwargs):
-#     try:
-#         (content, recipients, description, print_format) = parse_input(args, kwargs)
-
-#         target_folder = ensure_folder_exists("/Home/Preview")
-
-#         shipping = MemberLetterShipping(True)
-#         pdf = shipping.create_preview(
-#             recipients, content, print_format, target_folder
-#         )
-
-#         return pdf
-
-#     except Exception as e:
-#         print(e)
-#         frappe.log_error(e)
-#         return []
 
 
 @frappe.whitelist(allow_guest=False)
@@ -111,7 +75,8 @@ def parse_print_input(kwargs):
     data = kwargs["data"]
 
     if all(
-        k not in data for k in ("content", "recipients", "description", "printFormat", "isPreview")
+        k not in data
+        for k in ("content", "recipients", "description", "printFormat", "isPreview")
     ):
         raise BadRequestError()
 
@@ -126,7 +91,9 @@ def parse_print_input(kwargs):
 
 @frappe.whitelist(allow_guest=False)
 def print_letters(*args, **kwargs):
-    (content, recipients, description, printFormat, isPreview) = parse_print_input(kwargs)
+    (content, recipients, description, printFormat, isPreview) = parse_print_input(
+        kwargs
+    )
     try:
         letters_to_print = []
         shipping = MemberLetterShipping(False)
