@@ -44,6 +44,13 @@
           :toolbars="toolbars"
           v-model="editorContent"
           language="en-US"
+          noKatex
+          noMermaid
+          noHighlight
+          noPrettier
+          noUploadImg
+          noScreenFul
+          :customIcon="icons"
           class="preview-markdown min-h-[50vh] inline-block h-full w-full p-1.5 bg-gray-50 text-sm text-gray-800 border-0"
         />
       </template>
@@ -57,6 +64,20 @@ import { marked } from "marked";
 import Select from "./buttons/Select.vue";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
+
+import { config } from 'md-editor-v3';
+
+config({
+  editorExtensions: {
+    iconfont: '/assets/erpnext_kleingartenverein/font_2605852_u82y61ve02.js',
+    screenfull: {
+      instance: {
+        isEnabled: false
+      },
+    },
+  },
+  iconfontType: 'svg'
+});
 
 export default defineComponent({
   name: "EditorComponent",
@@ -96,6 +117,10 @@ export default defineComponent({
     const preview = ref(false);
     const editorContent = ref(unref(props.content));
 
+    const icons: Record<string, string> = {
+      "bold": "xxx"
+    }
+
     const toolbars = [
       "bold",
       "underline",
@@ -111,8 +136,6 @@ export default defineComponent({
       "code",
       "link",
       "table",
-      "pageFullscreen",
-      "fullscreen",
       "preview",
     ];
 
@@ -120,6 +143,7 @@ export default defineComponent({
       preview,
       editorContent,
       toolbars,
+      icons
     };
   },
   methods: {},
