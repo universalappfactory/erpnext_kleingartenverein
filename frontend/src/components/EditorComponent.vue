@@ -1,6 +1,7 @@
 <template>
-  <div class="w-full mb-4 border  rounded-lg bg-gray-50"
-        :class="hasError ? 'border-red-400 border-2': 'border-gray-200'"
+  <div
+    class="w-full mb-4 border rounded-lg bg-gray-50"
+    :class="hasError ? 'border-red-400 border-2' : 'border-gray-200'"
   >
     <div class="flex items-center justify-between px-3 py-2 border-b">
       <div class="flex flex-wrap items-center divide-gray-200 sm:divide-x">
@@ -24,8 +25,13 @@
             @itemSelected="(tpl) => this.$emit('templateSelected', tpl)"
             :placeholder="$t('new_letter.select_template')"
           ></Select>
-        
-          <a class="pl-4 font-medium text-blue-600 dark:text-blue-500 hover:underline" target="_blank" href="/app/member-letter-template">{{$t('new_letter.edit_templates')}}</a>
+
+          <a
+            class="pl-4 font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            target="_blank"
+            href="/app/member-letter-template"
+            >{{ $t("new_letter.edit_templates") }}</a
+          >
         </div>
       </div>
     </div>
@@ -34,14 +40,12 @@
         <div class="preview-markdown p-2 min-h-[5vh]" v-html="renderedContent"></div>
       </template>
       <template v-else>
-        <textarea
-          id="editor"
-          class="min-h-[50vh] inline-block h-full w-full p-1.5 bg-gray-50 text-sm text-gray-800 border-0"
+        <MdEditor
+          :toolbars="toolbars"
           v-model="editorContent"
-          :placeholder="placeholder"
-          required
-        >
-        </textarea>
+          language="en-US"
+          class="preview-markdown min-h-[50vh] inline-block h-full w-full p-1.5 bg-gray-50 text-sm text-gray-800 border-0"
+        />
       </template>
     </div>
   </div>
@@ -51,6 +55,8 @@ import { PropType, defineComponent, ref, unref } from "vue";
 import { SelectItem } from "../ts/buttons/select";
 import { marked } from "marked";
 import Select from "./buttons/Select.vue";
+import { MdEditor } from "md-editor-v3";
+import "md-editor-v3/lib/style.css";
 
 export default defineComponent({
   name: "EditorComponent",
@@ -84,13 +90,36 @@ export default defineComponent({
   },
   components: {
     Select,
+    MdEditor,
   },
   setup(props) {
     const preview = ref(false);
     const editorContent = ref(unref(props.content));
+
+    const toolbars = [
+      "bold",
+      "underline",
+      "italic",
+      "-",
+      "strikeThrough",
+      "title",
+      "sub",
+      "sup",
+      "quote",
+      "unorderedList",
+      "orderedList",
+      "code",
+      "link",
+      "table",
+      "pageFullscreen",
+      "fullscreen",
+      "preview",
+    ];
+
     return {
       preview,
       editorContent,
+      toolbars,
     };
   },
   methods: {},
