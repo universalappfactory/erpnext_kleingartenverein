@@ -14,6 +14,7 @@
         @showDetails="showDetails"
         :hasNext="pageInfo.hasNext"
         @loadMore="next()"
+        :headerList="[$t('reports.headline')]"
       >
         <template #item="{ name }">
           <div class="flex p-4">
@@ -48,8 +49,6 @@ import Button from "../components/Button.vue";
 import ListComponent from "../components/ListComponent.vue";
 import PageHeadline from "../components/PageHeadline.vue";
 import { Badge, Input, Alert } from "flowbite-vue";
-
-const count = ref(0);
 
 const openLinkAnchor = ref();
 const openLink = ref("");
