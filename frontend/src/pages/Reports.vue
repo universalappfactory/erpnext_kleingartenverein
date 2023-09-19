@@ -24,12 +24,7 @@
                 :href="`/app/query-report/${name}`"
                 target="_blank"
                 type="button"
-                :class="
-                  mobile_no
-                    ? 'text-blue-700 hover:bg-blue-700 border border-blue-700  hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 '
-                    : 'border border-gray-300  bg-gray-100'
-                "
-                class="disabled:opacity-75 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                class="text-blue-700 hover:bg-blue-700 border border-blue-700  hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 disabled:opacity-75 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
               >
                 <i class="fa fa-external-link" aria-hidden="true"></i>
               </a>
