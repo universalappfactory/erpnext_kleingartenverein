@@ -84,6 +84,8 @@
 					</template>
 				</li>
 			</ul>
+
+			<!-- <NavbarCta message="Test" headline="Welcome" /> -->
 		</div>
 	</aside>
 
@@ -100,11 +102,13 @@ import { useSharedDashboard } from '../ts/dashboard'
 import { useRoute } from 'vue-router';
 import { useDashboardStore } from '../ts/dashboardstore';
 import Logo from "./Logo.vue";
+import NavbarCta from "./NavbarCta.vue";
 
 export default defineComponent({
 	name: "navbar",
 	components: {
-		Logo
+		Logo,
+		NavbarCta
 	},
 	setup() {
 		const dashboard = useSharedDashboard();
