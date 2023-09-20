@@ -428,6 +428,30 @@ def mark_as_read(*args, **kwargs):
         return []
 
 
+def to_plot_tag(plot):
+    r = {
+        "name": plot['name'],
+        "tags": plot["_user_tags"].strip(",").split(",")
+    }
+    return r
+
+@frappe.whitelist(allow_guest=False)
+def get_plot_tags(*args, **kwargs):
+    try:
+        plot_tags = frappe.db.sql(
+            """
+            SELECT name, _user_tags FROM `tabPlot` WHERE _user_tags IS NOT NULL; 
+            """,
+            as_dict=1,
+        )
+
+        return list(map(lambda x: to_plot_tag(x), plot_tags))
+    except Exception as e:
+        print(e)
+        frappe.log_error(e)
+        return []
+
+
 @frappe.whitelist(allow_guest=False)
 def search_tenants(*args, **kwargs):
     try:

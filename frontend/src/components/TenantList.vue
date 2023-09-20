@@ -104,13 +104,13 @@
           <div class="p-4">
             <div class="flex">
               <template v-if="customer_group === 'Tenant'">
-                <Badge type="green">Pächter</Badge>
+                <Badge type="green" >{{$t('tenant_list.group_tenant')}}</Badge>
               </template>
               <template v-if="customer_group === 'Former Tenant'">
-                <Badge type="yellow">Ehemaliger Pächter</Badge>
+                <Badge type="yellow">{{$t('tenant_list.group_former_tenant')}}</Badge>
               </template>
               <template v-if="customer_group === 'Member'">
-                <Badge type="dark">Passives Mitglied</Badge>
+                <Badge type="dark" class="dark:bg-gray-100">{{$t('tenant_list.group_member')}}</Badge>
               </template>
 
               <Badge v-for="(item, index) of getUserTags(_user_tags)">{{ item }}</Badge>
@@ -222,7 +222,7 @@ export default defineComponent({
       if (!input) {
         return [];
       }
-      return input.split(",").filter((itm) => itm !== "");
+      return input.split(",").filter((itm) => itm.trim() !== "null" && itm !== "");
     },
   },
 });

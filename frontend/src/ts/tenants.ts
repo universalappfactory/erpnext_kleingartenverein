@@ -1,5 +1,5 @@
 import { createListResource, createResource } from 'frappe-ui'
-import { Ref, UnwrapNestedRefs, reactive, ref, unref, watch } from 'vue'
+import { Ref, UnwrapNestedRefs, reactive, ref, unref, watch, onMounted } from 'vue'
 import { watchThrottled } from '@vueuse/core'
 
 
@@ -26,10 +26,12 @@ export interface AddressData {
 }
 
 export interface TenantData {
+    _user_tags?: string
     contact: ContactData | undefined
     address: AddressData | undefined
     selected: boolean | undefined
     name: string | undefined
+    plot_link?: string
 }
 
 export interface PlotData {
@@ -71,9 +73,28 @@ export function useTenants(): TenantFunctions {
         url: '/api/method/erpnext_kleingartenverein.api.search_tenants'
     })
 
+    const plotTagResource = createResource({
+        url: '/api/method/erpnext_kleingartenverein.api.get_plot_tags'
+    })
+
     function createData(input: any): TenantData {
         let result = input as TenantData;
         result.selected = selection.findIndex(x => x.name === result.name) > -1 ? true : false
+
+        if (plotTagResource.data) {
+            const existing = (result._user_tags ?? '').split(',')
+            const tags = plotTagResource.data.find(x => x.name === result.plot_link)
+            if (tags) {
+                for (const t of tags.tags) {
+                    const idx = existing.findIndex(x => x === t)
+                    if (idx === -1) {
+                        result._user_tags = result._user_tags + "," + t
+                    }
+                }
+
+            }
+        }
+
         return result
     }
 
@@ -106,23 +127,8 @@ export function useTenants(): TenantFunctions {
         throttle: 1000
     })
 
-    // const updateResult = () => {
-    //     pageInfo.hasNext = teantsResource.hasNextPage
 
-    //     if (teantsResource.data) {
-    //         if (teantsResource.start === 0) {
-    //             clear()
-    //             let data = mapData(teantsResource.data);
-    //             tenants.push(...data)
-    //         } else {
-    //             tenants.push(...mapData(teantsResource.data.slice(teantsResource.start, teantsResource.start + teantsResource.pageLength)))
-    //         }
-    //     } else {
-    //         clear()
-    //     }
-    // }
-
-    const search = (query: string, filter: string="") => {
+    const search = (query: string, filter: string = "") => {
         if (!query || query.trim() === '') {
             clear()
             fetch()
@@ -150,13 +156,18 @@ export function useTenants(): TenantFunctions {
 
     const loadMore = async () => teantsResource.next()
 
-    const fetch = () => {
-        teantsResource.fetch()
+    const fetch = async () => {
+        await plotTagResource.fetch()
+        await teantsResource.list.fetch()
     }
 
     const clear = () => {
         tenants.splice(0, tenants.length)
     }
+
+    // onMounted(() => {
+    //     plotTagResource.fetch()
+    // })
 
     const filters = reactive<FilterItem[]>(
         [

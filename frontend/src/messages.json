@@ -138,7 +138,7 @@
         "tenant_list": {
             "select_placeholder": "Filter wählen",
             "group_tenant": "Pächter",
-            "group_member": "Mitglied",
+            "group_member": "Passives Mitglied",
             "group_former_tenant": "Ehemaliger Pächter",
             "select_tag": "Schlagwort auswählen",
             "open_in_desk": "Im Desk öffnen"
