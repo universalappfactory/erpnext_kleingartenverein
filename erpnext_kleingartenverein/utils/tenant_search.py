@@ -1,3 +1,4 @@
+import unicodedata
 import frappe
 from frappe.search.full_text_search import FullTextSearch, FuzzyTermExtended
 from whoosh.fields import ID, TEXT, KEYWORD, NUMERIC, Schema
@@ -32,7 +33,7 @@ class TenantSearch(FullTextSearch):
             plot_number=TEXT(stored=False),
             plot_number_numeric=NUMERIC(stored=False),
             plot_status=TEXT(stored=False),
-            tags=KEYWORD(stored=False, commas=True),
+            tags=KEYWORD(stored=False, commas=True, scorable=True, lowercase=True),
             # plot_tags=KEYWORD(stored=False),
         )
 
@@ -122,11 +123,23 @@ class TenantSearch(FullTextSearch):
 
             result = result + plot_tags
 
-        rr = ",".join(set(result))
-        return rr
-    
+        return (
+            unicodedata.normalize("NFC", ",".join(set(result)))
+            .lower()
+            .replace(" ", "_")
+        )
+
     def parse_result(self, result):
         return result["name"]
+
+    def is_keyword_search(self):
+        if not self.current_filter:
+            return False
+
+        if self.current_filter == "with_tag" or self.current_filter == "without_tag":
+            return True
+
+        return False
 
     def search(self, text, scope=None, limit=20):
         """Search from the current index
@@ -158,15 +171,20 @@ class TenantSearch(FullTextSearch):
                 termclass=FuzzyTermExtended,
                 fieldboosts=fieldboosts,
             )
-            parser.remove_plugin_class(FieldsPlugin)
-            # parser.remove_plugin_class(WildcardPlugin)
 
+            parser.remove_plugin_class(FieldsPlugin)
+
+            if self.is_keyword_search():
+                text = text.lower().replace(" ", "_")
+
+            text = unicodedata.normalize("NFC", text)
             query = parser.parse(text)
             if self.current_filter and self.current_filter == "without_tag":
-                # text = f"NOT ({text})"
-                text = text.strip('*')
+                text = text.strip("*")
                 query = Not(Term("tags", text))
-                # query = And([not_plot_tags])
+
+            if self.current_filter and self.current_filter == "with_tag":
+                text = f"\"{text.strip('*')}\""
 
             filter_scoped = None
             if scope:
