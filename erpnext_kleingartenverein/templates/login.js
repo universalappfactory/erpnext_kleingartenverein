@@ -44,6 +44,7 @@ login.bind_events = function () {
 	});
 
 	$(".form-forgot").on("submit", function (event) {
+		console.log('yo')
 		event.preventDefault();
 		var args = {};
 		args.cmd = "frappe.core.doctype.user.user.reset_password";
@@ -52,6 +53,7 @@ login.bind_events = function () {
 			login.set_status('{{ _("Valid Login id required.") }}', 'red');
 			return false;
 		}
+		console.log('call')
 		login.call(args);
 		return false;
 	});
@@ -137,7 +139,6 @@ login.signup = function () {
 // Login
 login.call = function (args, callback) {
 	login.set_status('{{ _("Verifying...") }}', 'blue');
-
 	return frappe.call({
 		type: "POST",
 		args: args,
