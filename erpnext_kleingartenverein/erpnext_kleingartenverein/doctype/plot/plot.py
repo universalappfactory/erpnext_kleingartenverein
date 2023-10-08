@@ -103,14 +103,13 @@ class Plot(Document):
         self.validate_former_tenant_table()
 
     def validate_decreasing_counter_values(self, grouped_by_counter):
-        sorted_list = sorted(grouped_by_counter, key=lambda x: x.date)
         last = 0
-        for x in sorted_list:
-            if last > x.counter_value:
+        for entry in grouped_by_counter:
+            if last > entry.counter_value:
                 frappe.throw(
-                    _("Counter '{0}' has decresing values").format(x.counter_number)
+                    _("Counter '{0}' has decresing values").format(entry.counter_number)
                 )
-            last = x.counter_value
+            last = entry.counter_value
 
     def add_missing_water_meter_values(self, row):
         matching = next(
@@ -136,8 +135,9 @@ class Plot(Document):
                 self.add_missing_water_meter_values(row)
 
         if len(self.water_meter_table) > 0:
+            sorted_entries = list(sorted(self.water_meter_table, key=lambda x: x.counter_number))
             for key, group in groupby(
-                self.water_meter_table, lambda x: x.counter_number
+                sorted_entries, lambda x: x.counter_number
             ):
                 self.validate_decreasing_counter_values(list(group))
 

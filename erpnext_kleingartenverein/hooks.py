@@ -126,6 +126,7 @@ after_install = "erpnext_kleingartenverein.setup.install.after_install"
 
 override_doctype_class = {
 	# "Customer": "erpnext_kleingartenverein.overrides.customerform.CustomerForm"
+    "File": "erpnext_kleingartenverein.overrides.uploadfile.UploadFile"
 }
 
 # Document Events
