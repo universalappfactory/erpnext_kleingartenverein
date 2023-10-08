@@ -5,6 +5,9 @@ from erpnext_kleingartenverein.utils.decorators import check_permission
 @check_permission
 def upload_counter_value(*args, **kwargs):
     try:
+        for x in frappe.request.files:
+            print(x)
+
         file = frappe.request.files["file"]
         print(args)
         print(kwargs)

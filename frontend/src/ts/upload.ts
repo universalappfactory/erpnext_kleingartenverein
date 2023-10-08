@@ -11,7 +11,7 @@ export interface UploadData {
 }
 
 export function useUpload(options: UseUploadOptions) {
-    const { execute } = useAxios(
+    const { execute, isFinished } = useAxios(
         options.url,
         {
             method: options.method ?? "POST",
@@ -20,14 +20,15 @@ export function useUpload(options: UseUploadOptions) {
     );
 
     const executeUpload = async (content: UploadData) => {
+        console.log('content', content.file)
         const r = await execute({
             data: content,
             headers: {
-                "Content-Type": "multipart/mixed",
+                "Content-Type": "multipart/form-data",
             },
             method: options.method ?? 'POST',
         })
     }
 
-    return { executeUpload }
+    return { executeUpload, isFinished }
 }
