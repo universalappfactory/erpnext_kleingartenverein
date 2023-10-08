@@ -25,6 +25,14 @@ const routes = [
       title: 'Termine'
     }
   },
+  {
+    path: '/zaehler',
+    name: 'Counter',
+    component: () => import('@/pages/CounterUpload.vue'),
+    meta: {
+      title: 'Zählerstände'
+    }
+  },
 ]
 
 let router = createRouter({

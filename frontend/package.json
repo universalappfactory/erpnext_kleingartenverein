@@ -18,6 +18,8 @@
   "dependencies": {
     "@vavt/md-editor-extension": "^3.0.0",
     "@vueuse/core": "^10.2.1",
+    "@vueuse/integrations": "^10.4.1",
+    "axios": "^1.5.1",
     "feather-icons": "^4.29.0",
     "flowbite": "^1.8.1",
     "flowbite-vue": "^0.0.17-next.3",
