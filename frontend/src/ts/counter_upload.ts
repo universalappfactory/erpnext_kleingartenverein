@@ -1,5 +1,5 @@
 import { useResource } from "./resource";
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref, computed, watch, unref } from "vue";
 import { useUpload } from "./upload";
 import { useErrorClasses, DEFAULT_ERROR_CLASS } from "./error_classes";
 import * as yup from 'yup';
@@ -43,6 +43,8 @@ export function useCounterUpload() {
     const sentConfirmationMail = ref(false);
     const emptyFile = ref<boolean | false>();
     const uploadClicked = ref(false)
+    const isLoading = ref(false)
+    const uploadSuccess = ref(false)
 
     const toContent: () => CounterContent = () => {
         return {
@@ -75,16 +77,49 @@ export function useCounterUpload() {
         }
     })
 
+    const parseUploadResult = (result: any) => {
+        try {
+            const messages = unref(result.data.value.message);
+            let message = undefined
+            if (messages instanceof Array) {
+                message = messages[0]
+            } else {
+                message = messages
+            }
+
+            if (message) {
+                const success = message.success
+                if (success && success === true) {
+                    uploadSuccess.value = true
+                } else {
+                    uploadSuccess.value = false
+                    hasError.value = true
+                }
+            }            
+        } catch (e) {
+            hasError.value = true
+        }
+    }
+
     const uploadData = async () => {
-        console.log('yo')
-        uploadClicked.value = true
-        const content = await validate()
-        if (content) {
-            console.log('YES DO UPLOAD')
-            executeUpload({
-                file: file.value,
-                additionalData: content
-            })
+        try {
+            isLoading.value = true
+            uploadClicked.value = true
+            uploadSuccess.value = false
+            hasError.value = false
+            const content = await validate()
+            if (content && emptyFile.value == false) {
+                const uploadResult = await executeUpload({
+                    file: file.value,
+                    additionalData: content
+                })
+                parseUploadResult(uploadResult)
+            }
+        }
+        catch (e) {
+            hasError.value = true
+        } finally {
+            isLoading.value = false
         }
     }
 
@@ -97,7 +132,6 @@ export function useCounterUpload() {
         try {
             return await uploadCounterContentSchema.validate(content, { abortEarly: false })
         } catch (e) {
-            console.error(e)
             const validationError = e as yup.ValidationError;
             if (validationError) {
                 errorClasses.parseValidationError(validationError)
@@ -125,17 +159,19 @@ export function useCounterUpload() {
 
     return {
         plots,
-        plot, 
-        tenant, 
-        counterValue, 
-        file, 
-        hasError, 
-        sentConfirmationMail, 
-        clearFile, 
-        preview, 
-        uploadData, 
-        errors: errorClasses.errorClasses, 
+        plot,
+        tenant,
+        counterValue,
+        file,
+        hasError,
+        sentConfirmationMail,
+        clearFile,
+        preview,
+        uploadData,
+        errors: errorClasses.errorClasses,
         emptyFile,
-        isFinished
+        isFinished,
+        isLoading,
+        uploadSuccess
     }
 }

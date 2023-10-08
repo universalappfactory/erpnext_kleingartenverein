@@ -20,8 +20,7 @@ export function useUpload(options: UseUploadOptions) {
     );
 
     const executeUpload = async (content: UploadData) => {
-        console.log('content', content.file)
-        const r = await execute({
+        return await execute({
             data: content,
             headers: {
                 "Content-Type": "multipart/form-data",

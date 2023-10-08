@@ -1,7 +1,6 @@
 <template>
   <div class="flex justify-center">
     <div class="grid grid-cols-1 gap-4 p-4 max-w-md justify-center">
-      {{upload.isFinished.value}}x
       <div>
         <Alert type="success"
           >Hallo, hier könnt ihr euere Zählerstände hochladen. <br /><br />
@@ -32,7 +31,6 @@
         />
       </div>
       <div>
-        
         <Input
           :class="upload.errors.value['counterValue']"
           v-model="upload.counterValue.value"
@@ -41,7 +39,7 @@
         />
         <Alert class="mt-2" type="success">
           <b>Zählerstand in Kubikmeter (z.B. 19.3)</b>
-          <br>Als Dezimaltrennzeichen einen Punkt verwenden
+          <br />Als Dezimaltrennzeichen einen Punkt verwenden
         </Alert>
       </div>
 
@@ -63,7 +61,12 @@
         <div v-if="upload.preview.value">
           <img :src="upload.preview.value" />
           <div class="flex justify-end">
-            <Button @click="upload.clearFile" class="bg-red-400">Löschen</Button>
+            <Button
+              :disabled="upload.isLoading.value"
+              @click="upload.clearFile"
+              class="bg-red-400"
+              >Löschen</Button
+            >
           </div>
         </div>
       </div>
@@ -82,11 +85,33 @@
         />
       </div>
 
-      <div class="flex justify-end">
-        <Button @click="upload.uploadData()" class="bg-red-400" color="default"
-          >Übertragen</Button
-        >
+      <div class="flex items-center">
+        <div class="grow mt-0">
+          <AnimatedLoadingCard :isLoading="upload.isLoading.value">
+            <p class="p-2">Daten werden übertagen</p>
+          </AnimatedLoadingCard>
+        </div>
+
+        <template v-if="upload.uploadSuccess.value">
+          <div class="mr-2 text-green-800">
+            <i class="text-2xl fa fa-check text-green-400"></i>Vielen Dank, ihre Daten
+            wurden erfolgreich übertragen
+          </div>
+        </template>
+        <template v-else>
+          <Button
+            :disabled="upload.isLoading.value"
+            @click="upload.uploadData()"
+            class="bg-red-400"
+            color="default"
+          >
+            <div class="flex content-center">
+              <div class="mt-1">Übertragen</div>
+            </div>
+          </Button>
+        </template>
       </div>
+
       <Alert type="danger" v-if="upload.hasError.value">
         Es ist ein Fehler aufgetreten
       </Alert>
@@ -101,43 +126,7 @@ import { Input, Alert, FileInput, Button, Checkbox, Select } from "flowbite-vue"
 import { useAxios } from "@vueuse/integrations/useAxios";
 import { useCounterUpload } from "../ts/counter_upload";
 
+import AnimatedLoadingCard from "../components/indicators/AnimatedLoadingCard.vue";
+
 const upload = useCounterUpload();
-
-const { execute } = useAxios(
-  "http://localhost:8000/api/method/erpnext_kleingartenverein.public_api.upload_counter_value",
-  {
-    method: "POST",
-  },
-  { immediate: false }
-);
-
-// // const preview = computed(() => {
-// //   if file.value {
-// //     return URL.createObjectURL(file.value);
-// //   }
-// // })
-
-// const preview = computed(() => {
-//   if (file.value) {
-//     return URL.createObjectURL(file.value);
-//   }
-// });
-
-const uploadContent = async () => {
-  try {
-    console.log("uploadContent", upload.file.value);
-    // hasError.value = false;
-    const r = await execute({
-      data: { file: upload.file.value },
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      method: "POST",
-    });
-    console.log("upload result: ", r);
-  } catch (e) {
-    console.error(e);
-    // hasError.value = true;
-  }
-};
 </script>
