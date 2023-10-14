@@ -5,7 +5,6 @@ from pathlib import Path
 from erpnext_kleingartenverein.utils.decorators import check_permission
 from erpnext_kleingartenverein.exceptions import BadRequestError
 from erpnext_kleingartenverein.file_api import (
-    get_yearly_customer_folder,
     get_guest_folder,
 )
 from datetime import datetime
