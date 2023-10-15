@@ -22,7 +22,8 @@
             "group_member": "Member",
             "group_former_tenant": "Former Tenant",
             "select_tag": "Select a tag",
-            "open_in_desk": "Open in desk"
+            "open_in_desk": "Open in desk",
+            "counter_upload": "Counter upload"
         },
         "tenant_editor": {
             "base_data": "Base data",

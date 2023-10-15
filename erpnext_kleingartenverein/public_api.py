@@ -15,17 +15,16 @@ import puremagic
 @check_permission
 def upload_counter_value(*args, **kwargs):
     try:
-        print('upload_counter_value')
         file = frappe.request.files["file"]
 
         mimetype = mimetypes.guess_type(file.filename)[0]
-        if not mimetype.startswith("image") :
+        if not mimetype.startswith("image"):
             raise BadRequestError()
 
         mime_result = puremagic.magic_stream(file.stream)
         faulted = True
         for item in mime_result:
-            if item.mime_type.startswith("image") :
+            if item.mime_type.startswith("image"):
                 faulted = False
 
         if faulted:
@@ -33,10 +32,10 @@ def upload_counter_value(*args, **kwargs):
 
         content = file.stream.read()
 
-
         counter_value = float(frappe.request.form["additionalData[counterValue]"])
         plot = frappe.request.form["additionalData[plot]"]
         tenant = str(frappe.request.form["additionalData[tenant]"])
+        send_mail = True if frappe.request.form["additionalData[sendConfirmationMail]"] == 'true' else False
 
         extension = path.splitext(file.filename)[1][1:]
 
@@ -72,9 +71,7 @@ def upload_counter_value(*args, **kwargs):
         save_path = get_guest_folder()
         filename = f'counter_upload_{plot["customer"]}_{date}_.{extension}'
 
-        
-
-        file_doc = frappe.new_doc('File')
+        file_doc = frappe.new_doc("File")
         file_doc.folder = save_path
         file_doc.file_name = filename
         file_doc.is_private = 1
@@ -99,10 +96,10 @@ def upload_counter_value(*args, **kwargs):
                 "is_suspicious": 0,
                 "picture": file_doc.file_url,
                 "doc_status": 0,
+                "sent_mail": send_mail
             }
         ).save()
-
-        # raise Exception('xx')
+        
         return {"success": True}
     except Exception as e:
         frappe.log_error(e)

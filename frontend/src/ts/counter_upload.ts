@@ -13,6 +13,7 @@ const uploadCounterContentSchema = yup.object({
     tenant: yup.string().trim().required('tenant'),
     plot: yup.string().trim().required('plot'),
     counterValue: yup.number().positive('counterValue').required('counterValue').label('counterValue'),
+    sendConfirmationMail: yup.boolean()
 });
 
 interface CounterContent extends yup.InferType<typeof uploadCounterContentSchema> {
@@ -40,7 +41,7 @@ export function useCounterUpload() {
     const counterValue = ref<number | undefined>();
     const file = ref<File | undefined>();
     const hasError = ref(false);
-    const sentConfirmationMail = ref(false);
+    const sendConfirmationMail = ref(false);
     const emptyFile = ref<boolean | false>();
     const uploadClicked = ref(false)
     const isLoading = ref(false)
@@ -50,7 +51,8 @@ export function useCounterUpload() {
         return {
             tenant: tenant.value,
             plot: plot.value,
-            counterValue: counterValue.value
+            counterValue: counterValue.value,
+            sendConfirmationMail: sendConfirmationMail.value
         }
     }
 
@@ -164,7 +166,7 @@ export function useCounterUpload() {
         counterValue,
         file,
         hasError,
-        sentConfirmationMail,
+        sendConfirmationMail,
         clearFile,
         preview,
         uploadData,
