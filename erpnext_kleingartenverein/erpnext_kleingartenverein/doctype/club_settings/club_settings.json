@@ -27,7 +27,11 @@
   "read_marker_mappings",
   "dashboard_message",
   "dashboard_logo",
-  "default_logo"
+  "default_logo",
+  "sec_dashboard",
+  "dashboard_menu_entries",
+  "sec_api",
+  "api_access"
  ],
  "fields": [
   {
@@ -146,11 +150,33 @@
    "fieldname": "default_logo",
    "fieldtype": "Attach Image",
    "label": "default_logo"
+  },
+  {
+   "fieldname": "sec_dashboard",
+   "fieldtype": "Section Break",
+   "label": "Dashboard"
+  },
+  {
+   "fieldname": "dashboard_menu_entries",
+   "fieldtype": "Table",
+   "label": "Menu Entries",
+   "options": "DashboardMenuEntry"
+  },
+  {
+   "fieldname": "sec_api",
+   "fieldtype": "Section Break",
+   "label": "Api"
+  },
+  {
+   "fieldname": "api_access",
+   "fieldtype": "Table",
+   "label": "ApiAccess",
+   "options": "ApiAccess"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-01 14:49:32.266404",
+ "modified": "2023-10-14 15:38:15.904651",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Club Settings",

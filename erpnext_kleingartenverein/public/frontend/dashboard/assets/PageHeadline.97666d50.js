@@ -1,1 +1,0 @@
-import{h as s,i as a,j as o,k as r,t}from"./vendor.fddf21c1.js";const n={class:"text-2xl border-b-4 border-blue-400 pb-2"},l=s({__name:"PageHeadline",props:{messageId:{}},setup(d){return(e,p)=>(a(),o("div",null,[r("p",n,t(e.$t(e.messageId)),1)]))}});export{l as _};

@@ -15,6 +15,8 @@ def after_install():
     create_additional_customer_form_fields()
     create_customer_groups()
     hide_workspaces()
+    add_dashboard_navigation()
+    add_api_access()
 
 
 def hide_unimportant_customer_form_fields():
@@ -384,3 +386,263 @@ def before_tests():
 
     frappe.db.commit()
     frappe.clear_cache()
+
+
+def add_dashboard_navigation():
+    try:
+        club_settings = frappe.get_last_doc("Club Settings")
+
+        entry = frappe.new_doc("DashboardMenuEntry")
+        entry.description = "My Club"
+        entry.path = "/"
+        entry.role = "System Manager"
+        entry.icon = "fa-home"
+        entry.mode = "Router"
+        if not next(
+            (
+                doc
+                for doc in club_settings.dashboard_menu_entries
+                if doc.description == "My Club"
+            ),
+            None,
+        ):
+            club_settings.append("dashboard_menu_entries", entry)
+
+        entry = frappe.new_doc("DashboardMenuEntry")
+        entry.description = "Homepage"
+        entry.path = "/"
+        entry.role = "System Manager"
+        entry.icon = "fa-globe"
+        entry.mode = "External"
+        if not next(
+            (
+                doc
+                for doc in club_settings.dashboard_menu_entries
+                if doc.description == "Homepage"
+            ),
+            None,
+        ):
+            club_settings.append("dashboard_menu_entries", entry)
+
+        entry = frappe.new_doc("DashboardMenuEntry")
+        entry.description = "Desk"
+        entry.path = "/app/"
+        entry.role = "System Manager"
+        entry.icon = "fa-desktop"
+        entry.mode = "External"
+        if not next(
+            (
+                doc
+                for doc in club_settings.dashboard_menu_entries
+                if doc.description == "Desk"
+            ),
+            None,
+        ):
+            club_settings.append("dashboard_menu_entries", entry)
+
+        entry = frappe.new_doc("DashboardMenuEntry")
+        entry.description = "Meeting Minutes"
+        entry.path = "/meetingminutes"
+        entry.role = "System Manager"
+        entry.icon = "fa-meetup"
+        entry.mode = "Router"
+        entry.read_marker_doctype = "Meeting Minutes"
+        if not next(
+            (
+                doc
+                for doc in club_settings.dashboard_menu_entries
+                if doc.description == "Meeting Minutes"
+            ),
+            None,
+        ):
+            club_settings.append("dashboard_menu_entries", entry)
+
+        entry = frappe.new_doc("DashboardMenuEntry")
+        entry.description = "Tenants"
+        entry.path = "/paechter"
+        entry.role = "System Manager"
+        entry.icon = "fa-list"
+        entry.mode = "Router"
+        if not next(
+            (
+                doc
+                for doc in club_settings.dashboard_menu_entries
+                if doc.description == "Tenants"
+            ),
+            None,
+        ):
+            club_settings.append("dashboard_menu_entries", entry)
+
+        entry = frappe.new_doc("DashboardMenuEntry")
+        entry.description = "New Letter"
+        entry.path = "/letter"
+        entry.role = "System Manager"
+        entry.icon = "fa-user"
+        entry.mode = "Router"
+        if not next(
+            (
+                doc
+                for doc in club_settings.dashboard_menu_entries
+                if doc.description == "New Letter"
+            ),
+            None,
+        ):
+            club_settings.append("dashboard_menu_entries", entry)
+
+        entry = frappe.new_doc("DashboardMenuEntry")
+        entry.description = "Reports"
+        entry.path = "/reports"
+        entry.role = "System Manager"
+        entry.icon = "fa-flag"
+        entry.mode = "Router"
+        if not next(
+            (
+                doc
+                for doc in club_settings.dashboard_menu_entries
+                if doc.description == "Reports"
+            ),
+            None,
+        ):
+            club_settings.append("dashboard_menu_entries", entry)
+
+        entry = frappe.new_doc("DashboardMenuEntry")
+        entry.description = "Logout"
+        entry.path = "/logout"
+        entry.role = "System Manager"
+        entry.icon = "fa-sign-out"
+        entry.mode = "External"
+        if not next(
+            (
+                doc
+                for doc in club_settings.dashboard_menu_entries
+                if doc.description == "Logout"
+            ),
+            None,
+        ):
+            club_settings.append("dashboard_menu_entries", entry)
+
+        club_settings.save()
+    except Exception as error:
+        frappe.log_error(error)
+
+
+def add_not_existing_entry(club_settings, description, model, role):
+    entry = frappe.new_doc("ApiAccess")
+    entry.description = description
+    entry.model = model
+    entry.role = role
+
+    if not next(
+        (doc for doc in club_settings.api_access if doc.description == description),
+        None,
+    ):
+        club_settings.append("api_access", entry)
+
+
+def add_api_access():
+    try:
+        club_settings = frappe.get_last_doc("Club Settings")
+
+        add_not_existing_entry(
+            club_settings,
+            "Public Plotlist",
+            "erpnext_kleingartenverein.public_api.get_plot_list",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Public Upload Counter Value",
+            "erpnext_kleingartenverein.public_api.upload_counter_value",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Public Upload Counter Value",
+            "erpnext_kleingartenverein.public_api.upload_counter_value",
+            "System Manager",
+        )
+
+        add_not_existing_entry(
+            club_settings,
+            "Dashboard Get Navigation",
+            "erpnext_kleingartenverein.dashboard_api.get_dashboard_navigation",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Dashboard Get Unread Document Count",
+            "erpnext_kleingartenverein.dashboard_api.get_unread_document_count",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Dashboard Get Userinfo",
+            "erpnext_kleingartenverein.dashboard_api.get_user_info",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Dashboard Mark As Read",
+            "erpnext_kleingartenverein.dashboard_api.mark_as_read",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Dashboard Get Plot Tags",
+            "erpnext_kleingartenverein.dashboard_api.get_plot_tags",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Dashboard Search Tenants",
+            "erpnext_kleingartenverein.dashboard_api.search_tenants",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Dashboard Get Read Info",
+            "erpnext_kleingartenverein.dashboard_api.get_read_info",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Dashboard Get All",
+            "erpnext_kleingartenverein.dashboard_api.get_all",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Dashboard Get Tenant Data",
+            "erpnext_kleingartenverein.dashboard_api.get_tenant_data",
+            "System Manager",
+        )
+
+
+        add_not_existing_entry(
+            club_settings,
+            "Letter Get Print Preview",
+            "erpnext_kleingartenverein.letter_api.get_print_preview",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Letter Print Letters",
+            "erpnext_kleingartenverein.letter_api.print_letters",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Letter Get Job Status",
+            "erpnext_kleingartenverein.letter_api.get_job_status",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Letter Get Letters",
+            "erpnext_kleingartenverein.letter_api.get_letters",
+            "System Manager",
+        )
+
+        club_settings.save()
+    except Exception as error:
+        frappe.log_error(error)

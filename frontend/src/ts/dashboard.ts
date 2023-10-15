@@ -18,21 +18,21 @@ export function useDashboard() {
         orderBy: 'starts_on asc',
         start: 0,
         pageLength: 20,
-        url: '/api/method/erpnext_kleingartenverein.api.get_dashboard_navigation'
+        url: '/api/method/erpnext_kleingartenverein.dashboard_api.get_dashboard_navigation'
     })
     navigationResource.fetch()
 
     const readMarker = createResource({
-        url: '/api/method/erpnext_kleingartenverein.api.get_unread_document_count'
+        url: '/api/method/erpnext_kleingartenverein.dashboard_api.get_unread_document_count'
     })
 
     const userInfo = createResource({
-        url: '/api/method/erpnext_kleingartenverein.api.get_user_info'
+        url: '/api/method/erpnext_kleingartenverein.dashboard_api.get_user_info'
     })
     userInfo.fetch()
 
     const markAsReadCall = createResource({
-        url: '/api/method/erpnext_kleingartenverein.api.mark_as_read'
+        url: '/api/method/erpnext_kleingartenverein.dashboard_api.mark_as_read'
     })
 
     const mapMarker = function (markers: ReadMarker[] | undefined) {

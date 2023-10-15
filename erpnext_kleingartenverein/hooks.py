@@ -64,6 +64,7 @@ website_route_rules = [
     {"from_route": "/termine", "to_route": "service"},
     {"from_route": "/kalender", "to_route": "service"},
     {"from_route": "/dashboard/<path:selection>", "to_route": "dashboard"},
+    {"from_route": "/service/counter", "to_route": "service"},
 ]
 
 # home_page = "erpnext_kleingartenverein"
@@ -126,6 +127,7 @@ after_install = "erpnext_kleingartenverein.setup.install.after_install"
 
 override_doctype_class = {
 	# "Customer": "erpnext_kleingartenverein.overrides.customerform.CustomerForm"
+    "File": "erpnext_kleingartenverein.overrides.uploadfile.UploadFile"
 }
 
 # Document Events

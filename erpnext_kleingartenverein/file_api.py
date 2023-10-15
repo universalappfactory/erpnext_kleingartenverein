@@ -77,6 +77,8 @@ def get_customer_folder(customer_name):
 def get_temp_folder():
     return ensure_folder_exists(path.join("Home", "Tmp"))
 
+def get_guest_folder():
+    return ensure_folder_exists(path.join("Home", "Guest"))
 
 def get_yearly_customer_folder(customer_name):
     now = datetime.now().strftime("%Y")

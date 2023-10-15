@@ -1,0 +1,48 @@
+{
+    "en": {
+        "counter_upload": {
+            "headline": "Upload counter values",
+            "head_info": "Please note:",
+            "head_info_long": "There will be a message when the submission was successful",
+            "tenant": "Tenant",
+            "tenant_placeholder": "Name of tenant",
+            "garden_number": "Plotnumber",
+            "counter": "Counter",
+            "counter_value": "Counter value",
+            "counter_value_hint1": "",
+            "counter_value_hint2": "",
+            "counter_picture": "Picture of the counter",
+            "counter_select_picture": "Please select a picture",
+            "counter_delete_picture": "Delete",
+            "email_hint1": "",
+            "email_hint2": "",
+            "submitting": "Submitting",
+            "error": "Error",
+            "success": "Submission was succesful, thanks",
+            "submit": "Submit"
+        }
+    },
+    "de": {
+        "counter_upload": {
+            "headline": "Hallo, hier könnt ihr euere Zählerstände hochladen.",
+            "head_info": "Bitte beachtet:",
+            "head_info_long": "Nach dem klick auf Übertragen wird ein Hinweis angezeigt, ob alles geklappt hat!",
+            "tenant": "Pächter",
+            "tenant_placeholder": "Name des Pächters",
+            "garden_number": "Gartennummer",
+            "counter": "Zähler",
+            "counter_value": "Zählerstand",
+            "counter_value_hint1": "Zählerstand in Kubikmeter (z.B. 19.3)",
+            "counter_value_hint2": "Als Dezimaltrennzeichen einen Punkt verwenden",
+            "counter_picture": "Foto von dem Zählerstand hinzufügen",
+            "counter_select_picture": "Bitte wählen Sie ein Bild aus",
+            "counter_delete_picture": "Löschen",
+            "email_hint1": "Wenn ihr eine EMail Adresse bei uns hinterlegt habt, können wir euch eine Bestätigung senden sobald die Zählerstände eingetragen und geprüft sind.",
+            "email_hint2": "Das kann ein paar Tage dauern.",
+            "submitting": "Daten werden übertagen",
+            "error": "Es ist ein Fehler aufgetreten",
+            "success": "Vielen Dank, ihre Daten wurden erfolgreich übertragen",
+            "submit": "Übertragen"
+        }
+    }
+}

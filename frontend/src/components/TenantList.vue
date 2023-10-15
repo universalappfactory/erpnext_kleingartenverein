@@ -117,7 +117,14 @@
 
               <div class="grow"></div>
 
-              <div>
+              <div class="flex">
+                <a
+                  class="pl-4 font-medium text-blue-600 hover:underline"
+                  target="_blank"
+                  :href="`/service/counter?tenant=${name}&plot=${plot_link}`"
+                >
+                {{$t('tenant_list.counter_upload')}}
+                </a>
                 <a
                   class="pl-4 font-medium text-blue-600 hover:underline"
                   target="_blank"

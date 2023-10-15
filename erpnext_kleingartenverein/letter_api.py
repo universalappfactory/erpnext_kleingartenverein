@@ -11,6 +11,7 @@ from frappe import _
 import base64
 import json
 from werkzeug.wrappers import Response
+from erpnext_kleingartenverein.utils.decorators import check_permission
 
 
 def decode(content) -> str:
@@ -53,6 +54,7 @@ def background_publish_letters(letter_names):
 
 
 @frappe.whitelist(allow_guest=False)
+@check_permission
 def get_print_preview(*args, **kwargs):
     try:
         pdf = None  # create_print_preview(args, kwargs)
@@ -90,6 +92,7 @@ def parse_print_input(kwargs):
 
 
 @frappe.whitelist(allow_guest=False)
+@check_permission
 def print_letters(*args, **kwargs):
     (content, recipients, description, printFormat, isPreview) = parse_print_input(
         kwargs
@@ -113,6 +116,7 @@ def print_letters(*args, **kwargs):
 
 
 @frappe.whitelist(allow_guest=False)
+@check_permission
 def get_job_status(*args, **kwargs):
     if not "id" in kwargs:
         raise BadRequestError()
@@ -130,6 +134,7 @@ def get_job_status(*args, **kwargs):
 
 
 @frappe.whitelist(allow_guest=False)
+@check_permission
 def get_letters(*args, **kwargs):
     if not "letters" in kwargs:
         raise BadRequestError()

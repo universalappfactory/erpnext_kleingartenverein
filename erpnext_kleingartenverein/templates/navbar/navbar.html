@@ -10,7 +10,7 @@
       clip-rule="evenodd"></path>
   </svg></button>
 <!-- Dropdown menu -->
-<div id="{{parent_item.name}}" class="z-10 hidden bg-graygreen-200 
+<div id="{{parent_item.name}}" class="z-1000 hidden bg-graygreen-200 
   font-normal divide-y divide-gray-100 shadow w-full md:w-fit">
   <ul class="py-2" aria-labelledby="dropdownLargeButton">
     {% if top_bar_items -%}
@@ -153,7 +153,7 @@ md:hover:text-blue-700
 {% endmacro %}
 
 <nav class="top-0 absolute z-50 w-full flex flex-wrap">
-  <div class="container bg-head mx-auto items-center justify-start mt-4 px-4 py-4 bg-opacity-75"> 
+  <div class="container bg-head mx-auto items-center justify-start sm:mt-4 px-4 py-4 bg-opacity-75"> 
 
     <div class="flex items-center md:hidden ">
       <button data-collapse-toggle="navbar-multi-level" type="button" class="inline-flex items-center 
