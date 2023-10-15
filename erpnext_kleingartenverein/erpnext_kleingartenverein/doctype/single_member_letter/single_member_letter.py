@@ -14,10 +14,6 @@ STATUS_SUBMITTED = 1
 
 
 class SingleMemberLetter(Document):
-    def validate(self):
-        if self.recent_value <= 0:
-            self.is_suspicious = 1
-
     def on_submit(self):
         if self.error_message and self.error_message != "":
             frappe.throw(_("cannot submit letter has an error"))

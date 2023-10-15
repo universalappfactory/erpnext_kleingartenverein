@@ -6,14 +6,14 @@ from frappe.modules.patch_handler import get_patches_from_app, run_single
 
 
 class TestPatches(FrappeTestCase):
-    @unittest.skip('this fails actually, check before next release') # ToDo
+    # @unittest.skip('this fails actually, check before next release') # ToDo
     def test_that_patches_run(self):
         try:
-            customers = frappe.get_list('Customer')
+            customers = frappe.get_list("Customer")
             for c in customers:
-                if c.customer_group == 'Former Tenant':
-                    customer = frappe.get_doc('Customer', c.name)
-                    customer.customer_group = 'Tenant'
+                if c.customer_group == "Former Tenant":
+                    customer = frappe.get_doc("Customer", c.name)
+                    customer.customer_group = "Tenant"
                     customer.save()
 
             doc = frappe.get_doc("Customer Group", "Former Tenant")
@@ -24,7 +24,7 @@ class TestPatches(FrappeTestCase):
         check_patch_files("erpnext_kleingartenverein")
 
         all_patches = get_patches_from_app("erpnext_kleingartenverein")
-        self.assertEqual(len(all_patches), 3)
+        self.assertEqual(len(all_patches), 5)
         for p in all_patches:
             run_single(p, force=True)
 

@@ -187,131 +187,6 @@ def create_read_marker(document):
 
 
 @frappe.whitelist(allow_guest=False)
-def get_dashboard_navigation():
-    user = frappe.session.user
-    if not user or user == "Guest":
-        frappe.throw(_("Not permitted"), frappe.PermissionError)
-
-    roles = frappe.get_roles(user)
-
-    if not "MemberDashboard" in roles:
-        frappe.throw(_("Not permitted"), frappe.PermissionError)
-
-    try:
-        basic_navigation = [
-            {
-                "displayTitle": _("My Club"),
-                "href": "/",
-                "icon": "fa-home",
-                "mode": "NavigationMode.Router",
-            },
-            {
-                "displayTitle": _("Zur Homepage"),
-                "href": "/",
-                "icon": "fa-globe",
-                "mode": "NavigationMode.External",
-            },
-        ]
-
-        if not "Vorstand" in roles:
-            return basic_navigation
-
-        basic_navigation.append(
-            {
-                "displayTitle": _("Zum Desk"),
-                "href": "/app/",
-                "icon": "fa-desktop",
-                "mode": "NavigationMode.External",
-            }
-        )
-
-        basic_navigation.append(
-            {
-                "displayTitle": _("Meeting Minutes"),
-                "href": "/meetingminutes",
-                "icon": "fa-meetup",
-                "mode": "NavigationMode.Router",
-                "read_marker_doctype": "Meeting Minutes",
-            }
-        )
-
-        basic_navigation.append(
-            {
-                "displayTitle": _("Pächter"),
-                "href": "/paechter/",
-                "icon": "fa-list",
-                "mode": "NavigationMode.Router",
-            }
-        )
-
-        # basic_navigation.append(
-        #     {
-        #         "displayTitle": _("Meine Einstellungen"),
-        #         "href": "/profile/",
-        #         "icon": "fa-user",
-        #         "mode": "NavigationMode.Router",
-        #     }
-        # )
-
-        basic_navigation.append(
-            {
-                "displayTitle": _("Brief schreiben"),
-                "href": "/letter/",
-                "icon": "fa-user",
-                "mode": "NavigationMode.Router",
-            }
-        )
-
-        basic_navigation.append(
-            {
-                "displayTitle": _("Berichte"),
-                "href": "/reports/",
-                "icon": "fa-flag",
-                "mode": "NavigationMode.Router",
-            }
-        )
-        # basic_navigation.append(
-        #     {
-        #         "displayTitle": _("Berichte"),
-        #         "href": '/app/report?report_type=Query Report&_user_tags=["like"%2C"%25Dashboard%25"]',
-        #         "icon": "fa-flag",
-        #         "mode": "NavigationMode.External",
-        #     }
-        # )
-
-        # basic_navigation.append(
-        #     {
-        #         "displayTitle": _("Kalender"),
-        #         "href": "/calendar/",
-        #         "icon": "fa-list",
-        #         "mode": "NavigationMode.Router",
-        #     }
-        # )
-
-        # basic_navigation.append(
-        #     {
-        #         "displayTitle": _("Drive"),
-        #         "href": "/drive/",
-        #         "icon": "fa-list",
-        #         "mode": "NavigationMode.External",
-        #     }
-        # )
-
-        basic_navigation.append(
-            {
-                "displayTitle": _("Logout"),
-                "href": "/logout/",
-                "icon": "fa fa-sign-out",
-                "mode": "NavigationMode.External",
-            }
-        )
-        return basic_navigation
-    except Exception as e:
-        frappe.log_error(e)
-        return []
-
-
-@frappe.whitelist(allow_guest=False)
 def get_unread_document_count():
     user = frappe.session.user
     if not user or user == "Guest":
@@ -429,11 +304,9 @@ def mark_as_read(*args, **kwargs):
 
 
 def to_plot_tag(plot):
-    r = {
-        "name": plot['name'],
-        "tags": plot["_user_tags"].strip(",").split(",")
-    }
+    r = {"name": plot["name"], "tags": plot["_user_tags"].strip(",").split(",")}
     return r
+
 
 @frappe.whitelist(allow_guest=False)
 def get_plot_tags(*args, **kwargs):

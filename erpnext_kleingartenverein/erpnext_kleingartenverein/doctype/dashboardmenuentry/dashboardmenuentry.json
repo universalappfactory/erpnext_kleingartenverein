@@ -10,7 +10,10 @@
  "field_order": [
   "description",
   "path",
-  "role"
+  "role",
+  "icon",
+  "mode",
+  "read_marker_doctype"
  ],
  "fields": [
   {
@@ -34,12 +37,29 @@
    "label": "Role",
    "options": "Role",
    "reqd": 1
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Data",
+   "label": "Icon"
+  },
+  {
+   "fieldname": "mode",
+   "fieldtype": "Select",
+   "label": "mode",
+   "options": "Router\nExternal",
+   "reqd": 1
+  },
+  {
+   "fieldname": "read_marker_doctype",
+   "fieldtype": "Data",
+   "label": "Read Marker Doctype"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-10-14 15:33:58.694344",
+ "modified": "2023-10-15 13:31:30.377990",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "DashboardMenuEntry",
