@@ -201,17 +201,6 @@ export default defineComponent({
     },
   },
   computed: {
-    // href: function () {
-    //   const recipients = this.tenant.selection.map((x) => x.name);
-    //   let data = JSON.stringify({
-    //     recipients: recipients,
-    //     content: this.content,
-    //     description: "",
-    //     printFormat: this.letter.selectedPrintTemplate.value
-    //   });
-    //   data = encodeURIComponent(btoa(data));
-    //   return `/api/method/erpnext_kleingartenverein.letter_api.get_print_preview?data=${data}`;
-    // },
     previewDisabled: function () {
       return this.content === "" || this.tenant.selection.length === 0;
     },

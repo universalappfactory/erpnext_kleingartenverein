@@ -1,5 +1,5 @@
 import frappe
-
+from functools import wraps
 
 def valid_name(name):
     if not name:
@@ -36,10 +36,11 @@ def has_permission(user, func_name, func_module):
 
 
 def check_permission(func):
-    def inner():
+    @wraps(func)
+    def inner(*args, **kwargs):
         if not has_permission(frappe.session["user"], func.__name__, func.__module__):
-            return False
+            raise frappe.PermissionError
 
-        return func()
+        return func(*args, **kwargs)
 
     return inner

@@ -73,7 +73,7 @@ export default defineComponent({
          start: 0,
          pageLength: 20,
          // orderBy: 'date desc',
-         url: '/api/method/erpnext_kleingartenverein.api.get_all'
+         url: '/api/method/erpnext_kleingartenverein.dashboard_api.get_all'
       })
 
       meetingMinutes.fetch()
@@ -82,7 +82,7 @@ export default defineComponent({
       const readInfo = createResource({
          document_type_name: 'Meeting Minutes',
          // orderBy: 'date desc',
-         url: '/api/method/erpnext_kleingartenverein.api.get_read_info'
+         url: '/api/method/erpnext_kleingartenverein.dashboard_api.get_read_info'
       })
 
       watch(meetingMinutes, (val) => {

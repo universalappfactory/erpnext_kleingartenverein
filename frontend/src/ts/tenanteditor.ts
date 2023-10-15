@@ -26,7 +26,7 @@ export function useTenantEditor() {
 
 
     const teantsResource = createResource({
-        url: '/api/method/erpnext_kleingartenverein.api.get_tenant_data'
+        url: '/api/method/erpnext_kleingartenverein.dashboard_api.get_tenant_data'
     })
 
     const getAttachments = (data: any) => {

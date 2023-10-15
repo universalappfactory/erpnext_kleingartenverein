@@ -60,7 +60,6 @@ onMounted(async () => {
 });
 
 const showDetails = (item) => {
-  console.log("x", item.name);
   openLink.value = `${location.host}/app/query-report/${item.name}`;
   openLinkAnchor.value.click();
 };

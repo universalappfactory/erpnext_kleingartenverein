@@ -26,7 +26,7 @@ const routes = [
     }
   },
   {
-    path: '/zaehler',
+    path: '/counter',
     name: 'Counter',
     component: () => import('@/pages/CounterUpload.vue'),
     meta: {

@@ -19,9 +19,9 @@ export function useMemberLetter() {
     const processingFinished = ref(false)
 
     const noTemplate: SelectItem = {
-        content: '',
         description: 'Leer',
-        value: ''
+        value: '',
+        name: 'Leer'
     }
 
     const page = {

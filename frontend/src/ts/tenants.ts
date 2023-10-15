@@ -70,11 +70,11 @@ export function useTenants(): TenantFunctions {
     })
 
     const searchResource = createResource({
-        url: '/api/method/erpnext_kleingartenverein.api.search_tenants'
+        url: '/api/method/erpnext_kleingartenverein.dashboard_api.search_tenants'
     })
 
     const plotTagResource = createResource({
-        url: '/api/method/erpnext_kleingartenverein.api.get_plot_tags'
+        url: '/api/method/erpnext_kleingartenverein.dashboard_api.get_plot_tags'
     })
 
     function createData(input: any): TenantData {
