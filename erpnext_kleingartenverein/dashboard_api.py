@@ -286,3 +286,58 @@ def get_tenant_data(*args, **kwargs):
     except Exception as e:
         frappe.log_error(e)
         return []
+
+def map_tag(input):
+    return {"value": input["name"], "description": input["name"], "name": input["name"]}
+
+@frappe.whitelist(allow_guest=False)
+@check_permission
+def get_tenant_tags():
+    user = frappe.session.user
+    if not user or user == "Guest":
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+    try:
+        tenant_tags = frappe.db.sql(
+            """
+            with recursive cte as (
+                select _user_tags as name, concat(_user_tags, ',') as names, 1 as lev
+                from `tabCustomer`
+                union all
+                select substring_index(names, ',', 1),
+                        substr(names, instr(names, ',') + 1), lev + 1
+                from cte
+                where names like '%,%'
+                )
+            select DISTINCT(name)
+            from cte
+            where lev > 1 AND name <> ''
+        """,
+            as_dict=1,
+        )
+
+        plot_tags = frappe.db.sql(
+            """
+            with recursive cte as (
+                select _user_tags as name, concat(_user_tags, ',') as names, 1 as lev
+                from `tabPlot`
+                union all
+                select substring_index(names, ',', 1),
+                        substr(names, instr(names, ',') + 1), lev + 1
+                from cte
+                where names like '%,%'
+                )
+            select DISTINCT(name)
+            from cte
+            where lev > 1 AND name <> ''
+        """,
+            as_dict=1,
+        )
+
+        result = list(map(lambda x: map_tag(x), tenant_tags)) + list(
+            map(lambda x: map_tag(x), plot_tags)
+        )
+        return sorted(result, key=lambda x: x['description'].lower())
+    except Exception as e:
+        frappe.log_error(e)
+        return []

@@ -10,7 +10,7 @@ from datetime import datetime
 from frappe import _
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=False)
 def execute_invoice_calculation(names, status):
     try:
         names = json.loads(names)
@@ -63,60 +63,6 @@ def get_breadcrumbs(context, current_route=None):
                 result.append((itm.url, itm.label))
 
     return result
-
-
-@frappe.whitelist(allow_guest=True)
-def get_public_events():
-    try:
-        club_settings = frappe.get_last_doc("Club Settings")
-
-        all_events = []
-
-        if club_settings.public_date_tags:
-            next_events = frappe.get_all(
-                "Event",
-                filters={
-                    "event_type": "Public",
-                    "status": "Open",
-                    "_user_tags": ["like", f"%{club_settings.public_date_tags}%"],
-                },
-                order_by="starts_on asc",
-                fields="*",
-            )
-            all_events = all_events + next_events
-
-        if club_settings.stripped_date_tags:
-            next_events = frappe.get_all(
-                "Event",
-                filters={
-                    "event_type": "Public",
-                    "status": "Open",
-                    "_user_tags": ["like", f"%{club_settings.stripped_date_tags}%"],
-                },
-                order_by="starts_on asc",
-                fields="*",
-            )
-
-            for evt in next_events:
-                evt.subject = club_settings.stripped_date_tags
-                evt.details = ""
-
-            all_events = all_events + next_events
-
-        return sorted(
-            map(
-                lambda x: {
-                    "subject": x.subject,
-                    "starts_on": x.starts_on,
-                    "ends_on": x.ends_on,
-                },
-                all_events,
-            ),
-            key=lambda x: x["starts_on"],
-        )
-    except Exception as e:
-        frappe.log_error(e)
-        return []
 
 
 def get_or_create_read_marker(document_type, document_name):
@@ -191,63 +137,5 @@ def submit_by_name(*args, **kwargs):
         doc.submit()
     except Exception as e:
         print(e)
-        frappe.log_error(e)
-        return []
-
-
-
-
-
-def map_tag(input):
-    return {"value": input["name"], "description": input["name"], "name": input["name"]}
-
-
-@frappe.whitelist(allow_guest=False)
-def get_tenant_tags():
-    user = frappe.session.user
-    if not user or user == "Guest":
-        frappe.throw(_("Not permitted"), frappe.PermissionError)
-
-    try:
-        tenant_tags = frappe.db.sql(
-            """
-            with recursive cte as (
-                select _user_tags as name, concat(_user_tags, ',') as names, 1 as lev
-                from `tabCustomer`
-                union all
-                select substring_index(names, ',', 1),
-                        substr(names, instr(names, ',') + 1), lev + 1
-                from cte
-                where names like '%,%'
-                )
-            select DISTINCT(name)
-            from cte
-            where lev > 1 AND name <> ''
-        """,
-            as_dict=1,
-        )
-
-        plot_tags = frappe.db.sql(
-            """
-            with recursive cte as (
-                select _user_tags as name, concat(_user_tags, ',') as names, 1 as lev
-                from `tabPlot`
-                union all
-                select substring_index(names, ',', 1),
-                        substr(names, instr(names, ',') + 1), lev + 1
-                from cte
-                where names like '%,%'
-                )
-            select DISTINCT(name)
-            from cte
-            where lev > 1 AND name <> ''
-        """,
-            as_dict=1,
-        )
-
-        return list(map(lambda x: map_tag(x), tenant_tags)) + list(
-            map(lambda x: map_tag(x), plot_tags)
-        )
-    except Exception as e:
         frappe.log_error(e)
         return []

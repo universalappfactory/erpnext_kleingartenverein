@@ -35,7 +35,11 @@ def upload_counter_value(*args, **kwargs):
         counter_value = float(frappe.request.form["additionalData[counterValue]"])
         plot = frappe.request.form["additionalData[plot]"]
         tenant = str(frappe.request.form["additionalData[tenant]"])
-        send_mail = True if frappe.request.form["additionalData[sendConfirmationMail]"] == 'true' else False
+        send_mail = (
+            True
+            if frappe.request.form["additionalData[sendConfirmationMail]"] == "true"
+            else False
+        )
 
         extension = path.splitext(file.filename)[1][1:]
 
@@ -96,10 +100,10 @@ def upload_counter_value(*args, **kwargs):
                 "is_suspicious": 0,
                 "picture": file_doc.file_url,
                 "doc_status": 0,
-                "sent_mail": send_mail
+                "sent_mail": send_mail,
             }
         ).save()
-        
+
         return {"success": True}
     except Exception as e:
         frappe.log_error(e)
@@ -117,5 +121,60 @@ def get_plot_list(*args, **kwargs):
         )
     except Exception as e:
         print(e)
+        frappe.log_error(e)
+        return []
+
+
+@frappe.whitelist(allow_guest=True)
+@check_permission
+def get_public_events():
+    try:
+        club_settings = frappe.get_last_doc("Club Settings")
+
+        all_events = []
+
+        if club_settings.public_date_tags:
+            next_events = frappe.get_all(
+                "Event",
+                filters={
+                    "event_type": "Public",
+                    "status": "Open",
+                    "_user_tags": ["like", f"%{club_settings.public_date_tags}%"],
+                },
+                order_by="starts_on asc",
+                fields="*",
+            )
+            all_events = all_events + next_events
+
+        if club_settings.stripped_date_tags:
+            next_events = frappe.get_all(
+                "Event",
+                filters={
+                    "event_type": "Public",
+                    "status": "Open",
+                    "_user_tags": ["like", f"%{club_settings.stripped_date_tags}%"],
+                },
+                order_by="starts_on asc",
+                fields="*",
+            )
+
+            for evt in next_events:
+                evt.subject = club_settings.stripped_date_tags
+                evt.details = ""
+
+            all_events = all_events + next_events
+
+        return sorted(
+            map(
+                lambda x: {
+                    "subject": x.subject,
+                    "starts_on": x.starts_on,
+                    "ends_on": x.ends_on,
+                },
+                all_events,
+            ),
+            key=lambda x: x["starts_on"],
+        )
+    except Exception as e:
         frappe.log_error(e)
         return []
