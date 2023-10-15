@@ -79,7 +79,7 @@ export default defineComponent({
     const selectedTag = ref("")
 
     const tags = useResource<SelectItem>({
-      url: "/api/method/erpnext_kleingartenverein.api.get_tenant_tags",
+      url: "/api/method/erpnext_kleingartenverein.dashboard_api.get_tenant_tags",
     });
 
     const selectedFilter = ref("");

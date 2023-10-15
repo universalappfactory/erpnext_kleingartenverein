@@ -642,6 +642,24 @@ def add_api_access():
             "erpnext_kleingartenverein.letter_api.get_letters",
             "System Manager",
         )
+        add_not_existing_entry(
+            club_settings,
+            "Dashboard Get Tenant Tags",
+            "erpnext_kleingartenverein.dashboard_api.get_tenant_tags",
+            "System Manager",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Public Get Public Events (Guest)",
+            "erpnext_kleingartenverein.dashboard_api.get_public_events",
+            "Guest",
+        )
+        add_not_existing_entry(
+            club_settings,
+            "Public Get Public Events (System Manager)",
+            "erpnext_kleingartenverein.dashboard_api.get_public_events",
+            "System Manager",
+        )
 
         club_settings.save()
     except Exception as error:

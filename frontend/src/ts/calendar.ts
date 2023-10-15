@@ -47,7 +47,7 @@ export function getDurationString(input: CalendarEvent) {
 export function useCalendar() {
 
     const events = createResource({
-        url: '/api/method/erpnext_kleingartenverein.api.get_public_events'
+        url: '/api/method/erpnext_kleingartenverein.public_api.get_public_events'
     })
 
     const calendarEvents:CalendarEvent[]  = reactive([])
