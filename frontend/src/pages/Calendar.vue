@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="hidden md:block blog-page pb-20">
-      <CalendarComponent :events="calendar.calendarEvents" @event-focused="calendar.eventFocused" />
+      <CalendarComponent
+        :events="calendar.calendarEvents"
+        @event-focused="calendar.eventFocused"
+      />
     </div>
 
     <div class="bg-sand md:mt-4">
@@ -16,31 +19,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import CalendarComponent from "../components/CalendarComponent.vue";
 import EventListComponent from "../components/EventListComponent.vue";
-import VueCal from 'vue-cal'
-import 'vue-cal/dist/vuecal.css'
-import { useSharedCalendar } from '../ts/calendar'
+import VueCal from "vue-cal";
+import "vue-cal/dist/vuecal.css";
+import { useSharedCalendar } from "../ts/calendar";
 
 export default defineComponent({
-  name: 'Calendar',
+  name: "Calendar",
   setup() {
-    const calendar = useSharedCalendar()
+    const calendar = useSharedCalendar();
 
     return {
-      calendar
-    }
+      calendar,
+    };
   },
   data() {
     return {
       showDialog: false,
-    }
+    };
   },
   components: {
     VueCal,
     CalendarComponent,
-    EventListComponent
+    EventListComponent,
   },
 });
 </script>
@@ -65,16 +68,15 @@ export default defineComponent({
 }
 
 .vuecal__flex .vuecal__menu {
-  background-color: rgb(109 143 57)
+  background-color: rgb(109 143 57);
 }
 
 .vuecal__title-bar {
-  background-color: rgb(109 143 0.6)
+  background-color: rgb(109 143 0.6);
 }
 
 .vuecal__cell-events {
   padding: 4px;
-
 }
 
 .vuecal__event {
@@ -85,6 +87,5 @@ export default defineComponent({
 }
 
 .eventlist table {
-
 }
 </style>
