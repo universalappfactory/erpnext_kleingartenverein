@@ -20,10 +20,12 @@ export function useUpload(options: UseUploadOptions) {
     );
 
     const executeUpload = async (content: UploadData) => {
+        const frappe = window['frappe']
         return await execute({
             data: content,
             headers: {
                 "Content-Type": "multipart/form-data",
+                "X-Frappe-CSRF-Token": frappe.csrf_token
             },
             method: options.method ?? 'POST',
         })

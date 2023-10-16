@@ -32,6 +32,7 @@ export function useCounterUpload() {
         }
     })
 
+    
     const { executeUpload, isFinished } = useUpload({
         url: "/api/method/erpnext_kleingartenverein.public_api.upload_counter_value"
     })
@@ -46,6 +47,7 @@ export function useCounterUpload() {
     const uploadClicked = ref(false)
     const isLoading = ref(false)
     const uploadSuccess = ref(false)
+    const errorMessage = ref('')
 
     const toContent: () => CounterContent = () => {
         return {
@@ -109,7 +111,13 @@ export function useCounterUpload() {
             uploadClicked.value = true
             uploadSuccess.value = false
             hasError.value = false
+            errorMessage.value = ''
             const content = await validate()
+            
+            if ((file.value.size / (1024*1024)) > 10) {
+                throw Error('Filesize exceeded')    
+            }
+            
             if (content && emptyFile.value == false) {
                 const uploadResult = await executeUpload({
                     file: file.value,
@@ -120,6 +128,7 @@ export function useCounterUpload() {
         }
         catch (e) {
             hasError.value = true
+            errorMessage.value = e.message
         } finally {
             isLoading.value = false
         }
@@ -174,6 +183,7 @@ export function useCounterUpload() {
         emptyFile,
         isFinished,
         isLoading,
-        uploadSuccess
+        uploadSuccess,
+        errorMessage
     }
 }

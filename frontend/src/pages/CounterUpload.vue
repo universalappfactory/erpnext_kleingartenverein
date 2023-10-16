@@ -85,7 +85,7 @@
         <Checkbox
           class="mt-4 ml-2"
           v-model="upload.sendConfirmationMail.value"
-          label="Sent confirmation mail"
+          :label="$t('counter_upload.sendConfirmationMail')"
         />
       </div>
 
@@ -98,6 +98,11 @@
 
         <Alert type="danger" class="mr-2" v-if="upload.hasError.value">
           {{ $t("counter_upload.error") }}
+
+          <template v-if="upload.errorMessage.value === 'Filesize exceeded'">
+            <br/>
+            {{ $t("counter_upload.filesizeError") }}
+          </template>
         </Alert>
 
         <template v-if="upload.uploadSuccess.value">

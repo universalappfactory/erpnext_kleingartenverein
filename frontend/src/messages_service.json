@@ -19,7 +19,9 @@
             "submitting": "Submitting",
             "error": "Error",
             "success": "Submission was succesful, thanks",
-            "submit": "Submit"
+            "submit": "Submit",
+            "filesizeError": "Max 10MB",
+            "sendConfirmationMail": "Send confirmation mail"
         }
     },
     "de": {
@@ -42,7 +44,9 @@
             "submitting": "Daten werden übertagen",
             "error": "Es ist ein Fehler aufgetreten",
             "success": "Vielen Dank, ihre Daten wurden erfolgreich übertragen",
-            "submit": "Übertragen"
+            "submit": "Übertragen",
+            "filesizeError": "Es sind maximal 10MB erlaubt!",
+            "sendConfirmationMail": "Bestätigungs EMail senden"
         }
     }
 }
