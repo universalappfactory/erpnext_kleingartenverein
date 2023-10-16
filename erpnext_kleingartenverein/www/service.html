@@ -4,32 +4,28 @@
 
 {%- block customhead -%}
 
-    {% include 'erpnext_kleingartenverein/templates/public_js.html' %}
-    {% include 'erpnext_kleingartenverein/templates/public_script.html' %}
-    
+{% include 'erpnext_kleingartenverein/templates/public_js.html' %}
+{% include 'erpnext_kleingartenverein/templates/public_script.html' %}
+
 {%- endblock -%}
 
 {%- block content -%}
 
-<!-- {{ head_with_image(_('Dates'), default_header_image, separator=True ) }} -->
 
 <div class="relative left-0  pt-16 pb-32 flex content-center items-center justify-center" style="min-height: 25vh;">
   <div class="absolute top-0 w-full  h-full bg-center bg-cover"
-      style="background-image: url(&quot;{{default_header_image}}&quot;);">
+    style="background-image: url(&quot;{{default_header_image}}&quot;);z-index: -1;">
   </div>
 </div>
 
 {% set ns = namespace(background='') %}
-{%- if service_section_background  -%}
-    {% set ns.background = service_section_background %}
+{%- if service_section_background -%}
+{% set ns.background = service_section_background %}
 {%- endif -%}
 
 
-
-<!--  -->
-
-
-<section class="w-full flex justify-center pt-10 -mt-48" style="background-image: url('{{ns.background}}'); background-size: contain; background-repeat: repeat"  >
+<section class="w-full flex justify-center pt-10 -mt-48"
+  style="background-image: url('{{ns.background}}'); background-size: contain; background-repeat: repeat">
   <div class="w-full md:max-w-[90vh] container">
     <div id="app"></div>
     <div id="modals"></div>
