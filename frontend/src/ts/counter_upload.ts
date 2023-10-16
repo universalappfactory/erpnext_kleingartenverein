@@ -23,7 +23,7 @@ interface CounterContent extends yup.InferType<typeof uploadCounterContentSchema
 export function useCounterUpload() {
 
     const plots = useResource<Plot>({
-        url: "http://localhost:8000/api/method/erpnext_kleingartenverein.public_api.get_plot_list",
+        url: "/api/method/erpnext_kleingartenverein.public_api.get_plot_list",
         mapFn: (input: any) => {
             return {
                 name: input.plot_number,
@@ -33,7 +33,7 @@ export function useCounterUpload() {
     })
 
     const { executeUpload, isFinished } = useUpload({
-        url: "http://localhost:8000/api/method/erpnext_kleingartenverein.public_api.upload_counter_value"
+        url: "/api/method/erpnext_kleingartenverein.public_api.upload_counter_value"
     })
 
     const plot = ref<string | undefined>();

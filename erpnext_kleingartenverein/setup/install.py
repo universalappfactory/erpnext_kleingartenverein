@@ -651,13 +651,13 @@ def add_api_access():
         add_not_existing_entry(
             club_settings,
             "Public Get Public Events (Guest)",
-            "erpnext_kleingartenverein.dashboard_api.get_public_events",
+            "erpnext_kleingartenverein.get_public_events.get_public_events",
             "Guest",
         )
         add_not_existing_entry(
             club_settings,
             "Public Get Public Events (System Manager)",
-            "erpnext_kleingartenverein.dashboard_api.get_public_events",
+            "erpnext_kleingartenverein.get_public_events.get_public_events",
             "System Manager",
         )
 
