@@ -12,7 +12,7 @@ export interface Plot {
 const uploadCounterContentSchema = yup.object({
     tenant: yup.string().trim().required('tenant'),
     plot: yup.string().trim().required('plot'),
-    counterValue: yup.number().positive('counterValue').required('counterValue').label('counterValue'),
+    counterValue: yup.number().min(0).required('counterValue').label('counterValue'),
     sendConfirmationMail: yup.boolean()
 });
 
@@ -32,7 +32,7 @@ export function useCounterUpload() {
         }
     })
 
-    
+
     const { executeUpload, isFinished } = useUpload({
         url: "/api/method/erpnext_kleingartenverein.public_api.upload_counter_value"
     })
@@ -99,7 +99,7 @@ export function useCounterUpload() {
                     uploadSuccess.value = false
                     hasError.value = true
                 }
-            }            
+            }
         } catch (e) {
             hasError.value = true
         }
@@ -113,11 +113,11 @@ export function useCounterUpload() {
             hasError.value = false
             errorMessage.value = ''
             const content = await validate()
-            
-            if ((file.value.size / (1024*1024)) > 10) {
-                throw Error('Filesize exceeded')    
+
+            if ((file.value.size / (1024 * 1024)) > 10) {
+                throw Error('Filesize exceeded')
             }
-            
+
             if (content && emptyFile.value == false) {
                 const uploadResult = await executeUpload({
                     file: file.value,
@@ -146,6 +146,7 @@ export function useCounterUpload() {
             const validationError = e as yup.ValidationError;
             if (validationError) {
                 errorClasses.parseValidationError(validationError)
+                errorMessage.value = validationError.message
             }
         }
     }
@@ -158,6 +159,12 @@ export function useCounterUpload() {
 
     const plotWatch = watch(plot, () => {
         if (uploadClicked.value) {
+            validate()
+        }
+    })
+
+    const counterValueWatch = watch(counterValue, () => {
+        if (counterValue.value) {
             validate()
         }
     })

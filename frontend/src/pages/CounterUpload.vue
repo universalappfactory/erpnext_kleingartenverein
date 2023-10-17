@@ -89,21 +89,46 @@
         />
       </div>
 
+      <div class="mt-2 gap-2">
+        <template v-if="upload.errorMessage.value === 'Filesize exceeded'">
+          <Toast style="padding: 0px; margin-bottom: 2px;" type="danger">
+            {{ $t("counter_upload.filesizeError") }}
+          </Toast>
+        </template>
+        <template
+          v-if="upload.errors.value['tenant'] && upload.errors.value['tenant'] !== ''"
+        >
+          <Toast style="padding: 0px; margin-bottom: 2px;" type="danger">
+            {{ $t("counter_upload.tenant_error") }}
+          </Toast>
+        </template>
+        <template
+          v-if="upload.errors.value['plot'] && upload.errors.value['plot'] !== ''"
+        >
+          <Toast style="padding: 0px; margin-bottom: 2px;" type="danger"> {{ $t("counter_upload.plot_error") }} </Toast>
+        </template>
+        <template
+          v-if="
+            upload.errors.value['counterValue'] &&
+            upload.errors.value['counterValue'] !== ''
+          "
+        >
+          <Toast style="padding: 0px; margin-bottom: 2px;" type="danger">
+            {{ $t("counter_upload.counter_value_error") }}
+          </Toast>
+        </template>
+      </div>
+
       <div class="flex items-center">
         <div class="grow mt-0">
           <AnimatedLoadingCard :isLoading="upload.isLoading.value">
             <p class="p-2">{{ $t("counter_upload.submitting") }}</p>
           </AnimatedLoadingCard>
+
+          <Alert class="mr-2" type="danger" v-if="upload.hasError.value">
+            {{ $t("counter_upload.error") }}
+          </Alert>
         </div>
-
-        <Alert type="danger" class="mr-2" v-if="upload.hasError.value">
-          {{ $t("counter_upload.error") }}
-
-          <template v-if="upload.errorMessage.value === 'Filesize exceeded'">
-            <br/>
-            {{ $t("counter_upload.filesizeError") }}
-          </template>
-        </Alert>
 
         <template v-if="upload.uploadSuccess.value">
           <div class="mr-2 text-green-800 bg-white p-4 rounded-lg">
@@ -128,10 +153,8 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { PropType, ref, defineComponent, computed } from "vue";
-import { useVModel } from "@vueuse/core";
-import { Input, Alert, FileInput, Button, Checkbox, Select } from "flowbite-vue";
-import { useAxios } from "@vueuse/integrations/useAxios";
+import { ref } from "vue";
+import { Input, Alert, FileInput, Button, Checkbox, Select, Toast } from "flowbite-vue";
 import { useCounterUpload } from "../ts/counter_upload";
 import { useRoute } from "vue-router";
 import AnimatedLoadingCard from "../components/indicators/AnimatedLoadingCard.vue";

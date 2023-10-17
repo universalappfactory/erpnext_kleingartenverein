@@ -21,7 +21,10 @@
             "success": "Submission was succesful, thanks",
             "submit": "Submit",
             "filesizeError": "Max 10MB",
-            "sendConfirmationMail": "Send confirmation mail"
+            "sendConfirmationMail": "Send confirmation mail",
+            "tenant_error": "Tenant",
+            "plot_error": "Plotnumber",
+            "counter_value_error": "Counter"
         }
     },
     "de": {
@@ -46,7 +49,11 @@
             "success": "Vielen Dank, ihre Daten wurden erfolgreich übertragen",
             "submit": "Übertragen",
             "filesizeError": "Es sind maximal 10MB erlaubt!",
-            "sendConfirmationMail": "Bestätigungs EMail senden"
+            "sendConfirmationMail": "Bestätigungs EMail senden",
+            "tenant_error": "Pächtername muss angegeben werden",
+            "plot_error": "Gartennummer",
+            "counter_value_error": "Zählerstand"
+            
         }
     }
 }
