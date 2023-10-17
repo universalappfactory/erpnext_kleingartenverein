@@ -43,7 +43,7 @@ def upload_counter_value(*args, **kwargs):
 
         extension = path.splitext(file.filename)[1][1:]
 
-        if counter_value <= 0:
+        if counter_value < 0:
             raise BadRequestError()
 
         if tenant.lstrip().rstrip() == "":
