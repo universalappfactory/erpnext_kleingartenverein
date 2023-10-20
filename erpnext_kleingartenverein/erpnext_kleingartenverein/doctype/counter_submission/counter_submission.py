@@ -25,7 +25,7 @@ class CounterSubmission(Document):
             self.apply_to_customer()
 
     def apply_to_customer(self):
-        source_file = frappe.get_last_doc('File', filters={"file_url": self.picture})
+        source_file = frappe.get_last_doc("File", filters={"file_url": self.picture})
         plot = frappe.get_doc("Plot", self.plot)
 
         file_doc = frappe.new_doc("File")
@@ -45,8 +45,19 @@ class CounterSubmission(Document):
         try:
             plot.save()
         except Exception as error:
-             frappe.log_error(error)
-             raise error
+            frappe.log_error(error)
+            raise error
+
+    def update_attached_file(self):
+        if self.picture:
+            file = frappe.get_last_doc("File", {"file_url": self.picture })
+            file.attached_to_name = self.name
+            file.attached_to_doctype = "Counter Submission"
+            file.attached_to_field = "picture"
+            file.save()
+
+    def on_update(self):
+        self.update_attached_file()
 
     def before_submit(self):
         pass

@@ -73,7 +73,7 @@ def upload_counter_value(*args, **kwargs):
         date = now.strftime("%Y-%m-%d-%H-%M")
 
         save_path = get_guest_folder()
-        filename = f'counter_upload_{plot["customer"]}_{date}_.{extension}'
+        filename = f'counter_upload_{plot["customer"]}_{date}.{extension}'
 
         file_doc = frappe.new_doc("File")
         file_doc.folder = save_path
@@ -85,9 +85,9 @@ def upload_counter_value(*args, **kwargs):
                 "ignore_existing_file_check": True,
             }
         )
-        file_doc.save(ignore_permissions=True)
+        file_doc.insert(ignore_permissions=True)
 
-        submission = frappe.get_doc(
+        frappe.get_doc(
             {
                 "doctype": "Counter Submission",
                 "customer": plot["customer"],
@@ -102,7 +102,7 @@ def upload_counter_value(*args, **kwargs):
                 "doc_status": 0,
                 "sent_mail": send_mail,
             }
-        ).save()
+        ).insert()
 
         return {"success": True}
     except Exception as e:
