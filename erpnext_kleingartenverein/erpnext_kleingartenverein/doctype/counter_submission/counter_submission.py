@@ -54,7 +54,7 @@ class CounterSubmission(Document):
             file.attached_to_name = self.name
             file.attached_to_doctype = "Counter Submission"
             file.attached_to_field = "picture"
-            file.save()
+            file.save(ignore_permissions=True)
 
     def on_update(self):
         self.update_attached_file()
