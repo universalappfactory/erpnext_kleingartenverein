@@ -2,7 +2,12 @@ import frappe
 from frappe import _
 from erpnext_kleingartenverein.utils.decorators import check_permission
 from erpnext_kleingartenverein.utils.tenant_search import TenantSearch
-
+from erpnext_kleingartenverein.exceptions import BadRequestError, UploadBankstatementError
+from erpnext_kleingartenverein.file_api import (
+    get_yearly_bank_statements_folder
+)
+import puremagic
+import mimetypes
 
 @frappe.whitelist(allow_guest=False)
 @check_permission
@@ -341,3 +346,67 @@ def get_tenant_tags():
     except Exception as e:
         frappe.log_error(e)
         return []
+
+@frappe.whitelist(allow_guest=True)
+@check_permission
+def upload_bank_statement(*args, **kwargs):
+    try:
+        file = frappe.request.files["file"]
+
+        mimetype = mimetypes.guess_type(file.filename)[0]
+        if not mimetype.startswith("text/csv"):
+            raise BadRequestError()
+
+        club_settings = frappe.get_last_doc("Club Settings")
+        if not club_settings:
+            raise UploadBankstatementError()
+        
+        company = frappe.get_doc('Company', club_settings.club_link)
+        if not company:
+            raise UploadBankstatementError()
+
+        default_bank_accounts = frappe.get_all(
+            "Bank Account",
+            filters={
+                "is_default": True,
+            },
+        )
+        if len(default_bank_accounts) == 0:
+            raise UploadBankstatementError()
+
+
+        # now = datetime.now()
+        # date = now.strftime("%Y-%m-%d-%H-%M")
+
+        save_path = get_yearly_bank_statements_folder()
+        # filename = f'counter_upload_{plot["customer"]}_{date}.{extension}'
+
+        content = file.stream.read()
+        file_doc = frappe.new_doc("File")
+        file_doc.folder = save_path
+        file_doc.file_name = file.filename
+        file_doc.is_private = 1
+        file_doc.content = content
+        file_doc.flags = frappe._dict(
+            {
+                "ignore_existing_file_check": True,
+            }
+        )
+        file_doc.insert()
+
+        bsi = frappe.new_doc("Bank Statement Import")
+        bsi.update(
+			{
+				"company": company.name,
+			}
+		)
+        bsi.update({"bank_account": default_bank_accounts[0].name})
+        bsi.update({"import_file": file_doc.file_url})
+        bsi.update({"template_options": "{\"column_to_field_map\": {}}"})
+
+        bsi.insert()
+        bsi.start_import()
+        
+    except Exception as e:
+        frappe.log_error(e)
+        raise BadRequestError()

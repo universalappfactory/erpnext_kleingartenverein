@@ -1,4 +1,5 @@
 import { useAxios } from "@vueuse/integrations/useAxios";
+import { ref } from "vue";
 
 export interface UseUploadOptions {
     url: string,
@@ -11,6 +12,9 @@ export interface UploadData {
 }
 
 export function useUpload(options: UseUploadOptions) {
+    
+    const file = ref<File | undefined>();
+    
     const { execute, isFinished } = useAxios(
         options.url,
         {
@@ -20,16 +24,16 @@ export function useUpload(options: UseUploadOptions) {
     );
 
     const executeUpload = async (content: UploadData) => {
-        const frappe = window['frappe']
+        // const frappe = window['frappe']
         return await execute({
             data: content,
             headers: {
                 "Content-Type": "multipart/form-data",
-                "X-Frappe-CSRF-Token": frappe.csrf_token
+                "X-Frappe-CSRF-Token": window.csrf_token
             },
             method: options.method ?? 'POST',
         })
     }
 
-    return { executeUpload, isFinished }
+    return { executeUpload, isFinished , file}
 }
