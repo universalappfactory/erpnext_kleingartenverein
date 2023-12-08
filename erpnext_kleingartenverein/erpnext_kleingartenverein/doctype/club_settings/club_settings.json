@@ -31,7 +31,9 @@
   "sec_dashboard",
   "dashboard_menu_entries",
   "sec_api",
-  "api_access"
+  "api_access",
+  "sec_payment_settings",
+  "tab_payment_mappings"
  ],
  "fields": [
   {
@@ -172,11 +174,23 @@
    "fieldtype": "Table",
    "label": "ApiAccess",
    "options": "ApiAccess"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sec_payment_settings",
+   "fieldtype": "Section Break",
+   "label": "Payment Settings"
+  },
+  {
+   "fieldname": "tab_payment_mappings",
+   "fieldtype": "Table",
+   "label": "payment_mappings",
+   "options": "PaymentMapping"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-10-14 15:38:15.904651",
+ "modified": "2023-12-08 18:42:50.215942",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Club Settings",
