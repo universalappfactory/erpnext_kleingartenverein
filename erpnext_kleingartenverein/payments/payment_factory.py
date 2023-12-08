@@ -50,6 +50,7 @@ def create_payment_for_received_amount(
 
 def create_payment_for_paid_amount(
     company,
+    title,
     supplier,
     posting_date,
     reference_no,
@@ -66,6 +67,7 @@ def create_payment_for_paid_amount(
             "payment_type": "Pay",
             "posting_date": posting_date,
             "company": company,
+            "title": title,
             "paid_from": paid_from,
             "reference_no": reference_no,
             "paid_from_account_currency": "EUR",

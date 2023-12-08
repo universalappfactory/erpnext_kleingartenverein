@@ -53,12 +53,17 @@ def find_invoice_by_plot(input_text, regex, total_amount):
                 "Sales Invoice",
                 filters={
                     "customer": customer_list[0]["name"],
-                    "status": "Unpaid",
                     "posting_date": [">=", start],
                     "posting_date": ["<=", end],
                     "grand_total": total_amount,
                 },
                 fields="*",
+            )
+            invoice_list = list(
+                filter(
+                    lambda x: x.status in ["Submitted", "Overdue", "Unpaid"],
+                    invoice_list,
+                )
             )
             if len(invoice_list) == 1:
                 return invoice_list[0]
@@ -78,12 +83,17 @@ def find_invoice_by_customer_name(ref_no, description, total_amount):
                 "Sales Invoice",
                 filters={
                     "customer": customer["name"],
-                    "status": "Unpaid",
                     "posting_date": [">=", start],
                     "posting_date": ["<=", end],
                     "grand_total": total_amount,
                 },
                 fields="*",
+            )
+            invoice_list = list(
+                filter(
+                    lambda x: x.status in ["Submitted", "Overdue", "Unpaid"],
+                    invoice_list,
+                )
             )
             if len(invoice_list) == 1:
                 return invoice_list[0]
@@ -183,6 +193,20 @@ def get_or_create_unkown_customer():
         return customer
 
 
+def find_customer_for_transaction(transaction):
+    all_customers = frappe.get_list(
+        "Customer", limit_page_length=2000, fields=["name", "customer_name"]
+    )
+
+    for customer in all_customers:
+        compare = customer["customer_name"].lower()
+        if (
+            compare in transaction.reference_number.lower()
+            or compare in transaction.description.lower()
+        ):
+            return customer
+
+
 def get_general_item_code(company):
     try:
         item = frappe.get_doc("Item", "Ausgangsrechnung Freiposition")
@@ -202,7 +226,12 @@ def get_general_item_code(company):
 
 
 def create_invoice_for_transaction(transaction):
-    customer = get_or_create_unkown_customer()
+    submit = True
+    customer = find_customer_for_transaction(transaction)
+    if not customer:
+        submit = False
+        customer = get_or_create_unkown_customer()
+
     company = frappe.get_doc("Company", transaction.company)
     grand_total = transaction.unallocated_amount
     invoice = create_sales_invoice(
@@ -226,8 +255,9 @@ def create_invoice_for_transaction(transaction):
     invoice.append("items", entry)
 
     invoice.insert()
-    # invoice.submit()
-    return invoice
+    if submit:
+        invoice.submit()
+    return (invoice, submit)
 
 
 def create_payment_for_sales_invoice(
@@ -251,8 +281,8 @@ def create_payment_for_sales_invoice(
             transaction, matching_invoice, submit_payment_entry
         )
     else:
-        invoice = create_invoice_for_transaction(transaction)
+        (invoice, submit) = create_invoice_for_transaction(transaction)
         if invoice:
-            return create_payment_for_invoice(transaction, invoice, False)
+            return create_payment_for_invoice(transaction, invoice, submit)
 
     return None

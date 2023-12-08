@@ -22,6 +22,7 @@ def create_payment_for_existing_purchase_invoice(transaction, purchase_invoice):
     
     payment = create_payment_for_paid_amount(
         transaction.company,
+        transaction.reference_number[:140],
         purchase_invoice.supplier,
         purchase_invoice.posting_date,
         purchase_invoice.bill_no,
@@ -97,5 +98,5 @@ def create_payment_for_purchase_invoice(transaction, regex_list, submit_payment_
             payment = create_payment_for_existing_purchase_invoice(transaction, invoice)
             if submit_payment_entry and invoice.status in ["Submitted", "Overdue", "Unpaid"]:
                 payment.submit()
-
+            return payment
     return None
