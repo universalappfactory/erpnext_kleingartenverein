@@ -11,6 +11,10 @@ from erpnext_kleingartenverein.payments.sales_invoice_factory import (
 from erpnext_kleingartenverein.payments.item_factory import (
     create_item,
 )
+from erpnext_kleingartenverein.payments.payment_settings import (
+    skip_sales_invoice_submission,
+    get_item_for_sales_invoice,
+)
 
 
 def get_first_matching_group(text, regex):
@@ -207,7 +211,10 @@ def find_customer_for_transaction(transaction):
             return customer
 
 
-def get_general_item_code(company):
+def get_item_code(company, transaction):
+    item = get_item_for_sales_invoice(transaction)
+    if item:
+        return item
     try:
         item = frappe.get_doc("Item", "Ausgangsrechnung Freiposition")
         return item.item_code
@@ -242,7 +249,7 @@ def create_invoice_for_transaction(transaction):
         company.default_receivable_account,
     )
 
-    item = get_general_item_code(company)
+    item = get_item_code(company, transaction)
     entry = create_sales_invoice_item(
         item,
         transaction.reference_number,
@@ -255,6 +262,8 @@ def create_invoice_for_transaction(transaction):
     invoice.append("items", entry)
 
     invoice.insert()
+    if skip_sales_invoice_submission(transaction):
+        submit = False
     if submit:
         invoice.submit()
     return (invoice, submit)
