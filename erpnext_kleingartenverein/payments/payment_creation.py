@@ -253,6 +253,7 @@ def create_invoice_for_transaction(transaction):
         transaction.company,
         grand_total,
         company.default_receivable_account,
+        transaction.date
     )
 
     item = get_item_code(company, transaction)

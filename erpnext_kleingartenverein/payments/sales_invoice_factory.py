@@ -1,17 +1,15 @@
 import frappe
-from datetime import datetime
 
 
-def create_sales_invoice(customer, title, company, grand_total, debit_to):
-    now = datetime.now().strftime("%Y-%m-%d")
+def create_sales_invoice(customer, title, company, grand_total, debit_to, posting_date):
     return frappe.get_doc(
         {
             "doctype": "Sales Invoice",
             "customer": customer,
             "title": title,
             "company": company,
-            "posting_date": now,
-            "due_date": now,
+            "posting_date": posting_date,
+            "due_date": posting_date,
             "currency": "EUR",
             "conversion_rate": 1.0,
             "selling_price_list": "Standard-Vertrieb",

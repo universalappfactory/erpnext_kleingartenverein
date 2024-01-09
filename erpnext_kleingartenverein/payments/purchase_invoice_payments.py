@@ -106,6 +106,7 @@ def create_new_purchase_invoice(transaction):
         supplier.name,
         transaction.reference_number,
         company.default_payable_account,
+        transaction.date
     )
 
     item_code = get_item_code(company, transaction)

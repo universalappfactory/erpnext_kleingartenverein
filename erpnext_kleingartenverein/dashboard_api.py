@@ -6,6 +6,9 @@ from erpnext_kleingartenverein.exceptions import BadRequestError, UploadBankstat
 from erpnext_kleingartenverein.file_api import (
     get_yearly_bank_statements_folder
 )
+from erpnext_kleingartenverein.payments.row_templates import (
+    apply_row_templates
+)
 import puremagic
 import mimetypes
 
@@ -374,12 +377,7 @@ def upload_bank_statement(*args, **kwargs):
         if len(default_bank_accounts) == 0:
             raise UploadBankstatementError()
 
-
-        # now = datetime.now()
-        # date = now.strftime("%Y-%m-%d-%H-%M")
-
         save_path = get_yearly_bank_statements_folder()
-        # filename = f'counter_upload_{plot["customer"]}_{date}.{extension}'
 
         content = file.stream.read()
         file_doc = frappe.new_doc("File")
@@ -393,6 +391,9 @@ def upload_bank_statement(*args, **kwargs):
             }
         )
         file_doc.insert()
+
+        if club_settings.bank_statement_row_mapping_template:
+            apply_row_templates(file_doc, club_settings.bank_statement_row_mapping_template)
 
         bsi = frappe.new_doc("Bank Statement Import")
         bsi.update(
