@@ -108,21 +108,24 @@ def find_invoice(
 ):
     for re in regex_list:
         invoice = find_invoice_by_regex(ref_no, re)
-        if invoice:
+        if invoice and invoice['grand_total'] > 0:
             return invoice
 
         invoice = find_invoice_by_regex(description, re)
-        if invoice:
+        if invoice and invoice['grand_total'] > 0:
             return invoice
 
     for re in regex_list:
         invoice = find_invoice_by_plot(description, re, total_amount)
-        if invoice:
+        if invoice and invoice['grand_total'] > 0:
             return invoice
 
     invoice = find_invoice_by_customer_name(ref_no, description, total_amount)
-    if invoice:
+    if invoice and invoice['grand_total'] > 0:
         return invoice
+
+    if total_amount <= 0:
+        return
 
     if find_by_total_amount:
         invoice_list = frappe.db.get_list(
@@ -238,6 +241,9 @@ def create_invoice_for_transaction(transaction):
     if not customer:
         submit = False
         customer = get_or_create_unkown_customer()
+
+    if transaction.unallocated_amount <= 0:
+        return (None, False)
 
     company = frappe.get_doc("Company", transaction.company)
     grand_total = transaction.unallocated_amount

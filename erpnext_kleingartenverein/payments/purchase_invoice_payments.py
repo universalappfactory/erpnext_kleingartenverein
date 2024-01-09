@@ -45,7 +45,7 @@ def create_payment_for_existing_purchase_invoice(transaction, purchase_invoice):
 def get_or_create_unkown_supplier(transaction):
     try:
         supplier = frappe.get_doc("Supplier", "Unkown")
-        return supplier.name
+        return supplier
     except frappe.DoesNotExistError:
         pass
 
