@@ -140,7 +140,7 @@ def find_invoice(
 def create_payment_for_invoice(transaction, invoice, submit_payment_entry):
     bank_account = frappe.get_doc("Bank Account", transaction.bank_account)
 
-    amount = transaction.deposit
+    amount = float(transaction.deposit)
     remaining = 0
     try:
         if amount > invoice["grand_total"]:
