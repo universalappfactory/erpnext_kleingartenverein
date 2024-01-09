@@ -91,3 +91,15 @@ def get_yearly_customer_folder(customer_name):
 def get_print_preview_folder():
     temp_folder = get_temp_folder()
     return ensure_folder_exists(path.join(temp_folder, "Print Preview"))
+
+def get_bank_statements_folder():
+    bank_statements_path = path.join("Home", "Bank Statements")
+    bank_statements_folder = ensure_folder_exists(bank_statements_path)
+    return bank_statements_folder
+
+def get_yearly_bank_statements_folder():
+    now = datetime.now().strftime("%Y")
+
+    bank_statements_folder = get_bank_statements_folder()
+    yearly_folder = path.join(bank_statements_folder, now)
+    return ensure_folder_exists(yearly_folder)

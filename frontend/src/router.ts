@@ -41,6 +41,11 @@ const routes = [
     name: 'Reports',
     component: () => import('@/pages/Reports.vue'),
   },
+  {
+    path: '/bankstatements',
+    name: 'Bank Statements',
+    component: () => import('@/pages/BankStatements.vue'),
+  },
 ]
 
 let router = createRouter({

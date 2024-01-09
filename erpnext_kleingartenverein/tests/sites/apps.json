@@ -1,0 +1,61 @@
+{
+    "frappe": {
+        "resolution": {
+            "commit_hash": null,
+            "branch": null
+        },
+        "required": [],
+        "idx": 1,
+        "version": "14.57.0"
+    },
+    "payments": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "523b184a2c61e889e8198b92b7e52eef1ff89dd2",
+            "branch": "develop"
+        },
+        "required": [],
+        "idx": 2,
+        "version": "0.0.1"
+    },
+    "erpnext": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "7b6f25cb9e02e8f6e624ba7751c68e66ffc28a55",
+            "branch": "version-14"
+        },
+        "required": [],
+        "idx": 3,
+        "version": "14.52.1"
+    },
+    "drive": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "377ef9241937035e9fd28506af5a701af15aacfc",
+            "branch": "main"
+        },
+        "required": [],
+        "idx": 5,
+        "version": "0.0.1"
+    },
+    "wiki": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "ba5dbca14d975333b07eb457bd35a59a596f599f",
+            "branch": "master"
+        },
+        "required": [],
+        "idx": 6,
+        "version": "2.0.0"
+    },
+    "erpnext_kleingartenverein": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "ec5ebb1f1fd04736b77261abea47ef2503431ebb",
+            "branch": "webpage"
+        },
+        "required": [],
+        "idx": 6,
+        "version": "1.6.0"
+    }
+}

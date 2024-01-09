@@ -72,6 +72,14 @@
         },
         "reports": {
             "headline": "Reports"
+        },
+        "bankstatements": {
+            "headline": "Bank Statements",
+            "upload": "Upload",
+            "show_bank_transactions": "Show bank transactions"
+        },
+        "fileupload": {
+            "upload": "Upload"
         }
     },
     "de": {
@@ -143,6 +151,14 @@
             "group_former_tenant": "Ehemaliger Pächter",
             "select_tag": "Schlagwort auswählen",
             "open_in_desk": "Im Desk öffnen"
+        },
+        "bankstatements": {
+            "headline": "Kontoauszüge",
+            "upload": "Kontoauszug übertragen",
+            "show_bank_transactions": "Banktransaktionen anzeigen"
+        },
+        "fileupload": {
+            "upload": "Übertragen"
         }
     }
 }
