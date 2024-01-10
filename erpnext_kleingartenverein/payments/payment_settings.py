@@ -9,10 +9,10 @@ ACTION_MAP_ITEM_TO_PAYMENT = "MapItemToPayment"
 PAYMENT_MAPPING_MODE_DEPOSIT = "Deposit"
 PAYMENT_MAPPING_MODE_WITHDRAWAL = "Withdrawal"
 
-def get_item_for_sales_invoice(transaction):
-    (action, product) = get_action(transaction, PAYMENT_MAPPING_MODE_DEPOSIT)
-    if action == "MapToItem":
-        return product
+# def get_item_for_sales_invoice(transaction):
+#     (action, product) = get_action(transaction, PAYMENT_MAPPING_MODE_DEPOSIT)
+#     if action == "MapToItem":
+#         return product
 
 
 # def get_item_for_purchase_invoice(transaction):
@@ -28,11 +28,11 @@ def get_item_for_sales_invoice(transaction):
 #     return False
 
 
-def skip_sales_invoice_submission(transaction):
-    (action, product) = get_action(transaction, PAYMENT_MAPPING_MODE_DEPOSIT)
-    if action == "SkipSubmission":
-        return True
-    return False
+# def skip_sales_invoice_submission(transaction):
+#     (action, product) = get_action(transaction, PAYMENT_MAPPING_MODE_DEPOSIT)
+#     if action == "SkipSubmission":
+#         return True
+#     return False
 
 
 def get_action(transaction, mode):

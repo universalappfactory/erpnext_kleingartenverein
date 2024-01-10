@@ -12,8 +12,10 @@ from erpnext_kleingartenverein.payments.item_factory import (
     create_item,
 )
 from erpnext_kleingartenverein.payments.payment_settings import (
-    skip_sales_invoice_submission,
-    get_item_for_sales_invoice,
+    get_action,
+    PAYMENT_MAPPING_MODE_DEPOSIT,
+    ACTION_MAP_ITEM_TO_INVOICE,
+    ACTION_SKIP_SUBMISSION
 )
 
 
@@ -214,15 +216,28 @@ def find_customer_for_transaction(transaction):
             return customer
 
 
-def get_item_code(company, transaction):
-    item = get_item_for_sales_invoice(transaction)
-    if item:
-        return item
-    try:
-        item = frappe.get_doc("Item", "Ausgangsrechnung Freiposition")
-        return item.item_code
-    except frappe.DoesNotExistError:
-        pass
+def get_action_for_transaction(company, transaction):
+    (
+        action,
+        item_code,
+        paid_from_account,
+        bank_account,
+        supplier_name,
+    ) = get_action(transaction, PAYMENT_MAPPING_MODE_DEPOSIT)
+    
+    # if item:
+    #     return item
+    # try:
+    #     item = frappe.get_doc("Item", "Ausgangsrechnung Freiposition")
+    #     return item.item_code
+    # except frappe.DoesNotExistError:
+    #     pass
+
+    if action == ACTION_MAP_ITEM_TO_INVOICE and item_code:
+        return (action, item_code)
+
+    if action == ACTION_SKIP_SUBMISSION:
+        return (None, None)
 
     warehouse = frappe.get_last_doc("Warehouse")
     item = create_item(
@@ -232,10 +247,10 @@ def get_item_code(company, transaction):
         company.default_income_account,
     )
     item.insert()
-    return item.name
+    return (ACTION_MAP_ITEM_TO_INVOICE, item.item_code)
 
 
-def create_invoice_for_transaction(transaction):
+def create_invoice_for_transaction(transaction, submit=True):
     submit = True
     customer = find_customer_for_transaction(transaction)
     if not customer:
@@ -246,34 +261,34 @@ def create_invoice_for_transaction(transaction):
         return (None, False)
 
     company = frappe.get_doc("Company", transaction.company)
-    grand_total = transaction.unallocated_amount
-    invoice = create_sales_invoice(
-        customer.name,
-        transaction.reference_number,
-        transaction.company,
-        grand_total,
-        company.default_receivable_account,
-        transaction.date
-    )
+    (action, item) = get_action_for_transaction(company, transaction)
+    if action == ACTION_MAP_ITEM_TO_INVOICE:
+        grand_total = transaction.unallocated_amount
+        invoice = create_sales_invoice(
+            customer.name,
+            transaction.reference_number,
+            transaction.company,
+            grand_total,
+            company.default_receivable_account,
+            transaction.date
+        )
+    
+        entry = create_sales_invoice_item(
+            item,
+            transaction.reference_number,
+            "Stk",
+            1,
+            grand_total,
+            company.default_income_account,
+            company.cost_center,
+        )
+        invoice.append("items", entry)
 
-    item = get_item_code(company, transaction)
-    entry = create_sales_invoice_item(
-        item,
-        transaction.reference_number,
-        "Stk",
-        1,
-        grand_total,
-        company.default_income_account,
-        company.cost_center,
-    )
-    invoice.append("items", entry)
-
-    invoice.insert()
-    if skip_sales_invoice_submission(transaction):
-        submit = False
-    if submit:
-        invoice.submit()
-    return (invoice, submit)
+        invoice.insert()
+        
+        if submit:
+            invoice.submit()
+        return (invoice, submit)
 
 
 def create_payment_for_sales_invoice(
@@ -298,8 +313,8 @@ def create_payment_for_sales_invoice(
         )
     else:
         print(f'SALESINVOICE NOT FOUND {reference_number}')
-        # (invoice, submit) = create_invoice_for_transaction(transaction)
-        # if invoice:
-        #     return create_payment_for_invoice(transaction, invoice, submit)
+        (invoice, submit) = create_invoice_for_transaction(transaction, False)
+        if invoice and submit: # we cannot create payments when invoice is not submitted
+            return create_payment_for_invoice(transaction, invoice, submit)
 
     return None
