@@ -59,7 +59,6 @@ def create_payment_for_paid_amount(
     paid_from,
     paid_to,
     bank_account,
-
 ):
     return frappe.get_doc(
         {
@@ -93,5 +92,43 @@ def create_payment_for_paid_amount(
                     "allocated_amount": amount,
                 }
             ],
+        }
+    )
+
+
+def create_payment_from_account(
+    company_name,
+    title,
+    description,
+    supplier,
+    posting_date,
+    reference_no,
+    amount,
+    paid_from,
+    paid_to,
+):
+    return frappe.get_doc(
+        {
+            "doctype": "Payment Entry",
+            "payment_type": "Pay",
+            "posting_date": posting_date,
+            "company": company_name,
+            "title": title,
+            "description": description,
+            "paid_from": paid_from,
+            "reference_no": reference_no,
+            "paid_from_account_currency": "EUR",
+            "paid_amount": amount,
+            "source_exchange_rate": "1",
+            "base_paid_amount": amount,
+            "received_amount": amount,
+            "base_received_amount": amount,
+            "base_total_allocated_amount": amount,
+            "target_exchange_rate": "1",
+            "party_type": "Supplier",
+            "party": supplier,
+            "paid_to": paid_to,
+            "paid_to_account_currency": "EUR",
+            "reference_date": posting_date,
         }
     )

@@ -33,8 +33,13 @@ from erpnext_kleingartenverein.payments.payment_creation import (
     create_payment_for_sales_invoice,
 )
 
+from erpnext_kleingartenverein.payments.purchase_invoice_payments import (
+    create_payment_for_purchase_invoice,
+)
+
 class PaymentCreationTests(TestBase):
-    TEST_SITE = "testing.localhost"
+    # TEST_SITE = "testing.localhost"
+    TEST_SITE = "mysite.localhost"
 
     def test_create_bank_statement_import(self):
         folder = get_or_create_folder("Test")
@@ -59,7 +64,11 @@ class PaymentCreationTests(TestBase):
         ]
 
         for transaction in transactions:
-            create_payment_for_sales_invoice(transaction, regex_list, True, True)
+            try:
+                if float(transaction.withdrawal) > 0:
+                    create_payment_for_purchase_invoice(transaction, regex_list, True)
+            except Exception as error:
+                print(error)
 
     def test_create_sales_invoice(self):
         self.assertEqual(True, False)

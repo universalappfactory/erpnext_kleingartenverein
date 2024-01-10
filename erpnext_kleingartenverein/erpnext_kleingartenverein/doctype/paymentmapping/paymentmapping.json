@@ -10,7 +10,10 @@
   "regex_pattern",
   "action",
   "product_link",
-  "mode"
+  "mode",
+  "paid_from_account",
+  "bank_account",
+  "supplier"
  ],
  "fields": [
   {
@@ -32,7 +35,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Action",
-   "options": "MapToItem\nSkipSubmission",
+   "options": "MapItemToInvoice\nSkipSubmission\nMapItemToPayment",
    "reqd": 1
   },
   {
@@ -42,18 +45,36 @@
    "options": "Item"
   },
   {
-   "default": "SalesInvoice",
+   "default": "Deposit",
    "fieldname": "mode",
    "fieldtype": "Select",
    "label": "Mode",
-   "options": "SalesInvoice\nPurchaseInvoice",
+   "options": "Deposit\nWithdrawal",
    "reqd": 1
+  },
+  {
+   "fieldname": "paid_from_account",
+   "fieldtype": "Link",
+   "label": "Paid From Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Link",
+   "label": "Bank Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-08 19:27:41.942678",
+ "modified": "2024-01-10 07:17:08.703772",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "PaymentMapping",

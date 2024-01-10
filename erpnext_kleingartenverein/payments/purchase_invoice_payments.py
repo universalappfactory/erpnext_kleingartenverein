@@ -8,13 +8,17 @@ from erpnext_kleingartenverein.payments.supplier_factory import (
 )
 from erpnext_kleingartenverein.payments.payment_factory import (
     create_payment_for_paid_amount,
+    create_payment_from_account,
 )
 from erpnext_kleingartenverein.payments.item_factory import (
     create_item,
 )
 from erpnext_kleingartenverein.payments.payment_settings import (
-    get_item_for_purchase_invoice,
-    skip_purchase_invoice_submission,
+    get_action,
+    PAYMENT_MAPPING_MODE_WITHDRAWAL,
+    ACTION_MAP_ITEM_TO_INVOICE,
+    ACTION_SKIP_SUBMISSION,
+    ACTION_MAP_ITEM_TO_PAYMENT,
 )
 
 
@@ -51,10 +55,10 @@ def get_or_create_unkown_supplier(transaction):
 
     supplier = create_supplier("Unkown")
     supplier.insert()
-    return supplier
+    return supplier.name
 
 
-def find_supplier_for_transaction(transaction):
+def find_supplier_name_for_transaction(transaction):
     all_suppliers = frappe.get_list(
         "Supplier", limit_page_length=2000, fields=["name", "supplier_name"]
     )
@@ -65,17 +69,22 @@ def find_supplier_for_transaction(transaction):
             compare in transaction.reference_number.lower()
             or compare in transaction.description.lower()
         ):
-            return supplier
+            return supplier.name
 
 
-def get_item_code(company, transaction):
-    item = get_item_for_purchase_invoice(transaction)
-    if item:
-        return item
+def get_action_parameters(company, transaction):
+    (action, item_code, paid_from_account, bank_account, supplier) = get_action(
+        transaction, PAYMENT_MAPPING_MODE_WITHDRAWAL
+    )
+    if item_code:
+        return (action, item_code, paid_from_account, bank_account, supplier)
+
+    if action:
+        return (action, None, None, None, None)
 
     try:
         item = frappe.get_doc("Item", "Eingangsrechnung Freiposition")
-        return item.item_code
+        return (ACTION_MAP_ITEM_TO_INVOICE, item.item_code, None, None, None)
     except frappe.DoesNotExistError:
         pass
 
@@ -89,33 +98,84 @@ def get_item_code(company, transaction):
         True,
     )
     item.insert()
-    return item.item_code
+    return (ACTION_MAP_ITEM_TO_INVOICE, item.item_code, None, None, None)
 
 
-def create_new_purchase_invoice(transaction):
-    supplier = find_supplier_for_transaction(transaction)
-    if not supplier:
-        supplier = get_or_create_unkown_supplier(transaction)
-
-    company = frappe.get_doc("Company", transaction.company)
-
+def create_purchase_invoice_for_transaction(transaction, item_code, supplier_name, company):
     title = transaction.reference_number[:140]
     purchase_invoice = create_purchase_invoice(
         transaction.company,
         title,
-        supplier.name,
+        supplier_name,
         transaction.reference_number,
         company.default_payable_account,
-        transaction.date
+        transaction.date,
     )
 
-    item_code = get_item_code(company, transaction)
     entry = create_purchase_invoice_item(item_code, 1, transaction.withdrawal)
     purchase_invoice.append("items", entry)
 
     purchase_invoice.insert()
     purchase_invoice.submit()
     return purchase_invoice
+
+
+def create_payment(
+    transaction, item_code, company, paid_from_account, bank_account, supplier_name
+):
+    description = transaction.description
+    reference_number = transaction.reference_number
+
+    title = f"Zahlung {company.name}, {item_code}"
+
+    payment = create_payment_from_account(
+        company.name,
+        title,
+        description,
+        supplier_name,
+        transaction.date,
+        reference_number,
+        transaction.withdrawal,
+        bank_account,
+        paid_from_account,
+    )
+    payment.insert()
+    return payment
+
+
+def apply_action_for_transaction(transaction):
+    """
+    apply an action for a transaction
+    this can be:
+    - create a purchase invoice
+    - create only a payment entry
+    """
+    company = frappe.get_doc("Company", transaction.company)
+
+    (
+        action,
+        item_code,
+        paid_from_account,
+        bank_account,
+        supplier_name,
+    ) = get_action_parameters(company, transaction)
+
+    if not supplier_name:
+        supplier_name = find_supplier_name_for_transaction(transaction)
+        if not supplier_name:
+            supplier_name = get_or_create_unkown_supplier(transaction)
+
+    if action == ACTION_MAP_ITEM_TO_INVOICE:
+        purchase_invoice = create_purchase_invoice_for_transaction(transaction, item_code, supplier_name, company)
+        return (action, purchase_invoice)
+
+    if action == ACTION_MAP_ITEM_TO_PAYMENT:
+        payment = create_payment(
+            transaction, item_code, company, paid_from_account, bank_account, supplier_name
+        )
+        return (action, payment)
+
+    return (None, None)
 
 
 def create_payment_for_purchase_invoice(transaction, regex_list, submit_payment_entry):
@@ -134,15 +194,18 @@ def create_payment_for_purchase_invoice(transaction, regex_list, submit_payment_
         ]:
             payment.submit()
     else:
-        invoice = create_new_purchase_invoice(transaction)
-        if invoice:
-            payment = create_payment_for_existing_purchase_invoice(transaction, invoice)
-            if submit_payment_entry and invoice.status in [
-                "Submitted",
-                "Overdue",
-                "Unpaid",
-            ]:
-                if not skip_purchase_invoice_submission(transaction):
-                    payment.submit()
+        (action, result) = apply_action_for_transaction(transaction)
+        if action == ACTION_MAP_ITEM_TO_INVOICE and result:
+            payment = create_payment_for_existing_purchase_invoice(transaction, result)
+            # if submit_payment_entry and invoice.status in [
+            #     "Submitted",
+            #     "Overdue",
+            #     "Unpaid",
+            # ]:
+            print("NEW ACTION, SKIP SUBMISSION?")
+            # if not skip_purchase_invoice_submission(transaction):
+            #     payment.submit()
             return payment
+        if action == ACTION_MAP_ITEM_TO_PAYMENT and result:
+            print("should we submit this payment?")
     return None

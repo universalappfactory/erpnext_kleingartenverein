@@ -297,8 +297,9 @@ def create_payment_for_sales_invoice(
             transaction, matching_invoice, submit_payment_entry
         )
     else:
-        (invoice, submit) = create_invoice_for_transaction(transaction)
-        if invoice:
-            return create_payment_for_invoice(transaction, invoice, submit)
+        print(f'SALESINVOICE NOT FOUND {reference_number}')
+        # (invoice, submit) = create_invoice_for_transaction(transaction)
+        # if invoice:
+        #     return create_payment_for_invoice(transaction, invoice, submit)
 
     return None
