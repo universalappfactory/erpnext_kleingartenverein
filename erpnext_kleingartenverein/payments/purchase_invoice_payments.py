@@ -107,7 +107,7 @@ def get_action_parameters(company, transaction):
 def create_purchase_invoice_for_transaction(
     transaction, item_code, supplier_name, company
 ):
-    title = transaction.reference_number[:140]
+    title = transaction.description[:140]
     purchase_invoice = create_purchase_invoice(
         transaction.company,
         title,
