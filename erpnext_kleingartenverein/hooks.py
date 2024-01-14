@@ -87,7 +87,8 @@ jinja = {
     	"erpnext_kleingartenverein.utils.jinja_filters.as_base_xx",
         "erpnext_kleingartenverein.utils.jinja_filters.get_row_by_value",
         "erpnext_kleingartenverein.utils.jinja_filters.get_folder_contents",
-        "erpnext_kleingartenverein.utils.jinja_filters.render"
+        "erpnext_kleingartenverein.utils.jinja_filters.render",
+        "erpnext_kleingartenverein.utils.jinja_filters.sha_hash"
 	]
 }
 

@@ -11,6 +11,7 @@ from erpnext_kleingartenverein.payments.row_templates import (
 )
 import puremagic
 import mimetypes
+import uuid
 
 @frappe.whitelist(allow_guest=False)
 @check_permission
@@ -382,12 +383,13 @@ def upload_bank_statement(*args, **kwargs):
         content = file.stream.read()
         file_doc = frappe.new_doc("File")
         file_doc.folder = save_path
-        file_doc.file_name = file.filename
+        file_doc.file_name = f"{uuid.uuid4().hex}_{file.filename}"
         file_doc.is_private = 1
         file_doc.content = content
         file_doc.flags = frappe._dict(
             {
                 "ignore_existing_file_check": True,
+                "ignore_duplicate_entry_error": True
             }
         )
         file_doc.insert()
@@ -395,6 +397,7 @@ def upload_bank_statement(*args, **kwargs):
         if club_settings.bank_statement_row_mapping_template:
             apply_row_templates(file_doc, club_settings.bank_statement_row_mapping_template)
 
+        # file_doc = frappe.get_doc('File', file_doc.name)
         bsi = frappe.new_doc("Bank Statement Import")
         bsi.update(
 			{

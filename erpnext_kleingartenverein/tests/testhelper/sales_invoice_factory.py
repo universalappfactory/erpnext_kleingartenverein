@@ -32,7 +32,7 @@ def create_sales_invoice_item(
         {
             "doctype": "Sales Invoice Item",
             "item_name": item_name,
-            "description": description,
+            "description": description[:140],
             "uom": uom,
             "stock_uom": uom,
             "conversion_factor": 1,

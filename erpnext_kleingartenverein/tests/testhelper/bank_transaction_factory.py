@@ -15,6 +15,7 @@ def create_bank_transactions(csv_file, company, bank_account, currency):
 
             # row[0]
             date = datetime.strptime(row[0],"%d.%m.%Y").strftime("%Y-%m-%d")
+            description = f"{row[3]}-{row[4]}"
             transaction = frappe.get_doc(
                 {
                     "doctype": "Bank Transaction",
@@ -22,10 +23,10 @@ def create_bank_transactions(csv_file, company, bank_account, currency):
                     "bank_account": bank_account,
                     "company": company,
                     "currency": currency,
-                    "description": row[3],
+                    "description": description,
                     "reference_number": row[4],
-                    "deposit": row[1],
-                    "withdrawal": row[2],
+                    "deposit": float(row[1]),
+                    "withdrawal": float(row[2]),
                 }
             )
             transaction.insert()

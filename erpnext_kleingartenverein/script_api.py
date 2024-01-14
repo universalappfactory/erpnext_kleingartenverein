@@ -1,3 +1,4 @@
+import traceback
 import frappe
 from erpnext_kleingartenverein.payments.payment_creation import (
     create_payment_for_sales_invoice,
@@ -29,10 +30,34 @@ def enqueue_background_reconcile(transaction_name, payment_name):
     )
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=False)
 # @check_permission
 def create_payment_entry(*args, **kwargs):
+    """
+    try to create a payment entry for a given transaction
+
+    this function can be used within a serverscript "Bank Transaction - After Insert"
+
+    Required Params:
+    name - the name of the transaction
+
+    multiple params for regex to determine a sales or purchase invoice like
+    
+    re_1=".*ACC.*" re_2=".*MyInvoice\d.*"
+    pre_1="PCC.*" pre2="\d\d\d"
+
+    and so on
+
+    Then the function will try to determine a matching sales or purchchase invoice and create an according payment
+
+    OR
+
+    You can provide different payment settings within the "Club Settings", this settings will be prefered over the given regex, 
+    if we have a match
+
+    """
     try:
+    
         transaction_name = kwargs["name"]
         sales_invoice_regex_list = get_regex_list(kwargs, "re_")
         purchase_invoice_regex_list = get_regex_list(kwargs, "pre_")
@@ -42,7 +67,19 @@ def create_payment_entry(*args, **kwargs):
         by_total_amount = bool(kwargs["by_total_amount"]) if "by_total_amount" in kwargs else False
 
         transaction = frappe.get_doc("Bank Transaction", transaction_name)
-        if transaction.status == "Pending":
+
+        existing_by_reference = frappe.db.get_list(
+                "Bank Transaction",
+                filters={
+                    "reference_number": transaction.reference_number
+                },
+            )
+        
+        if len(existing_by_reference) > 1:
+            frappe.log_error(f"transaction '{transaction.name}' with {transaction.reference_number} exists multiple times")
+            return
+        
+        if transaction.status == "Pending" or transaction.status == "Unreconciled":
             if transaction.deposit > 0:
                 payment = create_payment_for_sales_invoice(
                     transaction, 

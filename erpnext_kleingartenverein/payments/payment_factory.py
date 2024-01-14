@@ -106,6 +106,7 @@ def create_payment_from_account(
     amount,
     paid_from,
     paid_to,
+    cost_center
 ):
     return frappe.get_doc(
         {
@@ -130,5 +131,6 @@ def create_payment_from_account(
             "paid_to": paid_to,
             "paid_to_account_currency": "EUR",
             "reference_date": posting_date,
+            "cost_center": cost_center
         }
     )

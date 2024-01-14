@@ -2,6 +2,7 @@ import base64
 import frappe
 from drive.api.files import list_folder_contents, get_file_content
 from frappe.utils.jinja import render_template
+from hashlib import sha256
 
 
 def get_value(source, fieldname):
@@ -77,6 +78,7 @@ def get_folder_contents(folder_name):
     except Exception as e:
         frappe.log_error(e)
 
+
 def render(*args, **kwargs):
     """
     render variable content
@@ -90,9 +92,24 @@ def render(*args, **kwargs):
     """
     try:
         context = frappe._dict(**kwargs)
-        context['doc'] = args[1]
+        context["doc"] = args[1]
         r = frappe.render_template(args[0], context, False, True)
         return r
     except Exception as e:
         frappe.log_error(e)
         return str(e)
+
+
+def sha_hash(*args, **kwargs):
+    """
+    create a sha256 hash of the given input (no 256 in the filter name as numbers does not seem to work as filtername)
+    """
+    try:
+        if len(args) > 0:
+            data = args[0]
+            output = sha256(data.encode("utf-8"))
+            return output.hexdigest().upper()
+        return ""
+    except Exception as e:
+        frappe.log_error(e)
+        return ""

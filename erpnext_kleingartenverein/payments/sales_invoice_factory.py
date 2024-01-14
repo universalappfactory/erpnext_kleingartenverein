@@ -6,7 +6,7 @@ def create_sales_invoice(customer, title, company, grand_total, debit_to, postin
         {
             "doctype": "Sales Invoice",
             "customer": customer,
-            "title": title,
+            "title": title[:140],
             "company": company,
             "posting_date": posting_date,
             "due_date": posting_date,
@@ -28,7 +28,7 @@ def create_sales_invoice_item(item_name, description, uom, qty, rate, income_acc
         {
             "doctype": "Sales Invoice Item",
             "item_name": item_name,
-            "description": description,
+            "description": description[:140],
             "uom": uom,
             "stock_uom": uom,
             "conversion_factor": 1,
