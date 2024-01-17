@@ -6,4 +6,14 @@ from frappe.model.document import Document
 
 
 class InvoiceCalculation(Document):
-    pass
+    
+
+    def validate_item(self, item):
+        pass
+
+    def validate_items(self):
+        for item in self.items:
+            item.validate()
+
+    def validate(self):
+        self.validate_items()

@@ -12,7 +12,11 @@
   "year",
   "items",
   "customer_group",
-  "errors"
+  "errors",
+  "price_list",
+  "debit_to",
+  "currency",
+  "company"
  ],
  "fields": [
   {
@@ -52,11 +56,39 @@
    "fieldtype": "Table",
    "label": "Errors",
    "options": "Invoice Calculation Error"
+  },
+  {
+   "fieldname": "price_list",
+   "fieldtype": "Link",
+   "label": "Price List",
+   "options": "Price List",
+   "reqd": 1
+  },
+  {
+   "fieldname": "debit_to",
+   "fieldtype": "Link",
+   "label": "Debit To",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-17 08:41:17.358798",
+ "modified": "2024-01-17 10:21:43.379064",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Invoice Calculation",

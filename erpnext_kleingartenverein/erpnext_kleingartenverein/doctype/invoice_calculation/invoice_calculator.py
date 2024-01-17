@@ -37,129 +37,137 @@ class InvoiceCalculator:
                 filters={"customer_group": invoice_calculation.customer_group},
             )
         else:
-            return frappe.get_all("Customer")
+            return []
 
-    def create_drafts(self, invoice_calculation):
-        customers = self.get_matching_customers(invoice_calculation)
+    def create_drafts():
+        pass
 
-        result = []
-        for customer in customers:
-            result.append(self.create_invoice_draft(invoice_calculation, customer))
-        return result
+    def get_or_create_sales_invoice_for_customer(self, customer, calculation):
+        now = datetime.now().strftime("%Y-%m-%d")
 
-    def get_item_price(self, product):
-        if len(product.item_defaults) == 0:
-            raise frappe.InvalidStatusError(
-                f"product {product.item_code} does not have any defaults"
+        sales_invoice_title = f"{calculation.prefix}-{calculation.year}-{customer.name}"
+        try:
+            existing = frappe.get_list(
+                "Sales Invoice",
+                filters={"title": sales_invoice_title},
             )
+            if len(existing) == 0:
+                raise frappe.DoesNotExistError()
+            elif len(existing) == 1:
+                return frappe.get_doc('Sales Invoice', existing[0])
+            else:
+                frappe.throw(
+                    f"multiple sales invoices with title: '{sales_invoice_title}'"
+                )
 
-        price_list_name = product.item_defaults[0].default_price_list
+        except frappe.DoesNotExistError:
+            price_list = frappe.get_doc("Price List", calculation.price_list)
 
-        item_price = frappe.db.get_list(
-            "Item Price",
-            filters={"item_code": product.item_code, "price_list": price_list_name},
+            sales_invoice = frappe.get_doc(
+                {
+                    "doctype": "Sales Invoice",
+                    "customer": customer.name,
+                    "title": sales_invoice_title,
+                    "company": calculation.company,
+                    "posting_date": now,
+                    "due_date": now,
+                    "currency": calculation.currency,
+                    "conversion_rate": 1.0,
+                    "selling_price_list": price_list.name,
+                    "price_list_currency": price_list.currency,
+                    "plc_conversion_rate": 1.0,
+                    "base_net_total": 0,
+                    "base_grand_total": 0,
+                    "grand_total": 0,
+                    "debit_to": calculation.debit_to,
+                }
+            )
+            return sales_invoice
+
+    def calculate_fixed_product(self, sales_invoice_item, item):
+        sales_invoice_item.rate = item.amount
+        sales_invoice_item.amount = item.amount
+        sales_invoice_item.base_rate = item.amount
+        sales_invoice_item.base_amount = item.amount
+
+    def add_fixed_product(self, sales_invoice, item):
+        for index, sales_invoice_item in enumerate(sales_invoice.items):
+            if sales_invoice_item.item_code == item.product:
+                sales_invoice.items[index].rate = item.amount
+                sales_invoice.items[index].amount = item.amount
+                sales_invoice.items[index].base_rate = item.amount
+                sales_invoice.items[index].base_amount = item.amount
+                return
+
+        sales_invoice_item = frappe.get_doc(
+            {
+                "doctype": "Sales Invoice Item",
+                "item_name": item.product,
+                "item_code": item.product,
+                "description": item.description[:140],
+                "conversion_factor": 1,
+                "qty": 1,
+                "rate": item.amount,
+                "amount": item.amount,
+                "base_rate": item.amount,
+                "base_amount": item.amount,
+                "income_account": item.income_account,
+            }
+        )
+        sales_invoice.append("items", sales_invoice_item)
+
+    def calculate_sales_invoice_items(self, sales_invoice, customer, calculation):
+        for item in calculation.items:
+            if item.action == "AddFixedProduct":
+                self.add_fixed_product(sales_invoice, item)
+
+        sales_invoice.save()
+
+    def calculate_invoice_for_customer(self, customer, calculation):
+        sales_invoice = self.get_or_create_sales_invoice_for_customer(
+            customer, calculation
+        )
+        if sales_invoice:
+            self.calculate_sales_invoice_items(sales_invoice, customer, calculation)
+
+    def create_error_message(self, error, customer=None, plot=None):
+        return frappe.get_doc(
+            {
+                "doctype": "Invoice Calculation Error",
+                "title": str(error)[:140],
+                "datetime": datetime.now(),
+                "message": str(error),
+                "customer": customer,
+                "plot": plot,
+            }
         )
 
-        if len(item_price) == 0:
-            raise MissingDefaultItemPriceError(
-                f"missing item price for product {product.item_code}"
+    def calculate(self, invoice_calculation_name):
+        try:
+            calculation = frappe.get_doc(
+                "Invoice Calculation", invoice_calculation_name
             )
+            customers = self.get_matching_customers(calculation)
 
-        return frappe.get_doc("Item Price", item_price[0].name)
+            if len(customers) == 0:
+                msg = self.create_error_message(
+                    f"No customers found for invoice calculation '{invoice_calculation_name}'"
+                )
+                calculation.append("errors", msg)
+                calculation.save()
+                return
 
-    def create_product_item(self, invoice, invoice_calculation_item, income_account):
-        p = frappe.get_doc("Item", invoice_calculation_item.product)
-        if not p:
-            raise frappe.DoesNotExistError("product does not exist")
+            for customer in customers:
+                try:
+                    self.calculate_invoice_for_customer(customer, calculation)
+                except Exception as error:
+                    frappe.log_error(error)
+                    msg = self.create_error_message(error, customer)
+                    calculation.append("errors", msg)
 
-        item = frappe.new_doc("Sales Invoice Item")
-        item_price = self.get_item_price(p)
-        item.item_name = p.name
-        item.qty = 1
-        item.uom = p.stock_uom
-        item.stock_uom = p.stock_uom
-        item.description = p.description
-        item.price_list_rate = item_price.price_list_rate
-        item.parentfield = "items"
-        item.parenttype = "Sales Invoice"
-        item.income_account = income_account
+            calculation.save()
 
-        return item
-
-    def create_item_from_plot(self, invoice, invoice_calculation_item, income_account):
-        p = frappe.get_doc("Item", invoice_calculation_item.product)
-        if not p:
-            raise frappe.DoesNotExistError("product does not exist")
-
-        item = frappe.new_doc("Sales Invoice Item")
-        
-        item_price = self.get_item_price(p)
-
-        customer = frappe.get_doc("Customer", invoice.customer)
-        if not customer:
-            raise frappe.DoesNotExistError(
-                f"Customer does not exist {invoice.customer}"
+        except frappe.DoesNotExistError:
+            frappe.log_error(
+                f"invoice calculation {invoice_calculation_name} does not exist"
             )
-
-        if not customer.plot_link:
-            raise CustomerWithoutPlot(f"Customer without plot {customer.name}")
-
-        field_value = frappe.db.get_value(
-            "Plot", customer.plot_link, invoice_calculation_item.plot_fieldname
-        )
-        if field_value is None:
-            raise MissingDocumentFieldError(
-                f"Plot does not have a field called {invoice_calculation_item.plot_fieldname}"
-            )
-
-        calculated_quantity = invoice_calculation_item.multiplicator * field_value
-
-        if calculated_quantity <= 0:
-            raise InvalidQuantityError(_("calculated_quantity must be greater than 0"))
-
-        item.item_name = p.name
-        item.qty = calculated_quantity
-        item.uom = p.stock_uom
-        item.stock_uom = p.stock_uom
-        item.description = p.description
-        item.price_list_rate = item_price.price_list_rate
-        item.parentfield = "items"
-        item.parenttype = "Sales Invoice"
-        item.income_account = income_account
-        return item
-
-    def add_items(self, invoice_calculation, invoice, income_account):
-        for item in invoice_calculation.items:
-            match item.source_type:
-                case "Plot":
-                    invoice.items.append(
-                        self.create_item_from_plot(invoice, item, income_account)
-                    )
-                    break
-                case _:
-                    invoice.items.append(
-                        self.create_product_item(invoice, item, income_account)
-                    )
-
-    def create_invoice_draft(self, invoice_calculation, customer):
-        invoice = frappe.new_doc("Sales Invoice")
-        invoice.title = f"Year {invoice_calculation.year}"
-        invoice.description = f"Invoice {invoice_calculation.year}"
-        invoice.customer = customer.name
-
-        company_list = frappe.get_list("Company")
-        company = frappe.get_doc("Company", company_list[0])
-        income_account = company.default_income_account
-
-        invoice.company = company.name
-        invoice.debit_to = company.default_receivable_account
-        invoice.base_grand_total = 0
-        invoice.base_rounded_total = 0
-        invoice.grand_total = 0
-        invoice.posting_date = datetime.utcnow()  # .strftime('%Y-%m-%d')
-        invoice.due_date = datetime(2024, 2, 15)  # .strftime('%Y-%m-%d')
-
-        self.add_items(invoice_calculation, invoice, income_account)
-        # invoice.set_against_income_account()
-        invoice.save()
-        return invoice.name

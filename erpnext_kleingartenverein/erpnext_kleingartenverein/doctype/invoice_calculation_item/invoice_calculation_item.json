@@ -10,7 +10,9 @@
   "action",
   "product",
   "quantity_template",
-  "amount_template"
+  "amount_template",
+  "income_account",
+  "amount"
  ],
  "fields": [
   {
@@ -42,12 +44,24 @@
    "fieldname": "amount_template",
    "fieldtype": "Text",
    "label": "AmoutTemplate"
+  },
+  {
+   "fieldname": "income_account",
+   "fieldtype": "Link",
+   "label": "Income Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-17 08:38:17.717135",
+ "modified": "2024-01-17 10:57:26.132569",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Invoice Calculation Item",
