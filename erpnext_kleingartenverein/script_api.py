@@ -12,6 +12,7 @@ from erpnext_kleingartenverein.payments.purchase_invoice_payments import (
 )
 from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calculation.invoice_calculator import (
     execute_invoice_calcuclation,
+    execute_invoice_printing
 )
 import html
 
@@ -120,13 +121,9 @@ def enqueue_background_invoice_creation(invoice_calculation_name):
 
 
 @frappe.whitelist(allow_guest=False)
-# @check_permission
 def start_invoice_calculation(*args, **kwargs):
     try:
         print(args)
-        my_args = frappe._dict(kwargs)
-        # {'draft': 'true', 'names': '["22a9b823c8"]', 'cmd': 'erpnext_kleingartenverein.script_api.start_invoice_calculation'}
-        draft = True
         if "draft" in kwargs:
             draft = kwargs["draft"]
 
@@ -137,6 +134,34 @@ def start_invoice_calculation(*args, **kwargs):
 
             for name in names:
                 enqueue_background_invoice_creation(name)
+    except Exception as error:
+        frappe.log_error(error)
+        return []
+
+
+def enqueue_background_invoice_printing(invoice_calculation_name):
+    frappe.enqueue(
+        method=execute_invoice_printing,
+        invoice_calculation_name=invoice_calculation_name,
+        queue="long",
+        job_name=f"execute_invoice_printing_{invoice_calculation_name}",
+    )
+
+
+@frappe.whitelist(allow_guest=False)
+def start_invoice_printing(*args, **kwargs):
+    try:
+        print(args)
+        if "draft" in kwargs:
+            draft = kwargs["draft"]
+
+        if "names" in kwargs:
+            names = []
+            if isinstance(kwargs['names'], str):
+                names = json.loads(kwargs['names'])
+
+            for name in names:
+                enqueue_background_invoice_printing(name)
     except Exception as error:
         frappe.log_error(error)
         return []

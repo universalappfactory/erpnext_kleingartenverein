@@ -18,7 +18,10 @@
   "currency",
   "company",
   "customer",
-  "output_folder"
+  "output_folder",
+  "due_date",
+  "print_format",
+  "letter_head"
  ],
  "fields": [
   {
@@ -98,11 +101,28 @@
    "fieldtype": "Link",
    "label": "Output Folder",
    "options": "File"
+  },
+  {
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "label": "Due Date"
+  },
+  {
+   "fieldname": "print_format",
+   "fieldtype": "Link",
+   "label": "Print Format",
+   "options": "Print Format"
+  },
+  {
+   "fieldname": "letter_head",
+   "fieldtype": "Link",
+   "label": "Letter Head",
+   "options": "Letter Head"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-17 17:13:55.270210",
+ "modified": "2024-01-17 21:44:01.582823",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Invoice Calculation",

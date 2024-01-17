@@ -325,6 +325,63 @@ class InvoiceCalculatorTests(TestBase):
         invoice = customer_invoices[0]
         self.assertEqual(invoice["grand_total"], expected_amount)
 
+    def test_new_counter(self):
+        customer = self.customers[0]
+        price_list = frappe.get_last_doc("Price List")
+        calculation = create_invoice_calculation(self.company, price_list.name)
+
+        self.items_to_delete.append(calculation)
+
+        product = get_or_create_item(
+            "New Counter",
+            self.company,
+            self.warehouse.name,
+            self.company.default_income_account,
+            False,
+        )
+        self.items_to_delete.append(product)
+
+        item = create_invoice_calculation_item(
+            product, self.company.default_income_account, "CalculateNewCounter"
+        )
+        item.amount = 40
+        item.water_consumption_year = 2023
+        self.items_to_delete.append(item)
+
+        calculation.append("items", item)
+        calculation.insert()
+
+        plot = self.plot = create_plot("123", customer.name)
+        plot.save()
+
+        expected_amount = 40
+        counter_values = [
+            create_counter_entry("2021-12-21", 94, "12/3456", "2018-01-01"),
+            create_counter_entry("2022-12-22", 96, "12/3456", "2018-01-01"),
+            create_counter_entry("2023-04-08", 0, "112233", "2018-01-01"),
+            create_counter_entry("2023-05-29", 7, "112233", "2018-01-01"),
+            create_counter_entry("2023-05-29", 0, "4444", "2018-01-01"),
+            create_counter_entry("2023-05-29", 9, "4444", "2018-01-01"),
+        ]
+
+        for item in counter_values:
+            plot.append("water_meter_table", item)
+        plot.save()
+
+        calculator = InvoiceCalculator()
+        calculator.calculate(calculation.name)
+
+        calculation = frappe.get_doc("Invoice Calculation", calculation.name)
+        self.assertEqual(len(calculation.errors), 0)
+
+        customer_invoices = frappe.get_list(
+            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+        )
+
+        self.assertEqual(len(customer_invoices), 1)
+        invoice = customer_invoices[0]
+        self.assertEqual(invoice["grand_total"], expected_amount)
+
     def test_quantity_by_script(self):
         customer = self.customers[0]
         price_list = frappe.get_last_doc("Price List")

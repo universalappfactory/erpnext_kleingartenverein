@@ -75,6 +75,25 @@ class PlotTests(TestBase):
     def tearDownClass(cls):
         super().tearDownClass()
 
+    def tearDown(self):
+        for c in self.customers:
+            try:
+                customer = frappe.get_doc("Customer", c)
+                if customer.plot_link and customer.plot_link != "":
+                    customer.plot_link = None
+                    customer.save()
+            except:
+                pass
+            
+        plots = frappe.get_list("Plot")
+        for p in plots:
+            try:
+                plot = frappe.get_doc("Plot", p)
+                plot.customer = None
+                plot.delete()
+            except Exception as error:
+                print(error)
+
     def test_plot_water_consumption(self):
         customer = self.customers[0]
         plot = self.plot = create_plot("123", customer.name)
@@ -119,3 +138,64 @@ class PlotTests(TestBase):
         plot = frappe.get_doc('Plot', plot.name)
         result = plot.calculate_water_consumption(2023)
         self.assertEqual(result, expected_consumption)
+
+    def test_has_new_water_meter_in(self):
+        customer = self.customers[0]
+        plot = self.plot = create_plot("123", customer.name)
+        plot.save()
+
+        counter_values = [
+            create_counter_entry("2021-12-21", 94, "12/3456", "2018-01-01"),
+            create_counter_entry("2022-12-22", 96, "12/3456", "2018-01-01"),
+            create_counter_entry("2023-04-08", 0, "112233", "2018-01-01"),
+            create_counter_entry("2023-05-29", 7, "112233", "2018-01-01"),
+            create_counter_entry("2023-05-29", 0, "4444", "2018-01-01"),
+            create_counter_entry("2023-05-29", 9, "4444", "2018-01-01"),
+        ]
+
+        for item in counter_values:
+            plot.append("water_meter_table", item)
+        plot.save()
+
+        plot = frappe.get_doc('Plot', plot.name)
+        result = plot.has_new_water_meter_in(2023)
+        self.assertEqual(result, True)
+
+    def test_has_no_new_water_meter_in(self):
+        customer = self.customers[0]
+        plot = self.plot = create_plot("123", customer.name)
+        plot.save()
+
+        counter_values = [
+            create_counter_entry("2021-10-31", 10, "112233", "2018-01-01"),
+            create_counter_entry("2021-12-31", 12, "112233", "2018-01-01"),
+            create_counter_entry("2022-12-31", 48, "112233", "2018-01-01"),
+            create_counter_entry("2023-10-29", 67, "112233", "2018-01-01"),
+        ]
+
+        for item in counter_values:
+            plot.append("water_meter_table", item)
+        plot.save()
+
+        plot = frappe.get_doc('Plot', plot.name)
+        result = plot.has_new_water_meter_in(2023)
+        self.assertEqual(result, False)
+
+    def test_has_no_new_in_running_year_water_meter_in(self):
+        customer = self.customers[0]
+        plot = self.plot = create_plot("123", customer.name)
+        plot.save()
+
+        counter_values = [
+            create_counter_entry("2021-12-31", 12, "112233", "2018-01-01"),
+            create_counter_entry("2022-12-31", 48, "112233", "2018-01-01"),
+            create_counter_entry("2023-10-29", 67, "112233", "2018-01-01"),
+        ]
+
+        for item in counter_values:
+            plot.append("water_meter_table", item)
+        plot.save()
+
+        plot = frappe.get_doc('Plot', plot.name)
+        result = plot.has_new_water_meter_in(2024)
+        self.assertEqual(result, False)

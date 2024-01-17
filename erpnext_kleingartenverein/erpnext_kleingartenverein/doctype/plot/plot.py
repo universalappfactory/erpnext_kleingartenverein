@@ -226,6 +226,22 @@ class Plot(Document):
 
         return result
 
+    def has_new_water_meter_in(self, year):
+        sorted_by_year = list(sorted(self.water_meter_table, key=lambda x: x.date.year, reverse=True))
+        this_year = year
+        year_before = year - 1
+
+        entry_this_year = next(
+            filter(lambda x: x.date.year == this_year, sorted_by_year), None
+        )
+        entry_year_before = next(
+            filter(lambda x: x.date.year == year_before, sorted_by_year), None
+        )
+
+        if entry_this_year and entry_year_before:
+            return entry_this_year.counter_number != entry_year_before.counter_number
+        return False
+
     def validate_former_tenant_table(self):
         if self.former_tenants_table:
             grouped = groupby(

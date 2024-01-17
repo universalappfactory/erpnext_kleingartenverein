@@ -5,6 +5,7 @@ import frappe
 from frappe.exceptions import ValidationError
 from frappe.utils.data import flt
 from frappe import _
+from frappe.utils.weasyprint import PrintFormatGenerator
 
 
 class MissingDefaultItemPriceError(ValidationError):
@@ -61,7 +62,9 @@ class InvoiceCalculator:
 
         return result
 
-    def get_or_create_sales_invoice_for_customer(self, customer, calculation):
+    def get_or_create_sales_invoice_for_customer(
+        self, customer, calculation, get_only=False
+    ):
         now = datetime.now().strftime("%Y-%m-%d")
 
         sales_invoice_title = f"{calculation.prefix}-{calculation.year}-{customer.name}"
@@ -80,6 +83,9 @@ class InvoiceCalculator:
                 )
 
         except frappe.DoesNotExistError:
+            if get_only:
+                raise frappe.DoesNotExistError()
+
             price_list = frappe.get_doc("Price List", calculation.price_list)
 
             sales_invoice = frappe.get_doc(
@@ -89,7 +95,7 @@ class InvoiceCalculator:
                     "title": sales_invoice_title,
                     "company": calculation.company,
                     "posting_date": now,
-                    "due_date": now,
+                    "due_date": calculation.due_date if calculation.due_date else now,
                     "currency": calculation.currency,
                     "conversion_rate": 1.0,
                     "selling_price_list": price_list.name,
@@ -116,6 +122,7 @@ class InvoiceCalculator:
                 sales_invoice.items[index].amount = item.amount
                 sales_invoice.items[index].base_rate = item.amount
                 sales_invoice.items[index].base_amount = item.amount
+                sales_invoice.items[index].description = item.description[:140]
                 return
 
         sales_invoice_item = frappe.get_doc(
@@ -147,6 +154,7 @@ class InvoiceCalculator:
                 sales_invoice.items[index].base_rate = item.amount
                 sales_invoice.items[index].base_amount = item.amount
                 sales_invoice.items[index].qty = consumption
+                sales_invoice.items[index].description = item.description[:140]
                 return
 
         sales_invoice_item = frappe.get_doc(
@@ -157,6 +165,40 @@ class InvoiceCalculator:
                 "description": item.description[:140],
                 "conversion_factor": 1,
                 "qty": consumption,
+                "rate": item.amount,
+                "amount": item.amount,
+                "base_rate": item.amount,
+                "base_amount": item.amount,
+                "income_account": item.income_account,
+            }
+        )
+        sales_invoice.append("items", sales_invoice_item)
+
+    def calculate_new_counter(self, sales_invoice, item, customer, calculation):
+        plot = frappe.get_doc("Plot", customer.plot_link)
+
+        has_new_counter = plot.has_new_water_meter_in(item.water_consumption_year)
+        if not has_new_counter:
+            return
+
+        for index, sales_invoice_item in enumerate(sales_invoice.items):
+            if sales_invoice_item.item_code == item.product:
+                sales_invoice.items[index].rate = item.amount
+                sales_invoice.items[index].amount = item.amount
+                sales_invoice.items[index].base_rate = item.amount
+                sales_invoice.items[index].base_amount = item.amount
+                sales_invoice.items[index].qty = 1
+                sales_invoice.items[index].description = item.description[:140]
+                return
+
+        sales_invoice_item = frappe.get_doc(
+            {
+                "doctype": "Sales Invoice Item",
+                "item_name": item.product,
+                "item_code": item.product,
+                "description": item.description[:140],
+                "conversion_factor": 1,
+                "qty": 1,
                 "rate": item.amount,
                 "amount": item.amount,
                 "base_rate": item.amount,
@@ -212,6 +254,7 @@ class InvoiceCalculator:
                 sales_invoice.items[index].base_rate = amount
                 sales_invoice.items[index].base_amount = amount
                 sales_invoice.items[index].qty = quantity
+                sales_invoice.items[index].description = item.description[:140]
                 return
 
         sales_invoice_item = frappe.get_doc(
@@ -246,6 +289,7 @@ class InvoiceCalculator:
                     sales_invoice.items[index].base_rate = item.amount
                     sales_invoice.items[index].base_amount = item.amount
                     sales_invoice.items[index].qty = consumption
+                    sales_invoice.items[index].description = item.description[:140]
                     return
 
             sales_invoice_item = frappe.get_doc(
@@ -263,8 +307,8 @@ class InvoiceCalculator:
                     "income_account": item.income_account,
                 }
             )
-            sales_invoice.append("items", sales_invoice_item)      
-    
+            sales_invoice.append("items", sales_invoice_item)
+
     def calculate_sales_invoice_items(self, sales_invoice, customer, calculation):
         for item in calculation.items:
             if item.action == "AddFixedProduct":
@@ -275,10 +319,10 @@ class InvoiceCalculator:
                 )
             if item.action == "AddProductByTemplates":
                 self.calculate_by_templates(sales_invoice, item, customer, calculation)
-            
             if item.action == "CalculateTeamwork":
                 self.calculate_teamwork(sales_invoice, item, customer, calculation)
-
+            if item.action == "CalculateNewCounter":
+                self.calculate_new_counter(sales_invoice, item, customer, calculation)
         sales_invoice.save()
 
     def calculate_invoice_for_customer(self, customer, calculation):
@@ -332,7 +376,61 @@ class InvoiceCalculator:
                 f"invoice calculation {invoice_calculation_name} does not exist"
             )
 
+    def create_pdf(self, doctype, name, print_format, letterhead):
+        doc = frappe.get_doc(doctype, name)
+        doc.check_permission("print")
+        generator = PrintFormatGenerator(print_format, doc, letterhead)
+        pdf = generator.render_pdf()
+        return pdf
+
+    def print_invoices(self, invoice_calculation_name):
+        calculation = frappe.get_doc("Invoice Calculation", invoice_calculation_name)
+
+        if not calculation.print_format:
+            frappe.throw("you must provide a print_format in order to print invoices")
+
+        if not calculation.output_folder:
+            frappe.throw("you must provide a output_folder in order to print invoices")
+
+        if not calculation.letter_head:
+            frappe.throw("you must provide a letter_head in order to print invoices")
+
+        customer_names = self.get_matching_customers(calculation)
+        for customer_name in customer_names:
+            try:
+                customer = frappe.get_doc("Customer", customer_name)
+                invoice = self.get_or_create_sales_invoice_for_customer(
+                    customer, calculation, get_only=True
+                )
+                pdf = self.create_pdf(
+                    "Sales Invoice",
+                    invoice.name,
+                    calculation.print_format,
+                    calculation.letter_head,
+                )
+
+                frappe.get_doc(
+                    {
+                        "doctype": "File",
+                        "attached_to_doctype": "Single Member Letter",
+                        "attached_to_name": customer.name,
+                        "attached_to_field": "attachment",
+                        "folder": calculation.output_folder,
+                        "file_name": f"{invoice.title}.pdf",
+                        # "file_url": file_url,
+                        "is_private": 1,
+                        "content": pdf,
+                    }
+                ).save()
+            except frappe.DoesNotExistError:
+                frappe.log_error(f"no sales invoice for {customer.name}")
+
 
 def execute_invoice_calcuclation(invoice_calculation_name):
     invoice_calculator = InvoiceCalculator()
     invoice_calculator.calculate(invoice_calculation_name)
+
+
+def execute_invoice_printing(invoice_calculation_name):
+    invoice_calculator = InvoiceCalculator()
+    invoice_calculator.print_invoices(invoice_calculation_name)
