@@ -8,9 +8,11 @@
  "engine": "InnoDB",
  "field_order": [
   "description",
+  "prefix",
   "year",
   "items",
-  "customer_group"
+  "customer_group",
+  "errors"
  ],
  "fields": [
   {
@@ -38,11 +40,23 @@
    "fieldtype": "Link",
    "label": "Customer Group",
    "options": "Customer Group"
+  },
+  {
+   "fieldname": "prefix",
+   "fieldtype": "Data",
+   "label": "Prefix",
+   "reqd": 1
+  },
+  {
+   "fieldname": "errors",
+   "fieldtype": "Table",
+   "label": "Errors",
+   "options": "Invoice Calculation Error"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-03 07:40:54.332846",
+ "modified": "2024-01-17 08:41:17.358798",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Invoice Calculation",
