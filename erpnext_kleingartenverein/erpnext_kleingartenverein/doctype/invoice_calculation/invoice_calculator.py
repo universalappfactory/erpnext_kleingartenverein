@@ -26,11 +26,12 @@ class InvalidQuantityError(ValidationError):
 class InvoiceCalculator:
     """
     Basic invoice calculator to calculate yearly invoices
-
-    Still under development
     """
 
     def get_matching_customers(self, invoice_calculation):
+        if invoice_calculation.customer:
+            return [invoice_calculation.customer]
+
         if invoice_calculation.customer_group:
             return frappe.get_list(
                 "Customer",
@@ -54,7 +55,7 @@ class InvoiceCalculator:
             if len(existing) == 0:
                 raise frappe.DoesNotExistError()
             elif len(existing) == 1:
-                return frappe.get_doc('Sales Invoice', existing[0])
+                return frappe.get_doc("Sales Invoice", existing[0])
             else:
                 frappe.throw(
                     f"multiple sales invoices with title: '{sales_invoice_title}'"
@@ -116,19 +117,18 @@ class InvoiceCalculator:
         )
         sales_invoice.append("items", sales_invoice_item)
 
-    
     def calculate_water_consumption(self, sales_invoice, item, customer, calculation):
-        plot = frappe.get_doc('Plot', customer.plot_link)       
-        
+        plot = frappe.get_doc("Plot", customer.plot_link)
+
         consumption = plot.calculate_water_consumption(item.water_consumption_year)
-        
+
         for index, sales_invoice_item in enumerate(sales_invoice.items):
             if sales_invoice_item.item_code == item.product:
                 sales_invoice.items[index].rate = item.amount
                 sales_invoice.items[index].amount = item.amount
                 sales_invoice.items[index].base_rate = item.amount
                 sales_invoice.items[index].base_amount = item.amount
-                sales_invoice.items[index].consumption = consumption
+                sales_invoice.items[index].qty = consumption
                 return
 
         sales_invoice_item = frappe.get_doc(
@@ -148,13 +148,81 @@ class InvoiceCalculator:
         )
         sales_invoice.append("items", sales_invoice_item)
 
-    
+    def amount_template_set(self, item):
+        return item.amount_template and item.amount_template.strip() != ""
+
+    def quantity_template_set(self, item):
+        return item.quantity_template and item.quantity_template.strip() != ""
+
+    def get_template_value(self, template, sales_invoice, customer, item):
+        try:
+            context = frappe._dict()
+            context["customer"] = customer
+            context["sales_invoice"] = sales_invoice
+            context["item"] = item
+            result = frappe.render_template(template, context, False, True)
+            return float(result)
+        except Exception as error:
+            frappe.throw(f"error in get_template_value {item.description}", error)
+
+    def calculate_by_templates(self, sales_invoice, item, customer, calculation):
+        amount = item.amount
+        quantity = 1
+
+        if not self.amount_template_set(item) and not self.quantity_template_set(item):
+            frappe.throw(
+                "You must set at least an amount_template or quantity_template"
+            )
+
+        if self.amount_template_set(item):
+            amount = self.get_template_value(
+                item.amount_template, sales_invoice, customer, item
+            )
+
+        if self.quantity_template_set(item):
+            quantity = self.get_template_value(
+                item.quantity_template, sales_invoice, customer, item
+            )
+
+        if quantity == 0:
+            return
+
+        for index, sales_invoice_item in enumerate(sales_invoice.items):
+            if sales_invoice_item.item_code == item.product:
+                sales_invoice.items[index].rate = amount
+                sales_invoice.items[index].amount = amount
+                sales_invoice.items[index].base_rate = amount
+                sales_invoice.items[index].base_amount = amount
+                sales_invoice.items[index].qty = quantity
+                return
+
+        sales_invoice_item = frappe.get_doc(
+            {
+                "doctype": "Sales Invoice Item",
+                "item_name": item.product,
+                "item_code": item.product,
+                "description": item.description[:140],
+                "conversion_factor": 1,
+                "qty": quantity,
+                "rate": amount,
+                "amount": amount,
+                "base_rate": amount,
+                "base_amount": amount,
+                "income_account": item.income_account,
+            }
+        )
+        sales_invoice.append("items", sales_invoice_item)
+
     def calculate_sales_invoice_items(self, sales_invoice, customer, calculation):
         for item in calculation.items:
             if item.action == "AddFixedProduct":
                 self.add_fixed_product(sales_invoice, item)
             if item.action == "CalculateWaterConsumption":
-                self.calculate_water_consumption(sales_invoice, item, customer, calculation)
+                self.calculate_water_consumption(
+                    sales_invoice, item, customer, calculation
+                )
+            if item.action == "AddProductByTemplates":
+                self.calculate_by_templates(sales_invoice, item, customer, calculation)
 
         sales_invoice.save()
 
@@ -194,7 +262,7 @@ class InvoiceCalculator:
 
             for customer_name in customer_names:
                 try:
-                    customer = frappe.get_doc('Customer', customer_name)
+                    customer = frappe.get_doc("Customer", customer_name)
                     self.calculate_invoice_for_customer(customer, calculation)
                 except Exception as error:
                     frappe.log_error(error)
@@ -207,3 +275,8 @@ class InvoiceCalculator:
             frappe.log_error(
                 f"invoice calculation {invoice_calculation_name} does not exist"
             )
+
+
+def execute_invoice_calcuclation(invoice_calculation_name):
+    invoice_calculator = InvoiceCalculator()
+    invoice_calculator.calculate(invoice_calculation_name)

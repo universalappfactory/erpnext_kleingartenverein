@@ -90,6 +90,18 @@ def create_counter_entry(date, counter_value, counter_number, mounting_date):
 
     return entry
 
+def create_insurance_entry(insurance_type, insurance_value):
+    entry = frappe.get_doc(
+        {
+            "doctype": "Insurance Table",
+            "insurance_type": insurance_type,
+            "insurance_description": "",
+            "insurance_value": insurance_value,
+        }
+    )
+
+    return entry
+
 
 class InvoiceCalculatorTests(TestBase):
     TEST_SITE = "testing.localhost"
@@ -105,6 +117,7 @@ class InvoiceCalculatorTests(TestBase):
 
         cls.company = frappe.get_last_doc("Company")
         test_customer = get_or_create_tenant("Test Tenant", "Tenant")
+
         cls.customers = [test_customer]
         cls.warehouse = frappe.get_last_doc("Warehouse")
 
@@ -130,6 +143,24 @@ class InvoiceCalculatorTests(TestBase):
                 doc.delete()
             except:
                 pass
+
+        for c in self.customers:
+            try:
+                customer = frappe.get_doc("Customer", c)
+                if customer.plot_link and customer.plot_link != "":
+                    customer.plot_link = None
+                    customer.save()
+            except:
+                pass
+
+        plots = frappe.get_list("Plot")
+        for p in plots:
+            try:
+                plot = frappe.get_doc("Plot", p)
+                plot.customer = None
+                plot.delete()
+            except Exception as error:
+                print(error)
 
     def test_create_invoice_calculator(self):
         calculator = InvoiceCalculator()
@@ -258,6 +289,260 @@ class InvoiceCalculatorTests(TestBase):
         for item in counter_values:
             plot.append("water_meter_table", item)
         plot.save()
+
+        calculator = InvoiceCalculator()
+        calculator.calculate(calculation.name)
+
+        calculation = frappe.get_doc("Invoice Calculation", calculation.name)
+        self.assertEqual(len(calculation.errors), 0)
+
+        customer_invoices = frappe.get_list(
+            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+        )
+
+        self.assertEqual(len(customer_invoices), 1)
+        invoice = customer_invoices[0]
+        self.assertEqual(invoice["grand_total"], expected_amount)
+
+    def test_quantity_by_script(self):
+        customer = self.customers[0]
+        price_list = frappe.get_last_doc("Price List")
+        calculation = create_invoice_calculation(self.company, price_list.name)
+
+        self.items_to_delete.append(calculation)
+
+        product = get_or_create_item(
+            "Plot Lease",
+            self.company,
+            self.warehouse.name,
+            self.company.default_income_account,
+            False,
+        )
+        self.items_to_delete.append(product)
+
+        item = create_invoice_calculation_item(
+            product, self.company.default_income_account, "AddProductByTemplates"
+        )
+        item.quantity_template = """
+            {%- set plot_link = customer.plot_link  -%}
+            {%- set plot = frappe.get_doc('Plot', plot_link)  -%}
+            {{plot.plot_size_sqm}}"""
+
+        item.amount = 0.86
+        self.items_to_delete.append(item)
+
+        calculation.append("items", item)
+        calculation.insert()
+
+        expected_amount = 152 * 0.86
+        plot = self.plot = create_plot("345", customer.name)
+        plot.plot_size_sqm = 152
+        plot.save()
+
+        calculator = InvoiceCalculator()
+        calculator.calculate(calculation.name)
+
+        calculation = frappe.get_doc("Invoice Calculation", calculation.name)
+        self.assertEqual(len(calculation.errors), 0)
+
+        customer_invoices = frappe.get_list(
+            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+        )
+
+        self.assertEqual(len(customer_invoices), 1)
+        invoice = customer_invoices[0]
+        self.assertEqual(invoice["grand_total"], expected_amount)
+
+    def test_amount_by_script(self):
+        customer = self.customers[0]
+        price_list = frappe.get_last_doc("Price List")
+        calculation = create_invoice_calculation(self.company, price_list.name)
+
+        old_invoice = create_sales_invoice(
+            customer.name,
+            "Old Invoice",
+            self.company,
+            100,
+            self.company.default_receivable_account,
+        )
+        old_invoice.title = "My_old_invoice"
+        old_invoice.remarks = "TestValue: 3.45"
+
+        product = get_or_create_item(
+            "TestProduct",
+            self.company,
+            self.warehouse.name,
+            self.company.default_receivable_account,
+            False,
+        )
+        old_item = create_sales_invoice_item(
+            product.name,
+            product.name,
+            "stk",
+            1,
+            10,
+            self.company.default_income_account,
+            self.company.cost_center,
+        )
+
+        old_invoice.append("items", old_item)
+        old_invoice.save()
+
+        self.items_to_delete.append(calculation)
+
+        product = get_or_create_item(
+            "Plot Lease",
+            self.company,
+            self.warehouse.name,
+            self.company.default_income_account,
+            False,
+        )
+        self.items_to_delete.append(product)
+
+        item = create_invoice_calculation_item(
+            product, self.company.default_income_account, "AddProductByTemplates"
+        )
+
+        item.amount_template = """
+            {%- set customer_name = customer.name  -%}
+            {%- set sales_invoice_list = frappe.get_all('Sales Invoice', filters={'customer': customer_name}, fields=['name', 'title', 'remarks']) -%}
+            {%- for invoice in sales_invoice_list -%}
+            {%- set invoice_title = invoice.title  -%}
+            {%- if invoice_title.startswith('My_old_invoice') -%}
+            {%- set remarks = invoice.remarks  -%}
+            {%- set value = remarks.split(':')  -%}
+            {%- set val = value[1] | float -%}
+            {{val * 2.74}}
+            {%- endif -%}
+            {%- endfor -%}"""
+
+        self.items_to_delete.append(item)
+
+        calculation.append("items", item)
+        calculation.insert()
+
+        expected_amount = 9.45
+
+        calculator = InvoiceCalculator()
+        calculator.calculate(calculation.name)
+
+        calculation = frappe.get_doc("Invoice Calculation", calculation.name)
+        self.assertEqual(len(calculation.errors), 0)
+
+        customer_invoices = frappe.get_list(
+            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+        )
+
+        self.assertEqual(len(customer_invoices), 2)
+        invoice = customer_invoices[0]
+        self.assertEqual(invoice["grand_total"], expected_amount)
+
+    def test_amount_by_script_divide(self):
+        test_customer = get_or_create_tenant("Second Tenant", "Tenant")
+        self.customers.append(test_customer)
+
+        price_list = frappe.get_last_doc("Price List")
+        calculation = create_invoice_calculation(self.company, price_list.name)
+
+        self.items_to_delete.append(calculation)
+
+        product = get_or_create_item(
+            "Plot Lease",
+            self.company,
+            self.warehouse.name,
+            self.company.default_income_account,
+            False,
+        )
+        self.items_to_delete.append(product)
+
+        item = create_invoice_calculation_item(
+            product, self.company.default_income_account, "AddProductByTemplates"
+        )
+
+        item.amount_template = """
+{%- set tenant_list = frappe.get_all('Customer', filters={'customer_group': "Tenant"}, fields=['name']) -%}
+{%- set len = tenant_list|length -%}
+{{ 144 / len }}
+            """
+
+        self.items_to_delete.append(item)
+
+        calculation.append("items", item)
+        calculation.insert()
+
+        expected_amount = 72
+
+        calculator = InvoiceCalculator()
+        calculator.calculate(calculation.name)
+
+        calculation = frappe.get_doc("Invoice Calculation", calculation.name)
+        self.assertEqual(len(calculation.errors), 0)
+
+        customer_invoices = frappe.get_list(
+            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+        )
+
+        self.assertEqual(len(customer_invoices), 1)
+        invoice = customer_invoices[0]
+        self.assertEqual(invoice["grand_total"], expected_amount)
+
+    def test_insurance_table(self):
+        customer = frappe.get_doc('Customer', self.customers[0].name)
+        price_list = frappe.get_last_doc("Price List")
+        calculation = create_invoice_calculation(self.company, price_list.name)
+
+        self.items_to_delete.append(calculation)
+
+        product = get_or_create_item(
+            "Insurance",
+            self.company,
+            self.warehouse.name,
+            self.company.default_income_account,
+            False,
+        )
+        self.items_to_delete.append(product)
+
+        insurances = [
+            create_insurance_entry("Basic Insurance", 35)
+        ]
+
+        for item in insurances:
+            customer.append("insurance_table", item)
+        customer.save()
+
+        item = create_invoice_calculation_item(
+            product, self.company.default_income_account, "AddProductByTemplates"
+        )
+
+        item.quantity_template = """
+{%- set customer_name = customer.name  -%}
+{%- set insurances = frappe.get_all('Insurance Table', filters={'parent': customer_name}, fields=['insurance_type', 'insurance_value']) -%}
+{%- for entry in insurances -%}
+{%- if entry.insurance_type == 'Basic Insurance' -%}
+1
+{%- else -%}
+0
+{%- endif -%}
+{%- endfor -%}
+            """
+        item.amount_template = """
+{%- set customer_name = customer.name  -%}
+{%- set insurances = frappe.get_all('Insurance Table', filters={'parent': customer_name}, fields=['insurance_type', 'insurance_value']) -%}
+{%- for entry in insurances -%}
+{%- if entry.insurance_type == 'Basic Insurance' -%}
+{{entry.insurance_value}}
+{%- else -%}
+0
+{%- endif -%}
+{%- endfor -%}
+            """
+
+        self.items_to_delete.append(item)
+
+        calculation.append("items", item)
+        calculation.insert()
+
+        expected_amount = 35
 
         calculator = InvoiceCalculator()
         calculator.calculate(calculation.name)
