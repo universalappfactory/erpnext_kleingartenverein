@@ -12,7 +12,8 @@
   "quantity_template",
   "amount_template",
   "income_account",
-  "amount"
+  "amount",
+  "water_consumption_year"
  ],
  "fields": [
   {
@@ -56,12 +57,17 @@
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Amount"
+  },
+  {
+   "fieldname": "water_consumption_year",
+   "fieldtype": "Int",
+   "label": "Water Consumption Year"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-17 10:57:26.132569",
+ "modified": "2024-01-17 13:02:51.463281",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Invoice Calculation Item",

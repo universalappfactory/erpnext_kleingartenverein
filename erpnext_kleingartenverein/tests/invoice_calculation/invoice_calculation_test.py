@@ -43,6 +43,7 @@ class InvoiceCalculationTests(TestBase):
     def setUpClass(cls):
         super().setUpClass()
 
+        cls.company = frappe.get_last_doc("Company")
         test_customer = get_or_create_tenant("Test Tenant", "Tenant")
         cls.customers = [test_customer]
 
@@ -54,12 +55,18 @@ class InvoiceCalculationTests(TestBase):
         super().tearDownClass()
 
     def test_create_and_delete_invoice_calculation(self):
+        price_list = frappe.get_last_doc("Price List")
         calculation = frappe.get_doc(
             {
                 "doctype": "Invoice Calculation",
                 "description": "Lease Invoice 2024",
-                "prefix": "Invoice_",
+                "prefix": "Lease Invoice_",
                 "year": 2024,
+                "customer_group": "Tenant",
+                "currency": "EUR",
+                "debit_to": self.company.default_receivable_account,
+                "price_list": price_list.name,
+                "company": self.company.name,
             }
         )
         self.assertIsNotNone(calculation)

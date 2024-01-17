@@ -135,10 +135,10 @@ class Plot(Document):
                 self.add_missing_water_meter_values(row)
 
         if len(self.water_meter_table) > 0:
-            sorted_entries = list(sorted(self.water_meter_table, key=lambda x: x.counter_number))
-            for key, group in groupby(
-                sorted_entries, lambda x: x.counter_number
-            ):
+            sorted_entries = list(
+                sorted(self.water_meter_table, key=lambda x: x.counter_number)
+            )
+            for key, group in groupby(sorted_entries, lambda x: x.counter_number):
                 self.validate_decreasing_counter_values(list(group))
 
     def validate_mounting_dates(self):
@@ -208,6 +208,23 @@ class Plot(Document):
                 new_entry.from_date = date.today()
                 new_entry.customer_link = self.customer
                 self.append("former_tenants_table", new_entry)
+
+    def calculate_water_consumption(self, year):
+        by_year = list(
+            filter(
+                lambda x: x.date.year == year,
+                self.water_meter_table,
+            )
+        )
+
+        sorted_by_counter_number = list(sorted(by_year, key=lambda x: x.counter_number))
+
+        result = 0
+        for _, group in groupby(sorted_by_counter_number, lambda x: x.counter_number):
+            sorted_by_date = list(sorted(group, key=lambda x: x.date))
+            result = result + sorted_by_date[-1].counter_value
+
+        return result
 
     def validate_former_tenant_table(self):
         if self.former_tenants_table:

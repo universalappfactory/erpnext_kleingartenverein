@@ -116,10 +116,45 @@ class InvoiceCalculator:
         )
         sales_invoice.append("items", sales_invoice_item)
 
+    
+    def calculate_water_consumption(self, sales_invoice, item, customer, calculation):
+        plot = frappe.get_doc('Plot', customer.plot_link)       
+        
+        consumption = plot.calculate_water_consumption(item.water_consumption_year)
+        
+        for index, sales_invoice_item in enumerate(sales_invoice.items):
+            if sales_invoice_item.item_code == item.product:
+                sales_invoice.items[index].rate = item.amount
+                sales_invoice.items[index].amount = item.amount
+                sales_invoice.items[index].base_rate = item.amount
+                sales_invoice.items[index].base_amount = item.amount
+                sales_invoice.items[index].consumption = consumption
+                return
+
+        sales_invoice_item = frappe.get_doc(
+            {
+                "doctype": "Sales Invoice Item",
+                "item_name": item.product,
+                "item_code": item.product,
+                "description": item.description[:140],
+                "conversion_factor": 1,
+                "qty": consumption,
+                "rate": item.amount,
+                "amount": item.amount,
+                "base_rate": item.amount,
+                "base_amount": item.amount,
+                "income_account": item.income_account,
+            }
+        )
+        sales_invoice.append("items", sales_invoice_item)
+
+    
     def calculate_sales_invoice_items(self, sales_invoice, customer, calculation):
         for item in calculation.items:
             if item.action == "AddFixedProduct":
                 self.add_fixed_product(sales_invoice, item)
+            if item.action == "CalculateWaterConsumption":
+                self.calculate_water_consumption(sales_invoice, item, customer, calculation)
 
         sales_invoice.save()
 
@@ -147,9 +182,9 @@ class InvoiceCalculator:
             calculation = frappe.get_doc(
                 "Invoice Calculation", invoice_calculation_name
             )
-            customers = self.get_matching_customers(calculation)
+            customer_names = self.get_matching_customers(calculation)
 
-            if len(customers) == 0:
+            if len(customer_names) == 0:
                 msg = self.create_error_message(
                     f"No customers found for invoice calculation '{invoice_calculation_name}'"
                 )
@@ -157,8 +192,9 @@ class InvoiceCalculator:
                 calculation.save()
                 return
 
-            for customer in customers:
+            for customer_name in customer_names:
                 try:
+                    customer = frappe.get_doc('Customer', customer_name)
                     self.calculate_invoice_for_customer(customer, calculation)
                 except Exception as error:
                     frappe.log_error(error)
