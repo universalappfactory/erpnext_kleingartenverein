@@ -43,6 +43,24 @@ class InvoiceCalculator:
     def create_drafts():
         pass
 
+    def calculate_teamwork_hours(self, customer, year):
+        result = 0
+
+        by_year = list(
+            filter(
+                lambda x: x.execution_date.year == year,
+                customer.teamwork_table,
+            )
+        )
+
+        for value in customer.teanant_teamwork_table:
+            result = result + value.duration
+
+        for value in by_year:
+            result = result + value.execution_duration
+
+        return result
+
     def get_or_create_sales_invoice_for_customer(self, customer, calculation):
         now = datetime.now().strftime("%Y-%m-%d")
 
@@ -213,6 +231,40 @@ class InvoiceCalculator:
         )
         sales_invoice.append("items", sales_invoice_item)
 
+    def calculate_teamwork(self, sales_invoice, item, customer, calculation):
+        if customer.teamwork_freed == 1:
+            return
+
+        hours = self.calculate_teamwork_hours(customer, item.teamwork_year)
+
+        missing = item.required_teamwork_hours - hours
+        if missing > 0:
+            for index, sales_invoice_item in enumerate(sales_invoice.items):
+                if sales_invoice_item.item_code == item.product:
+                    sales_invoice.items[index].rate = item.amount
+                    sales_invoice.items[index].amount = item.amount
+                    sales_invoice.items[index].base_rate = item.amount
+                    sales_invoice.items[index].base_amount = item.amount
+                    sales_invoice.items[index].qty = consumption
+                    return
+
+            sales_invoice_item = frappe.get_doc(
+                {
+                    "doctype": "Sales Invoice Item",
+                    "item_name": item.product,
+                    "item_code": item.product,
+                    "description": item.description[:140],
+                    "conversion_factor": 1,
+                    "qty": missing,
+                    "rate": item.amount,
+                    "amount": item.amount,
+                    "base_rate": item.amount,
+                    "base_amount": item.amount,
+                    "income_account": item.income_account,
+                }
+            )
+            sales_invoice.append("items", sales_invoice_item)      
+    
     def calculate_sales_invoice_items(self, sales_invoice, customer, calculation):
         for item in calculation.items:
             if item.action == "AddFixedProduct":
@@ -223,6 +275,9 @@ class InvoiceCalculator:
                 )
             if item.action == "AddProductByTemplates":
                 self.calculate_by_templates(sales_invoice, item, customer, calculation)
+            
+            if item.action == "CalculateTeamwork":
+                self.calculate_teamwork(sales_invoice, item, customer, calculation)
 
         sales_invoice.save()
 
@@ -260,6 +315,7 @@ class InvoiceCalculator:
                 calculation.save()
                 return
 
+            customer = None
             for customer_name in customer_names:
                 try:
                     customer = frappe.get_doc("Customer", customer_name)

@@ -102,6 +102,27 @@ def create_insurance_entry(insurance_type, insurance_value):
 
     return entry
 
+def create_teamwork_entry(execution_date, execution_duration):
+    entry = frappe.get_doc(
+        {
+            "doctype": "Teamwork Execution Table",
+            "execution_date": execution_date,
+            "execution_duration": execution_duration,
+        }
+    )
+
+    return entry
+
+def create_work_task_entry(description, duration):
+    entry = frappe.get_doc(
+        {
+            "doctype": "Work Task",
+            "description": description,
+            "duration": duration,
+        }
+    )
+
+    return entry
 
 class InvoiceCalculatorTests(TestBase):
     TEST_SITE = "testing.localhost"
@@ -543,6 +564,67 @@ class InvoiceCalculatorTests(TestBase):
         calculation.insert()
 
         expected_amount = 35
+
+        calculator = InvoiceCalculator()
+        calculator.calculate(calculation.name)
+
+        calculation = frappe.get_doc("Invoice Calculation", calculation.name)
+        self.assertEqual(len(calculation.errors), 0)
+
+        customer_invoices = frappe.get_list(
+            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+        )
+
+        self.assertEqual(len(customer_invoices), 1)
+        invoice = customer_invoices[0]
+        self.assertEqual(invoice["grand_total"], expected_amount)
+
+
+    def test_teamwork(self):
+        customer = frappe.get_doc('Customer', self.customers[0].name)
+        price_list = frappe.get_last_doc("Price List")
+        calculation = create_invoice_calculation(self.company, price_list.name)
+
+        self.items_to_delete.append(calculation)
+
+        product = get_or_create_item(
+            "Teamwork",
+            self.company,
+            self.warehouse.name,
+            self.company.default_income_account,
+            False,
+        )
+        self.items_to_delete.append(product)
+
+        teamwork = [
+            create_teamwork_entry("2023-10-10", 2),
+            create_teamwork_entry("2023-5-10", 3)
+        ]
+
+        for item in teamwork:
+            customer.append("teamwork_table", item)
+
+        work_task = [
+            create_work_task_entry("todo", 2)
+        ]
+
+        for item in work_task:
+            customer.append("teanant_teamwork_table", item)
+        customer.save()
+
+        item = create_invoice_calculation_item(
+            product, self.company.default_income_account, "CalculateTeamwork"
+        )
+        item.required_teamwork_hours = 8
+        item.teamwork_year = 2023
+        item.amount = 30
+
+        self.items_to_delete.append(item)
+
+        calculation.append("items", item)
+        calculation.insert()
+
+        expected_amount = 30
 
         calculator = InvoiceCalculator()
         calculator.calculate(calculation.name)

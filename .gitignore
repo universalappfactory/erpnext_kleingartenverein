@@ -11,3 +11,4 @@ lib64
 bin/
 
 erpnext_kleingartenverein/tests/payment_creation/test_payments.csv
+erpnext_kleingartenverein/tests/sites/mysite.localhost/**

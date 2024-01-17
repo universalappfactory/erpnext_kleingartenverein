@@ -17,7 +17,8 @@
   "debit_to",
   "currency",
   "company",
-  "customer"
+  "customer",
+  "output_folder"
  ],
  "fields": [
   {
@@ -91,11 +92,17 @@
    "fieldtype": "Link",
    "label": "Customer",
    "options": "Customer"
+  },
+  {
+   "fieldname": "output_folder",
+   "fieldtype": "Link",
+   "label": "Output Folder",
+   "options": "File"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-17 15:45:18.968434",
+ "modified": "2024-01-17 17:13:55.270210",
  "modified_by": "Administrator",
  "module": "Erpnext Kleingartenverein",
  "name": "Invoice Calculation",
