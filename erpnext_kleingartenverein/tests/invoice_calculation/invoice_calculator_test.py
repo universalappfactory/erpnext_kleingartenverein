@@ -107,7 +107,7 @@ def create_teamwork_entry(execution_date, execution_duration):
         {
             "doctype": "Teamwork Execution Table",
             "execution_date": execution_date,
-            "execution_duration": execution_duration,
+            "execution_duration": execution_duration * 3600,
         }
     )
 
@@ -118,7 +118,7 @@ def create_work_task_entry(description, duration):
         {
             "doctype": "Work Task",
             "description": description,
-            "duration": duration,
+            "duration": duration * 3600,
         }
     )
 

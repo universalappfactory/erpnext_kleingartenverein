@@ -1,11 +1,10 @@
 from datetime import datetime
-from erpnext.accounts.doctype.pricing_rule.pricing_rule import apply_pricing_rule
-from erpnext.stock.doctype.item.item import get_item_defaults, get_item_details
 import frappe
 from frappe.exceptions import ValidationError
 from frappe.utils.data import flt
 from frappe import _
 from frappe.utils.weasyprint import PrintFormatGenerator
+from frappe.utils.file_manager import add_attachments
 
 
 class MissingDefaultItemPriceError(ValidationError):
@@ -60,7 +59,7 @@ class InvoiceCalculator:
         for value in by_year:
             result = result + value.execution_duration
 
-        return result
+        return result / 3600
 
     def get_or_create_sales_invoice_for_customer(
         self, customer, calculation, get_only=False
@@ -277,9 +276,8 @@ class InvoiceCalculator:
     def calculate_teamwork(self, sales_invoice, item, customer, calculation):
         if customer.teamwork_freed == 1:
             return
-
+        
         hours = self.calculate_teamwork_hours(customer, item.teamwork_year)
-
         missing = item.required_teamwork_hours - hours
         if missing > 0:
             for index, sales_invoice_item in enumerate(sales_invoice.items):
@@ -288,7 +286,7 @@ class InvoiceCalculator:
                     sales_invoice.items[index].amount = item.amount
                     sales_invoice.items[index].base_rate = item.amount
                     sales_invoice.items[index].base_amount = item.amount
-                    sales_invoice.items[index].qty = consumption
+                    sales_invoice.items[index].qty = missing
                     sales_invoice.items[index].description = item.description[:140]
                     return
 
@@ -376,6 +374,9 @@ class InvoiceCalculator:
                 f"invoice calculation {invoice_calculation_name} does not exist"
             )
 
+    def add_attchment_to_customer(self, customer_name, file_url):
+        add_attachments("Customer", customer_name, file_url)
+
     def create_pdf(self, doctype, name, print_format, letterhead):
         doc = frappe.get_doc(doctype, name)
         doc.check_permission("print")
@@ -409,7 +410,7 @@ class InvoiceCalculator:
                     calculation.letter_head,
                 )
 
-                frappe.get_doc(
+                file = frappe.get_doc(
                     {
                         "doctype": "File",
                         "attached_to_doctype": "Single Member Letter",
@@ -422,6 +423,7 @@ class InvoiceCalculator:
                         "content": pdf,
                     }
                 ).save()
+                self.add_attchment_to_customer(customer.name, [file.name])
             except frappe.DoesNotExistError:
                 frappe.log_error(f"no sales invoice for {customer.name}")
 
