@@ -155,6 +155,35 @@ def add_teamwork_work_tasks_table(customize_form=None):
     )
 
 
+def add_invoice_by_email_field(customize_form=None):
+    if not customize_form:
+        customize_form = frappe.get_doc("Customize Form")
+        customize_form.doc_type = "Customer"
+        customize_form.fetch_to_customize()
+
+    add_field(
+        customize_form, "accounting_break", "", "bank_account_link", "Column Break"
+    )
+    add_field(
+        customize_form, "invoice_by_email", _("Invoice by EMail"), "accounting", "Check"
+    )
+
+
+def add_disagree_invoice_by_mail_field(customize_form=None):
+    if not customize_form:
+        customize_form = frappe.get_doc("Customize Form")
+        customize_form.doc_type = "Customer"
+        customize_form.fetch_to_customize()
+
+    add_field(
+        customize_form,
+        "disagree_invoice_by_email",
+        _("Disagree Invoice by EMail"),
+        "invoice_by_email",
+        "Check",
+    )
+
+
 def create_additional_customer_form_fields():
     customize_form = frappe.get_doc("Customize Form")
     customize_form.doc_type = "Customer"
@@ -277,6 +306,8 @@ def create_additional_customer_form_fields():
         ["Attachment table"],
     )
     add_teamwork_work_tasks_table(customize_form)
+    add_invoice_by_email_field(customize_form)
+    add_disagree_invoice_by_mail_field(customize_form)
 
 
 def get_or_create_default_pricelist():
@@ -616,7 +647,6 @@ def add_api_access():
             "erpnext_kleingartenverein.dashboard_api.get_tenant_data",
             "System Manager",
         )
-
 
         add_not_existing_entry(
             club_settings,
