@@ -26,7 +26,7 @@ from testhelper.sales_invoice_factory import (
 )
 
 from testhelper.file_factory import get_or_create_folder
-from testhelper.delete_utils import try_delete
+from testhelper.delete_utils import try_delete, try_delete_list
 
 from erpnext_kleingartenverein.erpnext_kleingartenverein.doctype.invoice_calculation.invoice_calculator import (
     InvoiceCalculator,
@@ -90,6 +90,7 @@ def create_counter_entry(date, counter_value, counter_number, mounting_date):
 
     return entry
 
+
 def create_insurance_entry(insurance_type, insurance_value):
     entry = frappe.get_doc(
         {
@@ -102,6 +103,7 @@ def create_insurance_entry(insurance_type, insurance_value):
 
     return entry
 
+
 def create_teamwork_entry(execution_date, execution_duration):
     entry = frappe.get_doc(
         {
@@ -113,50 +115,61 @@ def create_teamwork_entry(execution_date, execution_duration):
 
     return entry
 
+
 def create_work_task_entry(description, duration):
     entry = frappe.get_doc(
         {
             "doctype": "Work Task",
             "description": description,
-            "duration": duration * 3600,
+            "duration": duration * 3600 if duration is not None else None,
         }
     )
 
     return entry
 
+
+def flush_invoice_calculation_errors(invoice_calculation_name):
+    try:
+        calculation = frappe.get_doc("Invoice Calculation", invoice_calculation_name)
+        for errror in calculation.errors:
+            calculation.remove(errror)
+        calculation.save()
+    except frappe.DoesNotExistError:
+        pass
+
+
 class InvoiceCalculatorTests(TestBase):
     TEST_SITE = "testing.localhost"
-    customers = []
     invoices = []
     company = None
     warehouse = None
-    items_to_delete = []
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
 
         cls.company = frappe.get_last_doc("Company")
-        test_customer = get_or_create_tenant("Test Tenant", "Tenant")
-
-        cls.customers = [test_customer]
         cls.warehouse = frappe.get_last_doc("Warehouse")
 
     @classmethod
     def tearDownClass(cls):
-        for invoice in cls.customers:
-            try_delete(lambda: invoice.delete())
         for invoice in cls.invoices:
             try_delete(lambda: invoice.delete())
-        for item in cls.items_to_delete:
-            try_delete(lambda: item.delete())
 
         super().tearDownClass()
+
+    def setUp(self):
+        self.plot = None
+        self.calculation = None
+        self.customer = get_or_create_tenant("Test Tenant", "Tenant")
+        self.second_customer = get_or_create_tenant("Second Tenant", "Tenant")
+        self.second_plot = create_plot("567", self.second_customer.name)
+        self.second_plot.save()
 
     def tearDown(self):
         customer_invoices = frappe.get_list(
             "Sales Invoice",
-            filters={"customer": self.customers[0].name},
+            filters={"customer": self.customer.name},
         )
         for invoice in customer_invoices:
             try:
@@ -165,23 +178,41 @@ class InvoiceCalculatorTests(TestBase):
             except:
                 pass
 
-        for c in self.customers:
+        customer_invoices = frappe.get_list(
+            "Sales Invoice",
+            filters={"customer": self.second_customer.name},
+        )
+        for invoice in customer_invoices:
             try:
-                customer = frappe.get_doc("Customer", c)
-                if customer.plot_link and customer.plot_link != "":
-                    customer.plot_link = None
-                    customer.save()
+                doc = frappe.get_doc("Sales Invoice", invoice)
+                doc.delete()
             except:
                 pass
 
-        plots = frappe.get_list("Plot")
-        for p in plots:
-            try:
-                plot = frappe.get_doc("Plot", p)
-                plot.customer = None
-                plot.delete()
-            except Exception as error:
-                print(error)
+        if self.calculation:
+            self.calculation.delete()
+
+        if self.plot:
+            self.plot.clear_customer_backlink(self.customer.name)
+            self.plot.customer = None
+            self.plot.delete()
+            self.plot = None
+
+        if self.customer:
+            self.customer.delete()
+            self.customer = None
+
+        if self.second_plot:
+            self.second_plot.clear_customer_backlink(self.second_customer.name)
+            self.second_plot.customer = None
+            self.second_plot.delete()
+            self.second_plot = None
+
+        if self.second_customer:
+            self.second_customer.delete()
+            self.second_customer = None
+
+        try_delete_list("Sales Invoice")
 
     def test_create_invoice_calculator(self):
         calculator = InvoiceCalculator()
@@ -189,8 +220,9 @@ class InvoiceCalculatorTests(TestBase):
 
     def test_create_invoice_with_fixed_product(self):
         price_list = frappe.get_last_doc("Price List")
-        calculation = create_invoice_calculation(self.company, price_list.name)
-        self.items_to_delete.append(calculation)
+        calculation = self.calculation = create_invoice_calculation(
+            self.company, price_list.name
+        )
 
         product = get_or_create_item(
             "First Product",
@@ -199,14 +231,11 @@ class InvoiceCalculatorTests(TestBase):
             self.company.default_income_account,
             False,
         )
-        self.items_to_delete.append(product)
 
         item = create_invoice_calculation_item(
             product, self.company.default_income_account
         )
         item.amount = 100
-
-        self.items_to_delete.append(item)
 
         calculation.append("items", item)
         calculation.insert()
@@ -218,7 +247,7 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(len(calculation.errors), 0)
 
         customer_invoices = frappe.get_list(
-            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+            "Sales Invoice", filters={"customer": self.customer.name}, fields="*"
         )
 
         self.assertEqual(len(customer_invoices), 1)
@@ -227,8 +256,9 @@ class InvoiceCalculatorTests(TestBase):
 
     def test_that_invoice_item_is_updated(self):
         price_list = frappe.get_last_doc("Price List")
-        calculation = create_invoice_calculation(self.company, price_list.name)
-        self.items_to_delete.append(calculation)
+        calculation = self.calculation = create_invoice_calculation(
+            self.company, price_list.name
+        )
 
         product = get_or_create_item(
             "First Product",
@@ -237,14 +267,11 @@ class InvoiceCalculatorTests(TestBase):
             self.company.default_income_account,
             False,
         )
-        self.items_to_delete.append(product)
 
         item = create_invoice_calculation_item(
             product, self.company.default_income_account
         )
         item.amount = 100
-
-        self.items_to_delete.append(item)
 
         calculation.append("items", item)
         calculation.insert()
@@ -260,7 +287,7 @@ class InvoiceCalculatorTests(TestBase):
         calculator.calculate(calculation.name)
 
         customer_invoices = frappe.get_list(
-            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+            "Sales Invoice", filters={"customer": self.customer.name}, fields="*"
         )
 
         self.assertEqual(len(customer_invoices), 1)
@@ -269,11 +296,11 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(invoice["grand_total"], 50)
 
     def test_water_consumption(self):
-        customer = self.customers[0]
+        customer = self.customer
         price_list = frappe.get_last_doc("Price List")
-        calculation = create_invoice_calculation(self.company, price_list.name)
-
-        self.items_to_delete.append(calculation)
+        calculation = self.calculation = create_invoice_calculation(
+            self.company, price_list.name
+        )
 
         product = get_or_create_item(
             "Water (Cubic Meter)",
@@ -282,20 +309,18 @@ class InvoiceCalculatorTests(TestBase):
             self.company.default_income_account,
             False,
         )
-        self.items_to_delete.append(product)
 
         item = create_invoice_calculation_item(
             product, self.company.default_income_account, "CalculateWaterConsumption"
         )
         item.amount = 2.22
         item.water_consumption_year = 2023
-        self.items_to_delete.append(item)
 
         calculation.append("items", item)
         calculation.insert()
 
-        plot = self.plot = create_plot("123", customer.name)
-        plot.save()
+        self.plot = create_plot("123", customer.name)
+        self.plot.save()
 
         expected_amount = 16 * 2.22
         counter_values = [
@@ -308,8 +333,8 @@ class InvoiceCalculatorTests(TestBase):
         ]
 
         for item in counter_values:
-            plot.append("water_meter_table", item)
-        plot.save()
+            self.plot.append("water_meter_table", item)
+        self.plot.save()
 
         calculator = InvoiceCalculator()
         calculator.calculate(calculation.name)
@@ -318,7 +343,7 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(len(calculation.errors), 0)
 
         customer_invoices = frappe.get_list(
-            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+            "Sales Invoice", filters={"customer": self.customer.name}, fields="*"
         )
 
         self.assertEqual(len(customer_invoices), 1)
@@ -326,11 +351,11 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(invoice["grand_total"], expected_amount)
 
     def test_new_counter(self):
-        customer = self.customers[0]
+        customer = self.customer
         price_list = frappe.get_last_doc("Price List")
-        calculation = create_invoice_calculation(self.company, price_list.name)
-
-        self.items_to_delete.append(calculation)
+        calculation = self.calculation = create_invoice_calculation(
+            self.company, price_list.name
+        )
 
         product = get_or_create_item(
             "New Counter",
@@ -339,20 +364,18 @@ class InvoiceCalculatorTests(TestBase):
             self.company.default_income_account,
             False,
         )
-        self.items_to_delete.append(product)
 
         item = create_invoice_calculation_item(
             product, self.company.default_income_account, "CalculateNewCounter"
         )
         item.amount = 40
         item.water_consumption_year = 2023
-        self.items_to_delete.append(item)
 
         calculation.append("items", item)
         calculation.insert()
 
-        plot = self.plot = create_plot("123", customer.name)
-        plot.save()
+        self.plot = create_plot("123", customer.name)
+        self.plot.save()
 
         expected_amount = 40
         counter_values = [
@@ -365,8 +388,8 @@ class InvoiceCalculatorTests(TestBase):
         ]
 
         for item in counter_values:
-            plot.append("water_meter_table", item)
-        plot.save()
+            self.plot.append("water_meter_table", item)
+        self.plot.save()
 
         calculator = InvoiceCalculator()
         calculator.calculate(calculation.name)
@@ -375,7 +398,7 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(len(calculation.errors), 0)
 
         customer_invoices = frappe.get_list(
-            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+            "Sales Invoice", filters={"customer": self.customer.name}, fields="*"
         )
 
         self.assertEqual(len(customer_invoices), 1)
@@ -383,11 +406,11 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(invoice["grand_total"], expected_amount)
 
     def test_quantity_by_script(self):
-        customer = self.customers[0]
+        customer = self.customer
         price_list = frappe.get_last_doc("Price List")
-        calculation = create_invoice_calculation(self.company, price_list.name)
-
-        self.items_to_delete.append(calculation)
+        calculation = self.calculation = create_invoice_calculation(
+            self.company, price_list.name
+        )
 
         product = get_or_create_item(
             "Plot Lease",
@@ -396,7 +419,6 @@ class InvoiceCalculatorTests(TestBase):
             self.company.default_income_account,
             False,
         )
-        self.items_to_delete.append(product)
 
         item = create_invoice_calculation_item(
             product, self.company.default_income_account, "AddProductByTemplates"
@@ -407,15 +429,14 @@ class InvoiceCalculatorTests(TestBase):
             {{plot.plot_size_sqm}}"""
 
         item.amount = 0.86
-        self.items_to_delete.append(item)
 
         calculation.append("items", item)
         calculation.insert()
 
         expected_amount = 152 * 0.86
-        plot = self.plot = create_plot("345", customer.name)
-        plot.plot_size_sqm = 152
-        plot.save()
+        self.plot = create_plot("345", customer.name)
+        self.plot.plot_size_sqm = 152
+        self.plot.save()
 
         calculator = InvoiceCalculator()
         calculator.calculate(calculation.name)
@@ -424,7 +445,7 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(len(calculation.errors), 0)
 
         customer_invoices = frappe.get_list(
-            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+            "Sales Invoice", filters={"customer": self.customer.name}, fields="*"
         )
 
         self.assertEqual(len(customer_invoices), 1)
@@ -432,9 +453,11 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(invoice["grand_total"], expected_amount)
 
     def test_amount_by_script(self):
-        customer = self.customers[0]
+        customer = self.customer
         price_list = frappe.get_last_doc("Price List")
-        calculation = create_invoice_calculation(self.company, price_list.name)
+        calculation = self.calculation = create_invoice_calculation(
+            self.company, price_list.name
+        )
 
         old_invoice = create_sales_invoice(
             customer.name,
@@ -466,8 +489,6 @@ class InvoiceCalculatorTests(TestBase):
         old_invoice.append("items", old_item)
         old_invoice.save()
 
-        self.items_to_delete.append(calculation)
-
         product = get_or_create_item(
             "Plot Lease",
             self.company,
@@ -475,7 +496,6 @@ class InvoiceCalculatorTests(TestBase):
             self.company.default_income_account,
             False,
         )
-        self.items_to_delete.append(product)
 
         item = create_invoice_calculation_item(
             product, self.company.default_income_account, "AddProductByTemplates"
@@ -484,6 +504,7 @@ class InvoiceCalculatorTests(TestBase):
         item.amount_template = """
             {%- set customer_name = customer.name  -%}
             {%- set sales_invoice_list = frappe.get_all('Sales Invoice', filters={'customer': customer_name}, fields=['name', 'title', 'remarks']) -%}
+            {%- if sales_invoice_list|length == 0 -%}0{%- endif -%}
             {%- for invoice in sales_invoice_list -%}
             {%- set invoice_title = invoice.title  -%}
             {%- if invoice_title.startswith('My_old_invoice') -%}
@@ -493,8 +514,6 @@ class InvoiceCalculatorTests(TestBase):
             {{val * 2.74}}
             {%- endif -%}
             {%- endfor -%}"""
-
-        self.items_to_delete.append(item)
 
         calculation.append("items", item)
         calculation.insert()
@@ -508,7 +527,7 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(len(calculation.errors), 0)
 
         customer_invoices = frappe.get_list(
-            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+            "Sales Invoice", filters={"customer": self.customer.name}, fields="*"
         )
 
         self.assertEqual(len(customer_invoices), 2)
@@ -516,13 +535,10 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(invoice["grand_total"], expected_amount)
 
     def test_amount_by_script_divide(self):
-        test_customer = get_or_create_tenant("Second Tenant", "Tenant")
-        self.customers.append(test_customer)
-
         price_list = frappe.get_last_doc("Price List")
-        calculation = create_invoice_calculation(self.company, price_list.name)
-
-        self.items_to_delete.append(calculation)
+        calculation = self.calculation = create_invoice_calculation(
+            self.company, price_list.name
+        )
 
         product = get_or_create_item(
             "Plot Lease",
@@ -531,7 +547,6 @@ class InvoiceCalculatorTests(TestBase):
             self.company.default_income_account,
             False,
         )
-        self.items_to_delete.append(product)
 
         item = create_invoice_calculation_item(
             product, self.company.default_income_account, "AddProductByTemplates"
@@ -542,8 +557,6 @@ class InvoiceCalculatorTests(TestBase):
 {%- set len = tenant_list|length -%}
 {{ 144 / len }}
             """
-
-        self.items_to_delete.append(item)
 
         calculation.append("items", item)
         calculation.insert()
@@ -557,7 +570,7 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(len(calculation.errors), 0)
 
         customer_invoices = frappe.get_list(
-            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+            "Sales Invoice", filters={"customer": self.customer.name}, fields="*"
         )
 
         self.assertEqual(len(customer_invoices), 1)
@@ -565,11 +578,10 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(invoice["grand_total"], expected_amount)
 
     def test_insurance_table(self):
-        customer = frappe.get_doc('Customer', self.customers[0].name)
         price_list = frappe.get_last_doc("Price List")
-        calculation = create_invoice_calculation(self.company, price_list.name)
-
-        self.items_to_delete.append(calculation)
+        calculation = self.calculation = create_invoice_calculation(
+            self.company, price_list.name
+        )
 
         product = get_or_create_item(
             "Insurance",
@@ -578,15 +590,12 @@ class InvoiceCalculatorTests(TestBase):
             self.company.default_income_account,
             False,
         )
-        self.items_to_delete.append(product)
 
-        insurances = [
-            create_insurance_entry("Basic Insurance", 35)
-        ]
+        insurances = [create_insurance_entry("Basic Insurance", 35)]
 
         for item in insurances:
-            customer.append("insurance_table", item)
-        customer.save()
+            self.customer.append("insurance_table", item)
+        self.customer.save()
 
         item = create_invoice_calculation_item(
             product, self.company.default_income_account, "AddProductByTemplates"
@@ -595,6 +604,7 @@ class InvoiceCalculatorTests(TestBase):
         item.quantity_template = """
 {%- set customer_name = customer.name  -%}
 {%- set insurances = frappe.get_all('Insurance Table', filters={'parent': customer_name}, fields=['insurance_type', 'insurance_value']) -%}
+{%- if insurances|length == 0 -%}0{%- endif -%}
 {%- for entry in insurances -%}
 {%- if entry.insurance_type == 'Basic Insurance' -%}
 1
@@ -615,8 +625,6 @@ class InvoiceCalculatorTests(TestBase):
 {%- endfor -%}
             """
 
-        self.items_to_delete.append(item)
-
         calculation.append("items", item)
         calculation.insert()
 
@@ -629,20 +637,19 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(len(calculation.errors), 0)
 
         customer_invoices = frappe.get_list(
-            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+            "Sales Invoice", filters={"customer": self.customer.name}, fields="*"
         )
 
         self.assertEqual(len(customer_invoices), 1)
         invoice = customer_invoices[0]
         self.assertEqual(invoice["grand_total"], expected_amount)
 
-
     def test_teamwork(self):
-        customer = frappe.get_doc('Customer', self.customers[0].name)
+        customer = frappe.get_doc("Customer", self.customer.name)
         price_list = frappe.get_last_doc("Price List")
-        calculation = create_invoice_calculation(self.company, price_list.name)
-
-        self.items_to_delete.append(calculation)
+        calculation = self.calculation = create_invoice_calculation(
+            self.company, price_list.name
+        )
 
         product = get_or_create_item(
             "Teamwork",
@@ -651,19 +658,16 @@ class InvoiceCalculatorTests(TestBase):
             self.company.default_income_account,
             False,
         )
-        self.items_to_delete.append(product)
 
         teamwork = [
             create_teamwork_entry("2023-10-10", 2),
-            create_teamwork_entry("2023-5-10", 3)
+            create_teamwork_entry("2023-5-10", 3),
         ]
 
         for item in teamwork:
             customer.append("teamwork_table", item)
 
-        work_task = [
-            create_work_task_entry("todo", 2)
-        ]
+        work_task = [create_work_task_entry("todo", 2)]
 
         for item in work_task:
             customer.append("teanant_teamwork_table", item)
@@ -675,8 +679,6 @@ class InvoiceCalculatorTests(TestBase):
         item.required_teamwork_hours = 8
         item.teamwork_year = 2023
         item.amount = 30
-
-        self.items_to_delete.append(item)
 
         calculation.append("items", item)
         calculation.insert()
@@ -690,7 +692,57 @@ class InvoiceCalculatorTests(TestBase):
         self.assertEqual(len(calculation.errors), 0)
 
         customer_invoices = frappe.get_list(
-            "Sales Invoice", filters={"customer": self.customers[0].name}, fields="*"
+            "Sales Invoice", filters={"customer": self.customer.name}, fields="*"
+        )
+
+        self.assertEqual(len(customer_invoices), 1)
+        invoice = customer_invoices[0]
+        self.assertEqual(invoice["grand_total"], expected_amount)
+    
+    def test_teamwork_with_none_value(self):
+        customer = frappe.get_doc("Customer", self.customer.name)
+        price_list = frappe.get_last_doc("Price List")
+        calculation = self.calculation = create_invoice_calculation(
+            self.company, price_list.name
+        )
+
+        product = get_or_create_item(
+            "Teamwork",
+            self.company,
+            self.warehouse.name,
+            self.company.default_income_account,
+            False,
+        )
+
+        work_task = [
+            create_work_task_entry("todo", 2),
+            create_work_task_entry("todo2", None)
+        ]
+
+        for item in work_task:
+            customer.append("teanant_teamwork_table", item)
+        customer.save()
+
+        item = create_invoice_calculation_item(
+            product, self.company.default_income_account, "CalculateTeamwork"
+        )
+        item.required_teamwork_hours = 8
+        item.teamwork_year = 2023
+        item.amount = 30
+
+        calculation.append("items", item)
+        calculation.insert()
+
+        expected_amount = 180
+
+        calculator = InvoiceCalculator()
+        calculator.calculate(calculation.name)
+
+        calculation = frappe.get_doc("Invoice Calculation", calculation.name)
+        self.assertEqual(len(calculation.errors), 0)
+
+        customer_invoices = frappe.get_list(
+            "Sales Invoice", filters={"customer": self.customer.name}, fields="*"
         )
 
         self.assertEqual(len(customer_invoices), 1)

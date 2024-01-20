@@ -116,6 +116,26 @@ class PlotTests(TestBase):
         self.assertEqual(result, expected_consumption)
         # plot.delete()
     
+    def test_plot_water_consumption_with_previous_values(self):
+        customer = self.customers[0]
+        plot = self.plot = create_plot("123", customer.name)
+        plot.save()
+
+        expected_consumption = 11
+        counter_values = [
+            create_counter_entry("2021-12-31", 94, "12/3456", "2018-01-01"),
+            create_counter_entry("2022-12-31", 102, "12/3456", "2018-01-01"),
+            create_counter_entry("2023-10-29", 113, "12/3456", "2018-01-01"),
+        ]
+
+        for item in counter_values:
+            plot.append("water_meter_table", item)
+        plot.save()
+
+        plot = frappe.get_doc('Plot', plot.name)
+        result = plot.calculate_water_consumption(2023)
+        self.assertEqual(result, expected_consumption)
+
     def test_plot_water_consumption_with_multiple_counters_per_year(self):
         customer = self.customers[0]
         plot = self.plot = create_plot("123", customer.name)

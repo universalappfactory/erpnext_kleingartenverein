@@ -54,10 +54,12 @@ class InvoiceCalculator:
         )
 
         for value in customer.teanant_teamwork_table:
-            result = result + value.duration
+            if value.duration is not None:
+                result = result + value.duration
 
         for value in by_year:
-            result = result + value.execution_duration
+            if value.execution_duration is not None:
+                result = result + value.execution_duration
 
         return result / 3600
 
@@ -75,7 +77,12 @@ class InvoiceCalculator:
             if len(existing) == 0:
                 raise frappe.DoesNotExistError()
             elif len(existing) == 1:
-                return frappe.get_doc("Sales Invoice", existing[0])
+                existing_invoice = frappe.get_doc("Sales Invoice", existing[0])
+
+                for item in existing_invoice.items:
+                    existing_invoice.remove(item)
+
+                return existing_invoice
             else:
                 frappe.throw(
                     f"multiple sales invoices with title: '{sales_invoice_title}'"
@@ -115,15 +122,6 @@ class InvoiceCalculator:
         sales_invoice_item.base_amount = item.amount
 
     def add_fixed_product(self, sales_invoice, item):
-        for index, sales_invoice_item in enumerate(sales_invoice.items):
-            if sales_invoice_item.item_code == item.product:
-                sales_invoice.items[index].rate = item.amount
-                sales_invoice.items[index].amount = item.amount
-                sales_invoice.items[index].base_rate = item.amount
-                sales_invoice.items[index].base_amount = item.amount
-                sales_invoice.items[index].description = item.description[:140]
-                return
-
         sales_invoice_item = frappe.get_doc(
             {
                 "doctype": "Sales Invoice Item",
@@ -146,15 +144,8 @@ class InvoiceCalculator:
 
         consumption = plot.calculate_water_consumption(item.water_consumption_year)
 
-        for index, sales_invoice_item in enumerate(sales_invoice.items):
-            if sales_invoice_item.item_code == item.product:
-                sales_invoice.items[index].rate = item.amount
-                sales_invoice.items[index].amount = item.amount
-                sales_invoice.items[index].base_rate = item.amount
-                sales_invoice.items[index].base_amount = item.amount
-                sales_invoice.items[index].qty = consumption
-                sales_invoice.items[index].description = item.description[:140]
-                return
+        if consumption == 0:
+            return
 
         sales_invoice_item = frappe.get_doc(
             {
@@ -179,16 +170,6 @@ class InvoiceCalculator:
         has_new_counter = plot.has_new_water_meter_in(item.water_consumption_year)
         if not has_new_counter:
             return
-
-        for index, sales_invoice_item in enumerate(sales_invoice.items):
-            if sales_invoice_item.item_code == item.product:
-                sales_invoice.items[index].rate = item.amount
-                sales_invoice.items[index].amount = item.amount
-                sales_invoice.items[index].base_rate = item.amount
-                sales_invoice.items[index].base_amount = item.amount
-                sales_invoice.items[index].qty = 1
-                sales_invoice.items[index].description = item.description[:140]
-                return
 
         sales_invoice_item = frappe.get_doc(
             {
@@ -233,11 +214,6 @@ class InvoiceCalculator:
                 "You must set at least an amount_template or quantity_template"
             )
 
-        if self.amount_template_set(item):
-            amount = self.get_template_value(
-                item.amount_template, sales_invoice, customer, item
-            )
-
         if self.quantity_template_set(item):
             quantity = self.get_template_value(
                 item.quantity_template, sales_invoice, customer, item
@@ -246,15 +222,10 @@ class InvoiceCalculator:
         if quantity == 0:
             return
 
-        for index, sales_invoice_item in enumerate(sales_invoice.items):
-            if sales_invoice_item.item_code == item.product:
-                sales_invoice.items[index].rate = amount
-                sales_invoice.items[index].amount = amount
-                sales_invoice.items[index].base_rate = amount
-                sales_invoice.items[index].base_amount = amount
-                sales_invoice.items[index].qty = quantity
-                sales_invoice.items[index].description = item.description[:140]
-                return
+        if self.amount_template_set(item):
+            amount = self.get_template_value(
+                item.amount_template, sales_invoice, customer, item
+            )
 
         sales_invoice_item = frappe.get_doc(
             {
@@ -276,20 +247,10 @@ class InvoiceCalculator:
     def calculate_teamwork(self, sales_invoice, item, customer, calculation):
         if customer.teamwork_freed == 1:
             return
-        
+
         hours = self.calculate_teamwork_hours(customer, item.teamwork_year)
         missing = item.required_teamwork_hours - hours
         if missing > 0:
-            for index, sales_invoice_item in enumerate(sales_invoice.items):
-                if sales_invoice_item.item_code == item.product:
-                    sales_invoice.items[index].rate = item.amount
-                    sales_invoice.items[index].amount = item.amount
-                    sales_invoice.items[index].base_rate = item.amount
-                    sales_invoice.items[index].base_amount = item.amount
-                    sales_invoice.items[index].qty = missing
-                    sales_invoice.items[index].description = item.description[:140]
-                    return
-
             sales_invoice_item = frappe.get_doc(
                 {
                     "doctype": "Sales Invoice Item",
@@ -308,7 +269,7 @@ class InvoiceCalculator:
             sales_invoice.append("items", sales_invoice_item)
 
     def calculate_sales_invoice_items(self, sales_invoice, customer, calculation):
-        for item in calculation.items:
+        for item in list(sorted(calculation.items, key=lambda x: x.position)):
             if item.action == "AddFixedProduct":
                 self.add_fixed_product(sales_invoice, item)
             if item.action == "CalculateWaterConsumption":
@@ -321,7 +282,9 @@ class InvoiceCalculator:
                 self.calculate_teamwork(sales_invoice, item, customer, calculation)
             if item.action == "CalculateNewCounter":
                 self.calculate_new_counter(sales_invoice, item, customer, calculation)
-        sales_invoice.save()
+
+        if len(sales_invoice.items) > 0:
+            sales_invoice.save()
 
     def calculate_invoice_for_customer(self, customer, calculation):
         sales_invoice = self.get_or_create_sales_invoice_for_customer(
@@ -330,7 +293,13 @@ class InvoiceCalculator:
         if sales_invoice:
             self.calculate_sales_invoice_items(sales_invoice, customer, calculation)
 
-    def create_error_message(self, error, customer=None, plot=None):
+    def create_error_message(self, error, customer_name=None, plot=None):
+        customer = None
+        try:
+            if customer_name is not None and customer_name != "":
+                customer = frappe.get_doc("Customer", customer_name)
+        except frappe.DoesNotExistError:
+            pass
         return frappe.get_doc(
             {
                 "doctype": "Invoice Calculation Error",
@@ -357,14 +326,13 @@ class InvoiceCalculator:
                 calculation.save()
                 return
 
-            customer = None
             for customer_name in customer_names:
                 try:
                     customer = frappe.get_doc("Customer", customer_name)
                     self.calculate_invoice_for_customer(customer, calculation)
                 except Exception as error:
                     frappe.log_error(error)
-                    msg = self.create_error_message(error, customer)
+                    msg = self.create_error_message(error, customer_name)
                     calculation.append("errors", msg)
 
             calculation.save()

@@ -209,6 +209,20 @@ class Plot(Document):
                 new_entry.customer_link = self.customer
                 self.append("former_tenants_table", new_entry)
 
+    
+    def last_counter_value(self, year, counter_number):
+        by_year = list(
+            filter(
+                lambda x: x.date.year == year and x.counter_number == counter_number,
+                self.water_meter_table,
+            )
+        )
+        sorted_by_year = list(sorted(by_year, key=lambda x: x.counter_number))
+        if len(sorted_by_year) > 0:
+            return sorted_by_year[-1].counter_value
+        
+        return 0
+    
     def calculate_water_consumption(self, year):
         by_year = list(
             filter(
@@ -219,10 +233,13 @@ class Plot(Document):
 
         sorted_by_counter_number = list(sorted(by_year, key=lambda x: x.counter_number))
 
+        year_before = year -1
+
         result = 0
-        for _, group in groupby(sorted_by_counter_number, lambda x: x.counter_number):
+        for key, group in groupby(sorted_by_counter_number, lambda x: x.counter_number):
             sorted_by_date = list(sorted(group, key=lambda x: x.date))
-            result = result + sorted_by_date[-1].counter_value
+            year_before_value = self.last_counter_value(year_before, key)
+            result = result + (sorted_by_date[-1].counter_value - year_before_value)
 
         return result
 
