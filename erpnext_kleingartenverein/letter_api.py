@@ -91,6 +91,32 @@ def parse_print_input(kwargs):
     )
 
 
+def get_recepients(recipients):
+    if recipients is None:
+        return []
+
+    if len(recipients) == 1:
+        try:
+            group_name = recipients[0].split('_')
+            if len(group_name) != 2:
+                return recipients
+
+            group_customer = frappe.get_last_doc(
+                "Customer", filters={"customer_group": "Group", "name": recipients[0]}
+            )
+            
+            return frappe.get_list(
+                "Customer",
+                filters={"customer_group": group_name[1]},
+                pluck="name",
+            )
+
+        except frappe.DoesNotExistError:
+            return recipients
+    else:
+        return recipients
+
+
 @frappe.whitelist(allow_guest=False)
 @check_permission
 def print_letters(*args, **kwargs):
@@ -100,7 +126,8 @@ def print_letters(*args, **kwargs):
     try:
         letters_to_print = []
         shipping = MemberLetterShipping(False)
-        for recipient in recipients:
+
+        for recipient in get_recepients(recipients):
             letter = shipping.create_single_member_letter(
                 recipient, content, printFormat, description, isPreview
             )
