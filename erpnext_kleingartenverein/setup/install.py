@@ -183,6 +183,19 @@ def add_disagree_invoice_by_mail_field(customize_form=None):
         "Check",
     )
 
+def add_check_invoice_field(customize_form=None):
+    if not customize_form:
+        customize_form = frappe.get_doc("Customize Form")
+        customize_form.doc_type = "Customer"
+        customize_form.fetch_to_customize()
+
+    add_field(
+        customize_form,
+        "check_invoice",
+        _("Check Invoice"),
+        "disagree_invoice_by_email",
+        "Check",
+    )
 
 def create_additional_customer_form_fields():
     customize_form = frappe.get_doc("Customize Form")
