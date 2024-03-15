@@ -321,6 +321,7 @@ def create_additional_customer_form_fields():
     add_teamwork_work_tasks_table(customize_form)
     add_invoice_by_email_field(customize_form)
     add_disagree_invoice_by_mail_field(customize_form)
+    add_check_invoice_field(customize_form)
 
 
 def get_or_create_default_pricelist():
