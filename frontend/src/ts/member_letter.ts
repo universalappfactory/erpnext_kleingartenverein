@@ -56,10 +56,6 @@ export function useMemberLetter() {
         templates.splice(0, templates.length)
     }
 
-    // const previewResource = createResource({
-    //     url: '/api/method/erpnext_kleingartenverein.letter_api.get_print_preview'
-    // })
-
     const printResource = createResource({
         url: '/api/method/erpnext_kleingartenverein.letter_api.print_letters'
     })
@@ -182,7 +178,7 @@ export function useMemberLetter() {
             printTemplates.splice(0, printTemplates.length)
             printTemplates.push(...printFormatResource.data.map(x => {
                 return {
-                    content: x.name,
+                    name: x.name,
                     value: x.name,
                     description: x.name
                 }
@@ -260,5 +256,9 @@ export function useMemberLetter() {
         return !hasError
     }
 
-    return { isValid, letterAttachments, submitError, processingFinished, validationStatus, templatesResource, fetchData, templates, selectedTemplate, contentChanged, isLoading, printLetters, description, printTemplates, selectedPrintTemplate, setDescription }
+    const setPrintTemplate = (item: SelectItem) => {
+        selectedPrintTemplate.value = item.name
+    }
+
+    return { isValid, setPrintTemplate, letterAttachments, submitError, processingFinished, validationStatus, templatesResource, fetchData, templates, selectedTemplate, contentChanged, isLoading, printLetters, description, printTemplates, selectedPrintTemplate, setDescription }
 }

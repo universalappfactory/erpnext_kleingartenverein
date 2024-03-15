@@ -17,7 +17,7 @@
     </div>
 </template>
 <script lang="ts">
-import { PropType, defineComponent, ref } from 'vue';
+import { PropType, defineComponent, ref, toRaw } from 'vue';
 import { SelectItem } from '../../ts/buttons/select';
 
 export default defineComponent({
@@ -72,7 +72,7 @@ export default defineComponent({
         },
         currentValue: function(val) {
             const item = this.items.find(itm => itm.value === val)
-            this.$emit('itemSelected', item)
+            this.$emit('itemSelected', toRaw(item))
         }
     }
 

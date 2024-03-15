@@ -26,6 +26,7 @@
           class="mt-2"
           placeholder=""
           :items="letter.printTemplates"
+          @item-selected="letter.setPrintTemplate"
         >
         </Select>
       </div>
